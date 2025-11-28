@@ -1,0 +1,730 @@
+Accueil de jeunes enfants                                                                                                         
+Accueil ou accompagnement sans hebergement d'adultes handicapes ou de personnes agees                                             
+Accueil ou accompagnement sans hebergement d'enfants handicapes                                                                   
+Action sociale sans hebergement n.c.a.                                                                                            
+Activite des economistes de la construction                                                                                       
+Activite des geometres                                                                                                            
+Activite des medecins generalistes                                                                                                
+Activites chirurgicales                                                                                                           
+Activites combinees de soutien lie aux batiments                                                                                  
+Activites comptables                                                                                                              
+Activites d'architecture                                                                                                          
+Activites d'enquete                                                                                                               
+Activites d'ordre public et de securite                                                                                           
+Activites de banque centrale                                                                                                      
+Activites de centres d'appels                                                                                                     
+Activites de clubs de sports                                                                                                      
+Activites de conditionnement                                                                                                      
+Activites de poste dans le cadre d'une obligation de service universel                                                            
+Activites de pre presse                                                                                                           
+Activites de radiodiagnostic et de radiotherapie                                                                                  
+Activites de sante humaine non classees ailleurs                                                                                  
+Activites de securite privee                                                                                                      
+Activites de soutien a l'enseignement                                                                                             
+Activites de soutien a l'extraction d'hydrocarbures                                                                               
+Activites de soutien a la production animale                                                                                      
+Activites de soutien au spectacle vivant                                                                                          
+Activites de soutien aux autres industries extractives                                                                            
+Activites de soutien aux cultures                                                                                                 
+Activites des agences de placement de main d'oeuvre                                                                               
+Activites des agences de presse                                                                                                   
+Activites des agences de publicite                                                                                                
+Activites des agences de recouvrement de factures et des societes d'information financiere sur la clientele                       
+Activites des agences de travail temporaire                                                                                       
+Activites des agences de voyage                                                                                                   
+Activites des agents et courtiers d'assurances                                                                                    
+Activites des centres de culture physique                                                                                         
+Activites des infirmiers et des sages femmes                                                                                      
+Activites des marchands de biens immobiliers                                                                                      
+Activites des menages en tant qu'employeurs de personnel domestique                                                               
+Activites des organisations et organismes extraterritoriaux                                                                       
+Activites des organisations patronales et consulaires                                                                             
+Activites des organisations politiques                                                                                            
+Activites des organisations professionnelles                                                                                      
+Activites des organisations religieuses                                                                                           
+Activites des parcs d'attractions et parcs a themes                                                                               
+Activites des professionnels de la reeducation, de l'appareillage et des pedicures podologues                                     
+Activites des sieges sociaux                                                                                                      
+Activites des societes holding                                                                                                    
+Activites des syndicats de salaries                                                                                               
+Activites des voyagistes                                                                                                          
+Activites generales de securite sociale                                                                                           
+Activites hospitalieres                                                                                                           
+Activites juridiques                                                                                                              
+Activites liees aux systemes de securite                                                                                          
+Activites photographiques                                                                                                         
+Activites specialisees de design                                                                                                  
+Activites specialisees, scientifiques et techniques diverses                                                                      
+Activites veterinaires                                                                                                            
+Administration d'immeubles et autres biens immobiliers                                                                            
+Administration de marches financiers                                                                                              
+Administration publique (tutelle) de la sante, de la formation, de la culture et des services sociaux, autre que securite sociale 
+Administration publique (tutelle) des activites economiques                                                                       
+Administration publique generale                                                                                                  
+Affaires etrangeres                                                                                                               
+Affretement et organisation des transports                                                                                        
+Agencement de lieux de vente                                                                                                      
+Agences immobilieres                                                                                                              
+Aide a domicile                                                                                                                   
+Aide par le travail                                                                                                               
+Ambulances                                                                                                                        
+Analyses, essais et inspections techniques                                                                                        
+Appret et tannage des cuirs ; preparation et teinture des fourrures                                                               
+Aquaculture en eau douce                                                                                                          
+Aquaculture en mer                                                                                                                
+Arts du spectacle vivant                                                                                                          
+Assurance vie                                                                                                                     
+Autre accueil ou accompagnement sans hebergement d'enfants et d'adolescents                                                       
+Autre creation artistique                                                                                                         
+Autre distribution de credit                                                                                                      
+Autre imprimerie (labeur)                                                                                                         
+Autre mise a disposition de ressources humaines                                                                                   
+Autre transformation et conservation de legumes                                                                                   
+Autres activites auxiliaires d'assurance et de caisses de retraite                                                                
+Autres activites auxiliaires de services financiers, hors assurance et caisses de retraite, n.c.a.                                
+Autres activites d'edition                                                                                                        
+Autres activites de nettoyage des batiments et nettoyage industriel                                                               
+Autres activites de nettoyage n.c.a.                                                                                              
+Autres activites de poste et de courrier                                                                                          
+Autres activites de soutien aux entreprises n.c.a.                                                                                
+Autres activites de telecommunication                                                                                             
+Autres activites des medecins specialistes                                                                                        
+Autres activites des services financiers, hors assurance et caisses de retraite, n.c.a.                                           
+Autres activites du travail des grains                                                                                            
+Autres activites extractives n.c.a.                                                                                               
+Autres activites informatiques                                                                                                    
+Autres activites liees au sport                                                                                                   
+Autres activites manufacturieres n.c.a.                                                                                           
+Autres activites recreatives et de loisirs                                                                                        
+Autres assurances                                                                                                                 
+Autres commerces de detail alimentaires en magasin specialise                                                                     
+Autres commerces de detail en magasin non specialise                                                                              
+Autres commerces de detail specialises divers                                                                                     
+Autres commerces de detail sur eventaires et marches                                                                              
+Autres cultures non permanentes                                                                                                   
+Autres cultures permanentes                                                                                                       
+Autres enseignements                                                                                                              
+Autres hebergements                                                                                                               
+Autres intermediaires du commerce en combustibles, metaux, mineraux et produits chimiques                                         
+Autres intermediaires du commerce en denrees, boissons et tabac                                                                   
+Autres intermediaires du commerce en produits divers                                                                              
+Autres intermediations monetaires                                                                                                 
+Autres organisations fonctionnant par adhesion volontaire                                                                         
+Autres services d'information n.c.a.                                                                                              
+Autres services de reservation et activites connexes                                                                              
+Autres services de restauration n.c.a.                                                                                            
+Autres services personnels n.c.a.                                                                                                 
+Autres transports routiers de voyageurs                                                                                           
+Autres travaux d'installation n.c.a.                                                                                              
+Autres travaux de finition                                                                                                        
+Autres travaux specialises de construction                                                                                        
+Blanchisserie teinturerie de detail                                                                                               
+Blanchisserie teinturerie de gros                                                                                                 
+Boulangerie et boulangerie patisserie                                                                                             
+Cafeterias et autres libres services                                                                                              
+Caisses de retraite                                                                                                               
+Captage, traitement et distribution d'eau                                                                                         
+Centrales d'achat alimentaires                                                                                                    
+Centrales d'achat de carburant                                                                                                    
+Centrales d'achat non alimentaires                                                                                                
+Centres de collecte et banques d'organes                                                                                          
+Charcuterie                                                                                                                       
+Chasse, piegeage et services annexes                                                                                              
+Coiffure                                                                                                                          
+Cokefaction                                                                                                                       
+Collecte des dechets dangereux                                                                                                    
+Collecte des dechets non dangereux                                                                                                
+Collecte et traitement des eaux usees                                                                                             
+Commerce d'alimentation generale                                                                                                  
+Commerce d'autres vehicules automobiles                                                                                           
+Commerce d'electricite                                                                                                            
+Commerce de combustibles gazeux par conduites                                                                                     
+Commerce de detail alimentaire sur eventaires et marches                                                                          
+Commerce de detail d'appareils electromenagers en magasin specialise                                                              
+Commerce de detail d'articles d'horlogerie et de bijouterie en magasin specialise                                                 
+Commerce de detail d'articles de sport en magasin specialise                                                                      
+Commerce de detail d'articles medicaux et orthopediques en magasin specialise                                                     
+Commerce de detail d'autres equipements du foyer                                                                                  
+Commerce de detail d'enregistrements musicaux et video en magasin specialise                                                      
+Commerce de detail d'equipements automobiles                                                                                      
+Commerce de detail d'habillement en magasin specialise                                                                            
+Commerce de detail d'ordinateurs, d'unites peripheriques et de logiciels en magasin specialise                                    
+Commerce de detail de biens d'occasion en magasin                                                                                 
+Commerce de detail de boissons en magasin specialise                                                                              
+Commerce de detail de carburants en magasin specialise                                                                            
+Commerce de detail de fleurs, plantes, graines, engrais, animaux de compagnie et aliments pour ces animaux en magasin specialise  
+Commerce de detail de fruits et legumes en magasin specialise                                                                     
+Commerce de detail de jeux et jouets en magasin specialise                                                                        
+Commerce de detail de journaux et papeterie en magasin specialise                                                                 
+Commerce de detail de la chaussure                                                                                                
+Commerce de detail de livres en magasin specialise                                                                                
+Commerce de detail de maroquinerie et d'articles de voyage                                                                        
+Commerce de detail de materiels audio et video en magasin specialise                                                              
+Commerce de detail de materiels de telecommunication en magasin specialise                                                        
+Commerce de detail de meubles                                                                                                     
+Commerce de detail de pain, patisserie et confiserie en magasin specialise                                                        
+Commerce de detail de parfumerie et de produits de beaute en magasin specialise                                                   
+Commerce de detail de poissons, crustaces et mollusques en magasin specialise                                                     
+Commerce de detail de produits a base de tabac en magasin specialise                                                              
+Commerce de detail de produits pharmaceutiques en magasin specialise                                                              
+Commerce de detail de produits surgeles                                                                                           
+Commerce de detail de quincaillerie, peintures et verres en grandes surfaces (400 m 2 et plus)                                    
+Commerce de detail de quincaillerie, peintures et verres en petites surfaces (moins de 400 m 2)                                   
+Commerce de detail de tapis, moquettes et revetements de murs et de sols en magasin specialise                                    
+Commerce de detail de textiles en magasin specialise                                                                              
+Commerce de detail de textiles, d'habillement et de chaussures sur eventaires et marches                                          
+Commerce de detail de viandes et de produits a base de viande en magasin specialise                                               
+Commerce de gros (commerce interentreprises) alimentaire non specialise                                                           
+Commerce de gros (commerce interentreprises) alimentaire specialise divers                                                        
+Commerce de gros (commerce interentreprises) d'animaux vivants                                                                    
+Commerce de gros (commerce interentreprises) d'appareils electromenagers                                                          
+Commerce de gros (commerce interentreprises) d'appareils sanitaires et de produits de decoration                                  
+Commerce de gros (commerce interentreprises) d'articles d'horlogerie et de bijouterie                                             
+Commerce de gros (commerce interentreprises) d'autres biens domestiques                                                           
+Commerce de gros (commerce interentreprises) d'autres machines et equipements de bureau                                           
+Commerce de gros (commerce interentreprises) d'autres produits intermediaires                                                     
+Commerce de gros (commerce interentreprises) d'habillement et de chaussures                                                       
+Commerce de gros (commerce interentreprises) d'ordinateurs, d'equipements informatiques peripheriques et de logiciels             
+Commerce de gros (commerce interentreprises) de bois et de materiaux de construction                                              
+Commerce de gros (commerce interentreprises) de boissons                                                                          
+Commerce de gros (commerce interentreprises) de cafe, the, cacao et epices                                                        
+Commerce de gros (commerce interentreprises) de cereales, de tabac non manufacture, de semences et d'aliments pour le betail      
+Commerce de gros (commerce interentreprises) de combustibles et de produits annexes                                               
+Commerce de gros (commerce interentreprises) de composants et d'equipements electroniques et de telecommunication                 
+Commerce de gros (commerce interentreprises) de cuirs et peaux                                                                    
+Commerce de gros (commerce interentreprises) de dechets et debris                                                                 
+Commerce de gros (commerce interentreprises) de fleurs et plantes                                                                 
+Commerce de gros (commerce interentreprises) de fournitures et equipements divers pour le commerce et les services                
+Commerce de gros (commerce interentreprises) de fournitures et equipements industriels divers                                     
+Commerce de gros (commerce interentreprises) de fournitures pour la plomberie et le chauffage                                     
+Commerce de gros (commerce interentreprises) de fruits et legumes                                                                 
+Commerce de gros (commerce interentreprises) de machines outils                                                                   
+Commerce de gros (commerce interentreprises) de machines pour l'extraction, la construction et le genie civil                     
+Commerce de gros (commerce interentreprises) de machines pour l'industrie textile et l'habillement                                
+Commerce de gros (commerce interentreprises) de materiel agricole                                                                 
+Commerce de gros (commerce interentreprises) de materiel electrique                                                               
+Commerce de gros (commerce interentreprises) de meubles, de tapis et d'appareils d'eclairage                                      
+Commerce de gros (commerce interentreprises) de minerais et metaux                                                                
+Commerce de gros (commerce interentreprises) de mobilier de bureau                                                                
+Commerce de gros (commerce interentreprises) de parfumerie et de produits de beaute                                               
+Commerce de gros (commerce interentreprises) de poissons, crustaces et mollusques                                                 
+Commerce de gros (commerce interentreprises) de produits a base de tabac                                                          
+Commerce de gros (commerce interentreprises) de produits a base de viande                                                         
+Commerce de gros (commerce interentreprises) de produits chimiques                                                                
+Commerce de gros (commerce interentreprises) de produits laitiers, oeufs, huiles et matieres grasses comestibles                  
+Commerce de gros (commerce interentreprises) de produits pharmaceutiques                                                          
+Commerce de gros (commerce interentreprises) de produits surgeles                                                                 
+Commerce de gros (commerce interentreprises) de quincaillerie                                                                     
+Commerce de gros (commerce interentreprises) de sucre, chocolat et confiserie                                                     
+Commerce de gros (commerce interentreprises) de textiles                                                                          
+Commerce de gros (commerce interentreprises) de vaisselle, verrerie et produits d'entretien                                       
+Commerce de gros (commerce interentreprises) de viandes de boucherie                                                              
+Commerce de gros (commerce interentreprises) de volailles et gibier                                                               
+Commerce de gros (commerce interentreprises) non specialise                                                                       
+Commerce de gros d'equipements automobiles                                                                                        
+Commerce de voitures et de vehicules automobiles legers                                                                           
+Commerce et reparation de motocycles                                                                                              
+Commerces de detail d'optique                                                                                                     
+Commerces de detail de charbons et combustibles                                                                                   
+Conception d'ensemble et assemblage sur site industriel d'equipements de controle des processus industriels                       
+Conseil en relations publiques et communication                                                                                   
+Conseil en systemes et logiciels informatiques                                                                                    
+Conseil pour les affaires et autres conseils de gestion                                                                           
+Construction aeronautique et spatiale                                                                                             
+Construction d'autres batiments                                                                                                   
+Construction d'autres ouvrages de genie civil n.c.a.                                                                              
+Construction d'ouvrages d'art                                                                                                     
+Construction d'ouvrages maritimes et fluviaux                                                                                     
+Construction de bateaux de plaisance                                                                                              
+Construction de locomotives et d'autre materiel ferroviaire roulant                                                               
+Construction de maisons individuelles                                                                                             
+Construction de navires et de structures flottantes                                                                               
+Construction de reseaux electriques et de telecommunications                                                                      
+Construction de reseaux pour fluides                                                                                              
+Construction de routes et autoroutes                                                                                              
+Construction de vehicules automobiles                                                                                             
+Construction de vehicules militaires de combat                                                                                    
+Construction de voies ferrees de surface et souterraines                                                                          
+Construction et entretien de tunnels                                                                                              
+Controle technique automobile                                                                                                     
+Courtage de valeurs mobilieres et de marchandises                                                                                 
+Creation artistique relevant des arts plastiques                                                                                  
+Credit bail                                                                                                                       
+Cuisson de produits de boulangerie                                                                                                
+Culture d'agrumes                                                                                                                 
+Culture d'autres fruits d'arbres ou d'arbustes et de fruits a coque                                                               
+Culture de cereales (a l'exception du riz), de legumineuses et de graines oleagineuses                                            
+Culture de fruits a pepins et a noyau                                                                                             
+Culture de fruits oleagineux                                                                                                      
+Culture de fruits tropicaux et subtropicaux                                                                                       
+Culture de la canne a sucre                                                                                                       
+Culture de la vigne                                                                                                               
+Culture de legumes, de melons, de racines et de tubercules                                                                        
+Culture de plantes a boissons                                                                                                     
+Culture de plantes a epices, aromatiques, medicinales et pharmaceutiques                                                          
+Culture de plantes a fibres                                                                                                       
+Culture du riz                                                                                                                    
+Culture du tabac                                                                                                                  
+Culture et elevage associes                                                                                                       
+Debits de boissons                                                                                                                
+Decolletage                                                                                                                       
+Decoupage, emboutissage                                                                                                           
+Defense                                                                                                                           
+Demantelement d'epaves                                                                                                            
+Depollution et autres services de gestion des dechets                                                                             
+Desinfection, desinsectisation, deratisation                                                                                      
+Distribution d'electricite                                                                                                        
+Distribution de combustibles gazeux par conduites                                                                                 
+Distribution de films cinematographiques                                                                                          
+Distribution sociale de revenus                                                                                                   
+Edition de chaines generalistes                                                                                                   
+Edition de chaines thematiques                                                                                                    
+Edition de jeux electroniques                                                                                                     
+Edition de journaux                                                                                                               
+Edition de livres                                                                                                                 
+Edition de logiciels applicatifs                                                                                                  
+Edition de logiciels outils de developpement et de langages                                                                       
+Edition de logiciels systeme et de reseau                                                                                         
+Edition de repertoires et de fichiers d'adresses                                                                                  
+Edition de revues et periodiques                                                                                                  
+Edition et diffusion de programmes radio                                                                                          
+Edition et distribution video                                                                                                     
+Elaboration et transformation de matieres nucleaires                                                                              
+Elevage d'autres animaux                                                                                                          
+Elevage d'autres bovins et de buffles                                                                                             
+Elevage d'ovins et de caprins                                                                                                     
+Elevage de chameaux et d'autres camelides                                                                                         
+Elevage de chevaux et d'autres equides                                                                                            
+Elevage de porcins                                                                                                                
+Elevage de vaches laitieres                                                                                                       
+Elevage de volailles                                                                                                              
+Ennoblissement textile                                                                                                            
+Enregistrement sonore et edition musicale                                                                                         
+Enrichissement et retraitement de matieres nucleaires                                                                             
+Enseignement culturel                                                                                                             
+Enseignement de disciplines sportives et d'activites de loisirs                                                                   
+Enseignement de la conduite                                                                                                       
+Enseignement post secondaire non superieur                                                                                        
+Enseignement pre primaire                                                                                                         
+Enseignement primaire                                                                                                             
+Enseignement secondaire general                                                                                                   
+Enseignement secondaire technique ou professionnel                                                                                
+Enseignement superieur                                                                                                            
+Entreposage et stockage frigorifique                                                                                              
+Entreposage et stockage non frigorifique                                                                                          
+Entretien corporel                                                                                                                
+Entretien et reparation d'autres vehicules automobiles                                                                            
+Entretien et reparation de vehicules automobiles legers                                                                           
+Etirage a froid de barres                                                                                                         
+Etudes de marche et sondages                                                                                                      
+Evaluation des risques et dommages                                                                                                
+Exploitation de gravieres et sablieres, extraction d'argiles et de kaolin                                                         
+Exploitation forestiere                                                                                                           
+Extraction d'autres minerais de metaux non ferreux                                                                                
+Extraction de gaz naturel                                                                                                         
+Extraction de houille                                                                                                             
+Extraction de minerais d'uranium et de thorium                                                                                    
+Extraction de minerais de fer                                                                                                     
+Extraction de petrole brut                                                                                                        
+Extraction de pierres ornementales et de construction, de calcaire industriel, de gypse, de craie et d'ardoise                    
+Extraction de tourbe                                                                                                              
+Extraction des mineraux chimiques et d'engrais mineraux                                                                           
+Fabrication d'aliments homogeneises et dietetiques                                                                                
+Fabrication d'aliments pour animaux de compagnie                                                                                  
+Fabrication d'aliments pour animaux de ferme                                                                                      
+Fabrication d'appareils d'eclairage electrique                                                                                    
+Fabrication d'appareils electromenagers                                                                                           
+Fabrication d'appareils menagers non electriques                                                                                  
+Fabrication d'appareils sanitaires en ceramique                                                                                   
+Fabrication d'armes et de munitions                                                                                               
+Fabrication d'articles ceramiques a usage domestique ou ornemental                                                                
+Fabrication d'articles chaussants a mailles                                                                                       
+Fabrication d'articles de bijouterie fantaisie et articles similaires                                                             
+Fabrication d'articles de brosserie                                                                                               
+Fabrication d'articles de joaillerie et bijouterie                                                                                
+Fabrication d'articles de papeterie                                                                                               
+Fabrication d'articles de sport                                                                                                   
+Fabrication d'articles de voyage, de maroquinerie et de sellerie                                                                  
+Fabrication d'articles en fils metalliques, de chaines et de ressorts                                                             
+Fabrication d'articles en fourrure                                                                                                
+Fabrication d'articles en papier a usage sanitaire ou domestique                                                                  
+Fabrication d'articles metalliques menagers                                                                                       
+Fabrication d'articles textiles, sauf habillement                                                                                 
+Fabrication d'autres articles a mailles                                                                                           
+Fabrication d'autres articles de robinetterie                                                                                     
+Fabrication d'autres articles en caoutchouc                                                                                       
+Fabrication d'autres articles en papier ou en carton                                                                              
+Fabrication d'autres articles metalliques                                                                                         
+Fabrication d'autres equipements automobiles                                                                                      
+Fabrication d'autres equipements de transport n.c.a.                                                                              
+Fabrication d'autres fils et cables electroniques ou electriques                                                                  
+Fabrication d'autres machines d'usage general                                                                                     
+Fabrication d'autres machines outils                                                                                              
+Fabrication d'autres machines specialisees                                                                                        
+Fabrication d'autres materiels electriques                                                                                        
+Fabrication d'autres meubles et industries connexes de l'ameublement                                                              
+Fabrication d'autres outillages                                                                                                   
+Fabrication d'autres ouvrages en beton, en ciment ou en platre                                                                    
+Fabrication d'autres pompes et compresseurs                                                                                       
+Fabrication d'autres produits alimentaires n.c.a.                                                                                 
+Fabrication d'autres produits ceramiques                                                                                          
+Fabrication d'autres produits ceramiques a usage technique                                                                        
+Fabrication d'autres produits chimiques inorganiques de base n.c.a.                                                               
+Fabrication d'autres produits chimiques n.c.a.                                                                                    
+Fabrication d'autres produits chimiques organiques de base                                                                        
+Fabrication d'autres produits laitiers                                                                                            
+Fabrication d'autres produits mineraux non metalliques n.c.a.                                                                     
+Fabrication d'autres reservoirs, citernes et conteneurs metalliques                                                               
+Fabrication d'autres textiles n.c.a.                                                                                              
+Fabrication d'autres textiles techniques et industriels                                                                           
+Fabrication d'autres vetements et accessoires                                                                                     
+Fabrication d'elements en beton pour la construction                                                                              
+Fabrication d'elements en matieres plastiques pour la construction                                                                
+Fabrication d'elements en platre pour la construction                                                                             
+Fabrication d'emballages en bois                                                                                                  
+Fabrication d'emballages en matieres plastiques                                                                                   
+Fabrication d'emballages en papier                                                                                                
+Fabrication d'emballages metalliques legers                                                                                       
+Fabrication d'engrenages et d'organes mecaniques de transmission                                                                  
+Fabrication d'equipements aerauliques et frigorifiques industriels                                                                
+Fabrication d'equipements d'aide a la navigation                                                                                  
+Fabrication d'equipements d'emballage, de conditionnement et de pesage                                                            
+Fabrication d'equipements d'irradiation medicale, d'equipements electromedicaux et electrotherapeutiques                          
+Fabrication d'equipements de communication                                                                                        
+Fabrication d'equipements electriques et electroniques automobiles                                                                
+Fabrication d'equipements hydrauliques et pneumatiques                                                                            
+Fabrication d'etoffes a mailles                                                                                                   
+Fabrication d'huiles essentielles                                                                                                 
+Fabrication d'huiles et graisses brutes                                                                                           
+Fabrication d'huiles et graisses raffinees                                                                                        
+Fabrication d'instrumentation scientifique et technique                                                                           
+Fabrication d'instruments de musique                                                                                              
+Fabrication d'isolateurs et pieces isolantes en ceramique                                                                         
+Fabrication d'objets divers en bois ; fabrication d'objets en liege, vannerie et sparterie                                        
+Fabrication d'ordinateurs et d'equipements peripheriques                                                                          
+Fabrication d'outillage portatif a moteur incorpore                                                                               
+Fabrication d'ouvrages en fibre ciment                                                                                            
+Fabrication de beton pret a l'emploi                                                                                              
+Fabrication de beurre                                                                                                             
+Fabrication de bicyclettes et de vehicules pour invalides                                                                         
+Fabrication de biere                                                                                                              
+Fabrication de biscuits, biscottes et patisseries de conservation                                                                 
+Fabrication de briques, tuiles et produits de construction, en terre cuite                                                        
+Fabrication de cables de fibres optiques                                                                                          
+Fabrication de cacao, chocolat et de produits de confiserie                                                                       
+Fabrication de caoutchouc synthetique                                                                                             
+Fabrication de carreaux en ceramique                                                                                              
+Fabrication de carrosseries et remorques                                                                                          
+Fabrication de cartes electroniques assemblees                                                                                    
+Fabrication de carton ondule                                                                                                      
+Fabrication de cartonnages                                                                                                        
+Fabrication de charpentes et d'autres menuiseries                                                                                 
+Fabrication de chaussures                                                                                                         
+Fabrication de chaux et platre                                                                                                    
+Fabrication de cidre et de vins de fruits                                                                                         
+Fabrication de ciment                                                                                                             
+Fabrication de colles                                                                                                             
+Fabrication de colorants et de pigments                                                                                           
+Fabrication de composants electroniques                                                                                           
+Fabrication de condiments et assaisonnements                                                                                      
+Fabrication de coutellerie                                                                                                        
+Fabrication de fibres artificielles ou synthetiques                                                                               
+Fabrication de fibres de verre                                                                                                    
+Fabrication de ficelles, cordes et filets                                                                                         
+Fabrication de fours et bruleurs                                                                                                  
+Fabrication de fromage                                                                                                            
+Fabrication de futs et emballages metalliques similaires                                                                          
+Fabrication de gaz industriels                                                                                                    
+Fabrication de generateurs de vapeur, a l'exception des chaudieres pour le chauffage central                                      
+Fabrication de glaces et sorbets                                                                                                  
+Fabrication de jeux et jouets                                                                                                     
+Fabrication de lait liquide et de produits frais                                                                                  
+Fabrication de lunettes                                                                                                           
+Fabrication de machines agricoles et forestieres                                                                                  
+Fabrication de machines d'imprimerie                                                                                              
+Fabrication de machines et d'equipements de bureau (a l'exception des ordinateurs et equipements peripheriques)                   
+Fabrication de machines outils pour le travail des metaux                                                                         
+Fabrication de machines pour l'extraction ou la construction                                                                      
+Fabrication de machines pour l'industrie agro alimentaire                                                                         
+Fabrication de machines pour la metallurgie                                                                                       
+Fabrication de machines pour le travail du caoutchouc ou des plastiques                                                           
+Fabrication de machines pour les industries du papier et du carton                                                                
+Fabrication de machines pour les industries textiles                                                                              
+Fabrication de malt                                                                                                               
+Fabrication de margarine et graisses comestibles similaires                                                                       
+Fabrication de matelas                                                                                                            
+Fabrication de materiel d'installation electrique                                                                                 
+Fabrication de materiel de distribution et de commande electrique                                                                 
+Fabrication de materiel de levage et de manutention                                                                               
+Fabrication de materiel medico chirurgical et dentaire                                                                            
+Fabrication de materiels optique et photographique                                                                                
+Fabrication de matieres plastiques de base                                                                                        
+Fabrication de meubles de bureau et de magasin                                                                                    
+Fabrication de meubles de cuisine                                                                                                 
+Fabrication de mortiers et betons secs                                                                                            
+Fabrication de moteurs et turbines, a l'exception des moteurs d'avions et de vehicules                                            
+Fabrication de moteurs, generatrices et transformateurs electriques                                                               
+Fabrication de motocycles                                                                                                         
+Fabrication de moules et modeles                                                                                                  
+Fabrication de non tisses, sauf habillement                                                                                       
+Fabrication de papier et de carton                                                                                                
+Fabrication de papiers peints                                                                                                     
+Fabrication de parfums et de produits pour la toilette                                                                            
+Fabrication de parquets assembles                                                                                                 
+Fabrication de pate a papier                                                                                                      
+Fabrication de pates alimentaires                                                                                                 
+Fabrication de peintures, vernis, encres et mastics                                                                               
+Fabrication de pesticides et d'autres produits agrochimiques                                                                      
+Fabrication de pieces techniques a base de matieres plastiques                                                                    
+Fabrication de piles et d'accumulateurs electriques                                                                               
+Fabrication de placage et de panneaux de bois                                                                                     
+Fabrication de plaques, feuilles, tubes et profiles en matieres plastiques                                                        
+Fabrication de plats prepares                                                                                                     
+Fabrication de portes et fenetres en metal                                                                                        
+Fabrication de preparations pharmaceutiques                                                                                       
+Fabrication de produits a base de tabac                                                                                           
+Fabrication de produits abrasifs                                                                                                  
+Fabrication de produits amylaces                                                                                                  
+Fabrication de produits azotes et d'engrais                                                                                       
+Fabrication de produits de consommation courante en matieres plastiques                                                           
+Fabrication de produits electroniques grand public                                                                                
+Fabrication de produits explosifs                                                                                                 
+Fabrication de produits pharmaceutiques de base                                                                                   
+Fabrication de produits refractaires                                                                                              
+Fabrication de radiateurs et de chaudieres pour le chauffage central                                                              
+Fabrication de savons, detergents et produits d'entretien                                                                         
+Fabrication de serrures et de ferrures                                                                                            
+Fabrication de sieges d'ameublement d'interieur                                                                                   
+Fabrication de structures metalliques et de parties de structures                                                                 
+Fabrication de sucre                                                                                                              
+Fabrication de supports magnetiques et optiques                                                                                   
+Fabrication de tapis et moquettes                                                                                                 
+Fabrication de tubes, tuyaux, profiles creux et accessoires correspondants en acier                                               
+Fabrication de verre creux                                                                                                        
+Fabrication de verre plat                                                                                                         
+Fabrication de vetements de dessous                                                                                               
+Fabrication de vetements de dessus                                                                                                
+Fabrication de vetements de travail                                                                                               
+Fabrication de vetements en cuir                                                                                                  
+Fabrication de vins effervescents                                                                                                 
+Fabrication de vis et de boulons                                                                                                  
+Fabrication et faconnage d'autres articles en verre, y compris verre technique                                                    
+Fabrication et rechapage de pneumatiques                                                                                          
+Fabrication industrielle de pain et de patisserie fraiche                                                                         
+Faconnage et transformation du verre plat                                                                                         
+Fonderie d'acier                                                                                                                  
+Fonderie d'autres metaux non ferreux                                                                                              
+Fonderie de fonte                                                                                                                 
+Fonderie de metaux legers                                                                                                         
+Fonds de placement et entites financieres similaires                                                                              
+Forages et sondages                                                                                                               
+Forge, estampage, matricage ; metallurgie des poudres                                                                             
+Formation continue d'adultes                                                                                                      
+Frappe de monnaie                                                                                                                 
+Gestion d'installations informatiques                                                                                             
+Gestion d'installations sportives                                                                                                 
+Gestion de fonds                                                                                                                  
+Gestion de salles de spectacles                                                                                                   
+Gestion des bibliotheques et des archives                                                                                         
+Gestion des jardins botaniques et zoologiques et des reserves naturelles                                                          
+Gestion des musees                                                                                                                
+Gestion des retraites complementaires                                                                                             
+Gestion des sites et monuments historiques et des attractions touristiques similaires                                             
+Grands magasins                                                                                                                   
+Hebergement medicalise pour adultes handicapes et autre hebergement medicalise                                                    
+Hebergement medicalise pour enfants handicapes                                                                                    
+Hebergement medicalise pour personnes agees                                                                                       
+Hebergement social pour adultes et familles en difficultes et autre hebergement social                                            
+Hebergement social pour enfants en difficultes                                                                                    
+Hebergement social pour handicapes mentaux et malades mentaux                                                                     
+Hebergement social pour handicapes physiques                                                                                      
+Hebergement social pour personnes agees                                                                                           
+Hebergement social pour toxicomanes                                                                                               
+Hebergement touristique et autre hebergement de courte duree                                                                      
+Horlogerie                                                                                                                        
+Hotels et hebergement similaire                                                                                                   
+Hypermarches                                                                                                                      
+Impregnation du bois                                                                                                              
+Imprimerie de journaux                                                                                                            
+Industrie des eaux de table                                                                                                       
+Ingenierie, etudes techniques                                                                                                     
+Installation d'equipements electriques, de materiels electroniques et optiques ou d'autres materiels                              
+Installation de machines et equipements mecaniques                                                                                
+Installation de structures metalliques, chaudronnees et de tuyauterie                                                             
+Intermediaires du commerce en bois et materiaux de construction                                                                   
+Intermediaires du commerce en machines, equipements industriels, navires et avions                                                
+Intermediaires du commerce en matieres premieres agricoles, animaux vivants, matieres premieres textiles et produits semi finis   
+Intermediaires du commerce en meubles, articles de menage et quincaillerie                                                        
+Intermediaires du commerce en textiles, habillement, fourrures, chaussures et articles en cuir                                    
+Intermediaires specialises dans le commerce d'autres produits specifiques                                                         
+Justice                                                                                                                           
+Laboratoires d'analyses medicales                                                                                                 
+Laminage a froid de feuillards                                                                                                    
+Location avec operateur de materiel de construction                                                                               
+Location bail de propriete intellectuelle et de produits similaires, a l'exception des oeuvres soumises a copyright               
+Location de camions avec chauffeur                                                                                                
+Location de courte duree de voitures et de vehicules automobiles legers                                                           
+Location de logements                                                                                                             
+Location de longue duree de voitures et de vehicules automobiles legers                                                           
+Location de terrains et d'autres biens immobiliers                                                                                
+Location de videocassettes et disques video                                                                                       
+Location et location bail d'articles de loisirs et de sport                                                                       
+Location et location bail d'autres biens personnels et domestiques                                                                
+Location et location bail d'autres machines, equipements et biens materiels n.c.a.                                                
+Location et location bail de camions                                                                                              
+Location et location bail de machines de bureau et de materiel informatique                                                       
+Location et location bail de machines et equipements agricoles                                                                    
+Location et location bail de machines et equipements pour la construction                                                         
+Location et location bail de materiels de transport aerien                                                                        
+Location et location bail de materiels de transport par eau                                                                       
+Magasins multi commerces                                                                                                          
+Manutention non portuaire                                                                                                         
+Manutention portuaire                                                                                                             
+Mecanique industrielle                                                                                                            
+Messagerie, fret express                                                                                                          
+Metallurgie de l'aluminium                                                                                                        
+Metallurgie des autres metaux non ferreux                                                                                         
+Metallurgie du cuivre                                                                                                             
+Metallurgie du plomb, du zinc ou de l'etain                                                                                       
+Meunerie                                                                                                                          
+Nettoyage courant des batiments                                                                                                   
+Organisation de foires, salons professionnels et congres                                                                          
+Organisation de jeux de hasard et d'argent                                                                                        
+Patisserie                                                                                                                        
+Peche en eau douce                                                                                                                
+Peche en mer                                                                                                                      
+Photocopie, preparation de documents et autres activites specialisees de soutien de bureau                                        
+Portails Internet                                                                                                                 
+Post production de films cinematographiques, de video et de programmes de television                                              
+Pratique dentaire                                                                                                                 
+Preparation de fibres textiles et filature                                                                                        
+Preparation de jus de fruits et legumes                                                                                           
+Preparation industrielle de produits a base de viande                                                                             
+Production d'autres boissons fermentees non distillees                                                                            
+Production d'electricite                                                                                                          
+Production de boissons alcooliques distillees                                                                                     
+Production de boissons rafraichissantes                                                                                           
+Production de combustibles gazeux                                                                                                 
+Production de films et de programmes pour la television                                                                           
+Production de films institutionnels et publicitaires                                                                              
+Production de films pour le cinema                                                                                                
+Production de metaux precieux                                                                                                     
+Production de sel                                                                                                                 
+Production et distribution de vapeur et d'air conditionne                                                                         
+Profilage a froid par formage ou pliage                                                                                           
+Programmation informatique                                                                                                        
+Projection de films cinematographiques                                                                                            
+Promotion immobiliere d'autres batiments                                                                                          
+Promotion immobiliere de bureaux                                                                                                  
+Promotion immobiliere de logements                                                                                                
+Provisoire                                                                                                                        
+Raffinage du petrole                                                                                                              
+Reassurance                                                                                                                       
+Recherche developpement en autres sciences physiques et naturelles                                                                
+Recherche developpement en biotechnologie                                                                                         
+Recherche developpement en sciences humaines et sociales                                                                          
+Recolte de produits forestiers non ligneux poussant a l'etat sauvage                                                              
+Recuperation de dechets tries                                                                                                     
+Regie publicitaire de medias                                                                                                      
+Reliure et activites connexes                                                                                                     
+Reparation d'appareils electromenagers et d'equipements pour la maison et le jardin                                               
+Reparation d'articles d'horlogerie et de bijouterie                                                                               
+Reparation d'autres biens personnels et domestiques                                                                               
+Reparation d'autres equipements                                                                                                   
+Reparation d'equipements de communication                                                                                         
+Reparation d'equipements electriques                                                                                              
+Reparation d'ordinateurs et d'equipements peripheriques                                                                           
+Reparation d'ouvrages en metaux                                                                                                   
+Reparation de chaussures et d'articles en cuir                                                                                    
+Reparation de machines et equipements mecaniques                                                                                  
+Reparation de materiels electroniques et optiques                                                                                 
+Reparation de meubles et d'equipements du foyer                                                                                   
+Reparation de produits electroniques grand public                                                                                 
+Reparation et maintenance d'aeronefs et d'engins spatiaux                                                                         
+Reparation et maintenance d'autres equipements de transport                                                                       
+Reparation et maintenance navale                                                                                                  
+Reproduction d'enregistrements                                                                                                    
+Reproduction de plantes                                                                                                           
+Restauration collective sous contrat                                                                                              
+Restauration de type rapide                                                                                                       
+Restauration traditionnelle                                                                                                       
+Sciage et rabotage du bois, hors impregnation                                                                                     
+Services administratifs combines de bureau                                                                                        
+Services auxiliaires des transports aeriens                                                                                       
+Services auxiliaires des transports par eau                                                                                       
+Services auxiliaires des transports terrestres                                                                                    
+Services d'amenagement paysager                                                                                                   
+Services de demenagement                                                                                                          
+Services de soutien a l'exploitation forestiere                                                                                   
+Services des traiteurs                                                                                                            
+Services du feu et de secours                                                                                                     
+Services funeraires                                                                                                               
+Siderurgie                                                                                                                        
+Soins de beaute                                                                                                                   
+Superettes                                                                                                                        
+Supermarches                                                                                                                      
+Supports juridiques de gestion de patrimoine immobilier                                                                           
+Supports juridiques de gestion de patrimoine mobilier                                                                             
+Supports juridiques de programmes                                                                                                 
+Sylviculture et autres activites forestieres                                                                                      
+Taille, faconnage et finissage de pierres                                                                                         
+Telecommunications filaires                                                                                                       
+Telecommunications par satellite                                                                                                  
+Telecommunications sans fil                                                                                                       
+Telepheriques et remontees mecaniques                                                                                             
+Terrains de camping et parcs pour caravanes ou vehicules de loisirs                                                               
+Tierce maintenance de systemes et d'applications informatiques                                                                    
+Tissage                                                                                                                           
+Traduction et interpretation                                                                                                      
+Traitement de donnees, hebergement et activites connexes                                                                          
+Traitement des semences                                                                                                           
+Traitement et elimination des dechets dangereux                                                                                   
+Traitement et elimination des dechets non dangereux                                                                               
+Traitement et revetement des metaux                                                                                               
+Traitement primaire des recoltes                                                                                                  
+Transformation du the et du cafe                                                                                                  
+Transformation et conservation de fruits                                                                                          
+Transformation et conservation de la viande de boucherie                                                                          
+Transformation et conservation de la viande de volaille                                                                           
+Transformation et conservation de poisson, de crustaces et de mollusques                                                          
+Transformation et conservation de pommes de terre                                                                                 
+Transport d'electricite                                                                                                           
+Transport ferroviaire interurbain de voyageurs                                                                                    
+Transports aeriens de fret                                                                                                        
+Transports aeriens de passagers                                                                                                   
+Transports de voyageurs par taxis                                                                                                 
+Transports ferroviaires de fret                                                                                                   
+Transports fluviaux de fret                                                                                                       
+Transports fluviaux de passagers                                                                                                  
+Transports maritimes et cotiers de fret                                                                                           
+Transports maritimes et cotiers de passagers                                                                                      
+Transports par conduites                                                                                                          
+Transports routiers de fret de proximite                                                                                          
+Transports routiers de fret interurbains                                                                                          
+Transports routiers reguliers de voyageurs                                                                                        
+Transports spatiaux                                                                                                               
+Transports urbains et suburbains de voyageurs                                                                                     
+Travaux d'etancheification                                                                                                        
+Travaux d'installation d'eau et de gaz en tous locaux                                                                             
+Travaux d'installation d'equipements thermiques et de climatisation                                                               
+Travaux d'installation electrique dans tous locaux                                                                                
+Travaux d'installation electrique sur la voie publique                                                                            
+Travaux d'isolation                                                                                                               
+Travaux de charpente                                                                                                              
+Travaux de couverture par elements                                                                                                
+Travaux de demolition                                                                                                             
+Travaux de maconnerie generale et gros oeuvre de batiment                                                                         
+Travaux de menuiserie bois et PVC                                                                                                 
+Travaux de menuiserie metallique et serrurerie                                                                                    
+Travaux de montage de structures metalliques                                                                                      
+Travaux de peinture et vitrerie                                                                                                   
+Travaux de platrerie                                                                                                              
+Travaux de revetement des sols et des murs                                                                                        
+Travaux de terrassement courants et travaux preparatoires                                                                         
+Travaux de terrassement specialises ou de grande masse                                                                            
+Trefilage a froid                                                                                                                 
+Vente a distance sur catalogue general                                                                                    
+Vente a distance sur catalogue specialise                                                                                         
+Vente a domicile                                                                                                                  
+Vente par automates et autres commerces de detail hors magasin, eventaires ou marches n.c.a.                                      
+Vinification                                                                                                                      

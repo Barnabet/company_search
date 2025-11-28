@@ -1,0 +1,18 @@
+--- Inference Test Report ---
+Date: 2025-11-27T14:43:29.767354
+Total Samples: 200
+Success (Exact Match): 194 (97.00%)
+Errors (Exceptions): 0 (0.00%)
+Mismatches: 6 (3.00%)
+
+Latency (s): Avg=2.121, Max=16.120
+
+--- Top Mismatch Fields ---
+localisation.departement: 3 failures
+localisation.code_postal: 2 failures
+activite.libelle_secteur: 2 failures
+localisation.region: 1 failures
+criteres_juridiques.present: 1 failures
+criteres_juridiques.siege_entreprise: 1 failures
+activite.activite_entreprise: 1 failures
+activite.present: 1 failures
