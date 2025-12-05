@@ -51,7 +51,7 @@ export default function Home() {
   const [result, setResult] = useState<ExtractionResult | null>(null)
 
   // URL de l'API - à remplacer par votre URL Render après déploiement
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://company-search-v248.onrender.com'
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
