@@ -6,12 +6,18 @@ import os
 import json
 from pathlib import Path
 from typing import Any, Dict, Optional
+from datetime import datetime
 import requests
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import text
 
 from sector_matcher import SectorMatcher
+from database import get_db, init_db, close_db
+from schemas import HealthCheck
+from routers import conversation_router
 
 # ============================================================================
 # Configuration et chargement de l'environnement
@@ -284,6 +290,12 @@ app.add_middleware(
 )
 
 # ============================================================================
+# Include Routers
+# ============================================================================
+
+app.include_router(conversation_router.router)
+
+# ============================================================================
 # Models Pydantic
 # ============================================================================
 
@@ -317,10 +329,25 @@ async def root():
     }
 
 
-@app.get("/health")
-async def health():
-    """Health check endpoint"""
-    return {"status": "healthy"}
+@app.get("/health", response_model=HealthCheck)
+async def health(db: AsyncSession = Depends(get_db)):
+    """
+    Health check endpoint with database connection verification
+    """
+    db_status = "disconnected"
+    try:
+        # Test database connection
+        await db.execute(text("SELECT 1"))
+        db_status = "connected"
+    except Exception as e:
+        print(f"Database health check failed: {e}")
+        db_status = f"error: {str(e)}"
+
+    return HealthCheck(
+        status="healthy" if db_status == "connected" else "degraded",
+        database=db_status,
+        timestamp=datetime.utcnow()
+    )
 
 
 @app.post("/extract", response_model=ExtractResponse)
@@ -351,12 +378,35 @@ async def extract_endpoint(payload: ExtractRequest) -> ExtractResponse:
 
 
 # ============================================================================
+# Lifecycle Events
+# ============================================================================
+
+@app.on_event("startup")
+async def startup_event():
+    """Initialize database on application startup"""
+    print("🚀 Starting Company Search API...")
+    print("📊 Initializing database connection...")
+    # Note: Tables will be created by Alembic migrations
+    # init_db() is only needed for dev/testing without migrations
+    # await init_db()
+    print("✅ Database initialized")
+
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    """Clean up database connections on shutdown"""
+    print("🛑 Shutting down Company Search API...")
+    await close_db()
+    print("✅ Database connections closed")
+
+
+# ============================================================================
 # Main - pour lancement local
 # ============================================================================
 
 if __name__ == "__main__":
     import uvicorn
-    
+
     port = int(os.getenv("PORT", "8000"))
     uvicorn.run(
         "api:app",

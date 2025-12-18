@@ -4,7 +4,15 @@ services:
     env: python
     region: frankfurt
     plan: free
-    buildCommand: pip install -r requirements.txt
+    buildCommand: |
+      pip install -r requirements.txt
+      # Run database migrations if DATABASE_URL is set
+      if [ -n "$DATABASE_URL" ]; then
+        echo "Running database migrations..."
+        alembic upgrade head
+      else
+        echo "Skipping migrations (DATABASE_URL not set)"
+      fi
     startCommand: uvicorn api:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: PYTHON_VERSION
@@ -13,4 +21,8 @@ services:
         sync: false
       - key: OPENROUTER_MODEL
         value: google/gemini-2.5-flash-lite
+      - key: DATABASE_URL
+        sync: false
+        # Add your PostgreSQL database URL from Render here
+        # Get it from: Dashboard → PostgreSQL service → "Internal Database URL"
 
