@@ -5,10 +5,10 @@ import ChatInterface from '@/components/Chat/ChatInterface'
 import type { ExtractionResult } from '@/types/conversation'
 
 const EXAMPLE_QUERIES = [
-  "Je cherche des PME en Ile-de-France dans la restauration avec un CA supérieur à 1M€",
-  "Trouver des entreprises créées après 2020 dans le secteur informatique",
-  "Entreprises de construction dans les Hauts-de-Seine avec plus de 50 salariés",
-  "Sociétés commerciales en Bretagne spécialisées en conseil de gestion"
+  "PME dans la restauration en Ile-de-France",
+  "Entreprises informatiques créées après 2020",
+  "Sociétés de construction avec plus de 50 salariés",
+  "ETI en Bretagne spécialisées en conseil"
 ]
 
 export default function Home() {
@@ -18,7 +18,6 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null)
   const [result, setResult] = useState<ExtractionResult | null>(null)
 
-  // URL de l'API
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://company-search-v248.onrender.com'
 
   const handleDirectExtract = async (e: React.FormEvent) => {
@@ -36,9 +35,7 @@ export default function Home() {
     try {
       const response = await fetch(`${API_URL}/extract`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query }),
       })
 
@@ -57,11 +54,11 @@ export default function Home() {
   }
 
   const formatValue = (value: any): string => {
-    if (value === null) return 'Non spécifié'
+    if (value === null) return '-'
     if (typeof value === 'boolean') return value ? 'Oui' : 'Non'
     if (typeof value === 'number') {
-      if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M€`
-      if (value >= 1000) return `${(value / 1000).toFixed(0)}k€`
+      if (value >= 1000000) return `${(value / 1000000).toFixed(1)} M€`
+      if (value >= 1000) return `${(value / 1000).toFixed(0)} k€`
       return value.toString()
     }
     return value
@@ -71,24 +68,24 @@ export default function Home() {
     if (!present) {
       return (
         <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
-          <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">{title}</h3>
-          <p className="text-gray-500 dark:text-gray-400 italic">Aucun critère spécifié</p>
+          <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">{title}</h3>
+          <p className="text-gray-400 dark:text-gray-500 text-sm mt-2">Non spécifié</p>
         </div>
       )
     }
 
-    const fields = Object.entries(data).filter(([key]) => key !== 'present')
+    const fields = Object.entries(data).filter(([key, value]) => key !== 'present' && value !== null)
 
     return (
-      <div className="bg-white dark:bg-gray-900 rounded-lg p-4 border border-primary-200 dark:border-primary-800 shadow-sm">
-        <h3 className="text-lg font-semibold mb-3 text-primary-700 dark:text-primary-400">{title}</h3>
+      <div className="bg-white dark:bg-gray-900 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
+        <h3 className="text-sm font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wide mb-3">{title}</h3>
         <dl className="space-y-2">
           {fields.map(([key, value]) => (
-            <div key={key} className="flex justify-between items-start">
-              <dt className="text-sm font-medium text-gray-600 dark:text-gray-400 capitalize">
-                {key.replace(/_/g, ' ')}:
+            <div key={key} className="flex justify-between items-center">
+              <dt className="text-sm text-gray-600 dark:text-gray-400">
+                {key.replace(/_/g, ' ')}
               </dt>
-              <dd className="text-sm text-gray-900 dark:text-white font-semibold ml-4 text-right">
+              <dd className="text-sm font-medium text-gray-900 dark:text-white">
                 {formatValue(value)}
               </dd>
             </div>
@@ -99,150 +96,127 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-800 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto">
+    <main className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-5xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            🔍 Company Search
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            Company Search
           </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300">
-            Extraction intelligente de critères de recherche d'entreprises
+          <p className="text-gray-600 dark:text-gray-400 mt-1">
+            Recherche d'entreprises par critères
           </p>
         </div>
 
         {/* Mode Toggle */}
-        <div className="flex justify-center mb-8">
-          <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-1 inline-flex">
-            <button
-              onClick={() => setMode('chat')}
-              className={`px-6 py-2 rounded-md font-medium transition-all ${
-                mode === 'chat'
-                  ? 'bg-primary-600 text-white shadow-md'
-                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-              }`}
-            >
-              💬 Mode Conversationnel
-            </button>
-            <button
-              onClick={() => setMode('direct')}
-              className={`px-6 py-2 rounded-md font-medium transition-all ${
-                mode === 'direct'
-                  ? 'bg-primary-600 text-white shadow-md'
-                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-              }`}
-            >
-              ⚡ Extraction Directe
-            </button>
-          </div>
+        <div className="flex mb-6 border-b border-gray-200 dark:border-gray-700">
+          <button
+            onClick={() => setMode('chat')}
+            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+              mode === 'chat'
+                ? 'border-blue-600 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            Mode conversationnel
+          </button>
+          <button
+            onClick={() => setMode('direct')}
+            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+              mode === 'direct'
+                ? 'border-blue-600 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            Extraction directe
+          </button>
         </div>
 
         {/* Content */}
         {mode === 'chat' ? (
-          <div className="mb-8">
-            <ChatInterface onExtractionComplete={(extractionResult) => setResult(extractionResult)} />
-          </div>
+          <ChatInterface onExtractionComplete={(extractionResult) => setResult(extractionResult)} />
         ) : (
-          <div className="mb-8">
-            <div className="bg-white dark:bg-gray-900 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 p-6">
-              <form onSubmit={handleDirectExtract} className="space-y-4">
-                <div>
-                  <label htmlFor="query" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Votre requête (mode avancé)
-                  </label>
-                  <textarea
-                    id="query"
-                    rows={4}
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-800 dark:text-white"
-                    placeholder="Ex: Je cherche des PME en Ile-de-France dans la restauration avec un CA supérieur à 1M€"
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    disabled={loading}
-                  />
-                </div>
-
-                <button
-                  type="submit"
+          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+            <form onSubmit={handleDirectExtract} className="space-y-4">
+              <div>
+                <label htmlFor="query" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Requête
+                </label>
+                <textarea
+                  id="query"
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm"
+                  placeholder="Ex: PME informatique en Ile-de-France"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
                   disabled={loading}
-                  className="w-full bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {loading ? (
-                    <span className="flex items-center justify-center">
-                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      Extraction en cours...
-                    </span>
-                  ) : (
-                    '🚀 Extraire les critères'
-                  )}
-                </button>
-              </form>
+                />
+              </div>
 
-              {/* Example Queries */}
-              <div className="mt-4">
-                <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Essayez ces exemples :</p>
-                <div className="flex flex-wrap gap-2">
-                  {EXAMPLE_QUERIES.map((example, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setQuery(example)}
-                      className="text-xs bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 px-3 py-1 rounded-full transition-colors"
-                    >
-                      {example.substring(0, 50)}...
-                    </button>
-                  ))}
-                </div>
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors disabled:opacity-50"
+              >
+                {loading ? 'Extraction...' : 'Extraire les critères'}
+              </button>
+            </form>
+
+            {/* Examples */}
+            <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+              <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Exemples :</p>
+              <div className="flex flex-wrap gap-2">
+                {EXAMPLE_QUERIES.map((example, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setQuery(example)}
+                    className="text-xs bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300 px-2 py-1 rounded transition-colors"
+                  >
+                    {example}
+                  </button>
+                ))}
               </div>
             </div>
           </div>
         )}
 
-        {/* Error Message */}
+        {/* Error */}
         {error && (
-          <div className="mb-8 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
-            <div className="flex items-center">
-              <span className="text-2xl mr-3">⚠️</span>
-              <div>
-                <h3 className="text-red-800 dark:text-red-300 font-semibold">Erreur</h3>
-                <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
-              </div>
-            </div>
+          <div className="mt-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+            <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
           </div>
         )}
 
         {/* Results */}
         {result && (
-          <div className="space-y-6">
-            <div className="bg-gradient-to-r from-primary-500 to-primary-600 rounded-lg p-6 text-white shadow-lg">
-              <h2 className="text-2xl font-bold mb-2">✅ Critères extraits avec succès !</h2>
-              <p className="text-primary-100">Voici l'analyse structurée de votre requête :</p>
+          <div className="mt-6 space-y-4">
+            <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+              <p className="text-green-700 dark:text-green-400 font-medium text-sm">Critères extraits</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <ResultSection
-                title="📍 Localisation"
+                title="Localisation"
                 data={result.localisation}
                 present={result.localisation.present}
               />
               <ResultSection
-                title="💼 Activité"
+                title="Activité"
                 data={result.activite}
                 present={result.activite.present}
               />
               <ResultSection
-                title="👥 Taille d'entreprise"
+                title="Taille"
                 data={result.taille_entreprise}
                 present={result.taille_entreprise.present}
               />
               <ResultSection
-                title="💰 Critères financiers"
+                title="Financier"
                 data={result.criteres_financiers}
                 present={result.criteres_financiers.present}
               />
               <ResultSection
-                title="⚖️ Critères juridiques"
+                title="Juridique"
                 data={result.criteres_juridiques}
                 present={result.criteres_juridiques.present}
               />
@@ -250,20 +224,15 @@ export default function Home() {
 
             {/* Raw JSON */}
             <details className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4">
-              <summary className="cursor-pointer text-sm font-semibold text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400">
-                🔧 Voir le JSON brut
+              <summary className="cursor-pointer text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900">
+                Voir le JSON
               </summary>
-              <pre className="mt-4 p-4 bg-gray-900 text-green-400 rounded text-xs overflow-auto">
+              <pre className="mt-3 p-3 bg-gray-900 text-green-400 rounded text-xs overflow-auto">
                 {JSON.stringify(result, null, 2)}
               </pre>
             </details>
           </div>
         )}
-
-        {/* Footer */}
-        <div className="mt-12 text-center text-sm text-gray-500 dark:text-gray-400">
-          <p>Powered by OpenRouter AI • Built with Next.js & FastAPI</p>
-        </div>
       </div>
     </main>
   )

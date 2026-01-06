@@ -22,6 +22,4 @@ services:
         value: google/gemini-2.5-flash-lite
       - key: DATABASE_URL
         sync: false
-        # Add your PostgreSQL database URL from Render here
-        # Get it from: Dashboard → PostgreSQL service → "Internal Database URL"
 

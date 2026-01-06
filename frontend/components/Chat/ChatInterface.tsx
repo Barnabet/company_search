@@ -59,20 +59,20 @@ export default function ChatInterface({ onExtractionComplete }: ChatInterfacePro
   const hasMessages = currentConversation && currentConversation.messages.length > 0
 
   return (
-    <div className="flex flex-col h-[600px] bg-white dark:bg-gray-900 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700">
+    <div className="flex flex-col h-[500px] bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
       {/* Header */}
-      <div className="bg-gradient-to-r from-primary-500 to-primary-600 text-white px-6 py-4 rounded-t-lg">
+      <div className="bg-gray-50 dark:bg-gray-900 px-4 py-3 rounded-t-lg border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-bold">💬 Recherche Conversationnelle</h2>
-            <p className="text-sm text-primary-100 mt-1">
-              Décrivez votre recherche, je vous aide à affiner les critères
+            <h2 className="text-sm font-semibold text-gray-900 dark:text-white">Assistant de recherche</h2>
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              Décrivez votre recherche d'entreprises
             </p>
           </div>
           {hasMessages && (
             <button
               onClick={handleNewSearch}
-              className="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+              className="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             >
               Nouvelle recherche
             </button>
@@ -81,22 +81,21 @@ export default function ChatInterface({ onExtractionComplete }: ChatInterfacePro
       </div>
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-4">
+      <div className="flex-1 overflow-y-auto p-4 space-y-3">
         {!hasMessages && (
-          <div className="text-center py-12">
-            <div className="text-6xl mb-4">🤖</div>
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+          <div className="text-center py-8">
+            <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-2">
               Comment puis-je vous aider ?
             </h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
-              Décrivez le type d'entreprises que vous recherchez
+            <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
+              Décrivez le type d'entreprises recherchées
             </p>
-            <div className="text-left max-w-md mx-auto space-y-2 text-sm text-gray-500 dark:text-gray-400">
-              <p>💡 <strong>Exemples:</strong></p>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>"Je cherche des PME dans la restauration"</li>
-                <li>"Entreprises de construction en Bretagne"</li>
-                <li>"Sociétés informatiques avec CA &gt; 1M€"</li>
+            <div className="text-left max-w-sm mx-auto space-y-1 text-xs text-gray-500 dark:text-gray-400">
+              <p className="font-medium">Exemples :</p>
+              <ul className="list-disc list-inside space-y-1 ml-2">
+                <li>PME dans la restauration</li>
+                <li>Entreprises de construction en Bretagne</li>
+                <li>Sociétés informatiques avec CA &gt; 1M€</li>
               </ul>
             </div>
           </div>
@@ -110,11 +109,11 @@ export default function ChatInterface({ onExtractionComplete }: ChatInterfacePro
         {/* Loading indicator */}
         {isLoading && (
           <div className="flex justify-start">
-            <div className="bg-gray-100 dark:bg-gray-800 rounded-lg px-4 py-3">
-              <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 bg-primary-600 rounded-full animate-bounce" />
-                <div className="w-2 h-2 bg-primary-600 rounded-full animate-bounce delay-100" />
-                <div className="w-2 h-2 bg-primary-600 rounded-full animate-bounce delay-200" />
+            <div className="bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-2">
+              <div className="flex items-center space-x-1">
+                <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" />
+                <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
+                <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
               </div>
             </div>
           </div>
@@ -122,20 +121,14 @@ export default function ChatInterface({ onExtractionComplete }: ChatInterfacePro
 
         {/* Error message */}
         {error && (
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
-            <div className="flex items-start">
-              <span className="text-2xl mr-3">⚠️</span>
-              <div className="flex-1">
-                <h4 className="text-red-800 dark:text-red-300 font-semibold mb-1">
-                  Erreur
-                </h4>
-                <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
-              </div>
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
+            <div className="flex items-start justify-between">
+              <p className="text-red-600 dark:text-red-400 text-xs">{error}</p>
               <button
                 onClick={clearError}
-                className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200"
+                className="text-red-400 hover:text-red-600 text-xs ml-2"
               >
-                ✕
+                ×
               </button>
             </div>
           </div>
@@ -143,18 +136,10 @@ export default function ChatInterface({ onExtractionComplete }: ChatInterfacePro
 
         {/* Completion banner */}
         {isComplete && (
-          <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
-            <div className="flex items-center">
-              <span className="text-2xl mr-3">✅</span>
-              <div>
-                <h4 className="text-green-800 dark:text-green-300 font-semibold">
-                  Critères complétés !
-                </h4>
-                <p className="text-green-600 dark:text-green-400 text-sm">
-                  Affichage des résultats ci-dessous
-                </p>
-              </div>
-            </div>
+          <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3">
+            <p className="text-green-700 dark:text-green-400 text-xs font-medium">
+              Critères extraits avec succès
+            </p>
           </div>
         )}
 
@@ -169,7 +154,7 @@ export default function ChatInterface({ onExtractionComplete }: ChatInterfacePro
           placeholder={
             hasMessages
               ? 'Votre réponse...'
-              : 'Ex: Je cherche des PME dans la restauration'
+              : 'Ex: PME informatique en Bretagne'
           }
         />
       )}
