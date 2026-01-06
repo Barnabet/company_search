@@ -11,7 +11,7 @@ Render.com compatibility:
 import os
 from typing import AsyncGenerator, Optional
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker, AsyncEngine
-from sqlalchemy.orm import declarativebase
+from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.pool import NullPool
 
 # ============================================================================
