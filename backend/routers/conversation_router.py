@@ -21,7 +21,7 @@ from schemas import (
 )
 from services.conversation_service import ConversationService, MessageService
 from services.agent_service import AgentService
-from api import extract_criteria  # Import existing extraction function
+from services.extraction_service import extract_criteria
 
 # Create router
 router = APIRouter(prefix="/api/v1/conversations", tags=["conversations"])
