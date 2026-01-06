@@ -166,9 +166,8 @@ async def startup_event():
     """Initialize database on application startup"""
     print("🚀 Starting Company Search API...")
     print("📊 Initializing database connection...")
-    # Note: Tables will be created by Alembic migrations
-    # init_db() is only needed for dev/testing without migrations
-    # await init_db()
+    # Create tables if they don't exist (fallback when migrations don't run at build time)
+    await init_db()
     print("✅ Database initialized")
 
 
