@@ -1,19 +1,16 @@
 """
 Agent service for intelligent conversation management.
 
-This service implements the core conversational AI logic:
-- Completeness analysis (is the query ready for extraction?)
-- Question generation (what to ask next?)
-- Conversation merging (combine multi-turn inputs)
+Simplified approach: ONE LLM call that decides whether to extract or clarify.
 """
 
 import json
 import os
 import requests
 from typing import List, Dict, Any, Optional
+from dataclasses import dataclass
 
 from models import Message
-from schemas import CompletenessAnalysis
 
 # OpenRouter configuration
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
@@ -21,70 +18,139 @@ OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
 OPENROUTER_MODEL = os.getenv("OPENROUTER_MODEL", "google/gemini-2.5-flash-lite")
 
 
+@dataclass
+class AgentResponse:
+    """Response from the agent processing"""
+    action: str  # "extract" or "clarify"
+    message: str  # Question to ask or confirmation message
+    extraction_result: Optional[Dict[str, Any]] = None  # Extracted criteria if action="extract"
+
+
 # ============================================================================
-# Question Templates (Fast path for common scenarios)
+# Combined Agent Prompt - Decision + Extraction in ONE call
 # ============================================================================
 
-QUESTION_TEMPLATES = {
-    "missing_activity": (
-        "Une {company_type} dans quel secteur d'activité ? "
-        "(par exemple : restauration, informatique, construction, santé...)"
-    ),
-    "missing_location": (
-        "Dans quelle région ou département souhaitez-vous chercher ? "
-        "(par exemple : Bretagne, 75, Paris, Île-de-France...)"
-    ),
-    "vague_activity": (
-        "Une PME de quoi exactement ? "
-        "(secteur d'activité ou type de produit/service : restauration, services informatiques, BTP...)"
-    ),
-    "very_broad": (
-        "Votre recherche est large. Avez-vous une préférence de localisation "
-        "(région, département) ou de taille d'entreprise (TPE, PME, ETI) ?"
-    ),
-    "confirm_optional": (
-        "J'ai compris : {criteria}. Souhaitez-vous ajouter d'autres critères ? "
-        "(localisation, taille, chiffre d'affaires...)"
-    ),
+AGENT_SYSTEM_PROMPT = """Tu es un agent intelligent pour rechercher des entreprises françaises.
+
+MISSION
+-------
+Analyse la requête utilisateur et décide :
+1. EXTRAIRE : si au moins un critère exploitable est présent
+2. CLARIFIER : si la requête est trop vague
+
+CRITÈRES EXPLOITABLES (au moins 1 requis pour extraire)
+-------------------------------------------------------
+- Secteur/activité : restauration, informatique, BTP, santé, conseil, industrie...
+- Localisation : région, département, ville, code postal
+- Critères financiers : CA, résultat net, rentabilité avec montant
+
+CRITÈRES INSUFFISANTS SEULS (nécessitent clarification)
+-------------------------------------------------------
+- Taille seule (TPE/PME/ETI/grand groupe) SANS secteur ni localisation
+- Termes vagues : "entreprise", "société", "bonjour", "aide-moi"
+
+RÈGLES DE DÉCISION
+------------------
+✅ EXTRAIRE si :
+- "PME informatique" → activité présente
+- "restaurants en Bretagne" → activité + localisation
+- "entreprises à Paris" → localisation présente
+- "sociétés de conseil" → activité présente
+- "CA > 1M€" → critère financier exploitable
+
+❌ CLARIFIER si :
+- "une PME" → taille seule, demander secteur
+- "je cherche une entreprise" → trop vague
+- "bonjour" / "aide-moi" → pas de critère
+
+FORMAT DE SORTIE JSON
+---------------------
+Si EXTRAIRE, renvoie l'extraction complète :
+{
+  "action": "extract",
+  "localisation": {
+    "present": true/false,
+    "code_postal": string ou null,
+    "departement": string ou null,
+    "region": string ou null,
+    "commune": string ou null
+  },
+  "activite": {
+    "present": true/false,
+    "libelle_secteur": string ou null,
+    "activite_entreprise": string ou null
+  },
+  "taille_entreprise": {
+    "present": true/false,
+    "tranche_effectif": string ou null,
+    "acronyme": string ou null
+  },
+  "criteres_financiers": {
+    "present": true/false,
+    "ca_plus_recent": number ou null,
+    "resultat_net_plus_recent": number ou null,
+    "rentabilite_plus_recente": number ou null
+  },
+  "criteres_juridiques": {
+    "present": true/false,
+    "categorie_juridique": string ou null,
+    "siege_entreprise": string ou null,
+    "date_creation_entreprise": string ou null,
+    "capital": number ou null,
+    "date_changement_dirigeant": string ou null,
+    "nombre_etablissements": number ou null
+  }
 }
 
+Si CLARIFIER, renvoie une question :
+{
+  "action": "clarify",
+  "question": "Question courte et naturelle avec exemples"
+}
 
-# ============================================================================
-# Agent Service
-# ============================================================================
+EXEMPLES DE QUESTIONS DE CLARIFICATION
+--------------------------------------
+- "Une PME dans quel secteur d'activité ? (restauration, informatique, BTP...)"
+- "Quel type d'entreprise recherchez-vous ? (secteur, localisation...)"
+- "Dans quelle région ou département ?"
+
+RÈGLES D'EXTRACTION (si action=extract)
+---------------------------------------
+- libelle_secteur : reprendre le terme utilisé (restauration, informatique...)
+- activite_entreprise : code NAF UNIQUEMENT si explicitement mentionné, sinon null
+- region : liste autorisée = Ile-de-France, Bretagne, Normandie, Occitanie, etc.
+- tranche_effectif : "10 a 19 salaries", "20 a 49 salaries", etc.
+- acronyme : TPE, PME, ETI, grand groupe
+- Ne jamais inventer de valeurs non mentionnées
+
+Réponds UNIQUEMENT avec le JSON, sans texte autour.
+"""
+
 
 class AgentService:
-    """Service for conversational AI agent logic"""
+    """Service for conversational AI agent logic - Simplified version"""
 
     @staticmethod
-    def _call_llm(prompt: str, temperature: float = 0.0, response_format: Optional[str] = None) -> str:
+    def _call_llm(messages: List[Dict[str, str]], temperature: float = 0.0) -> str:
         """
-        Call OpenRouter LLM with given prompt.
+        Call OpenRouter LLM.
 
         Args:
-            prompt: The prompt to send
-            temperature: Temperature for generation (0.0 = deterministic)
-            response_format: Optional response format ("json_object" for JSON)
+            messages: List of message dicts with role and content
+            temperature: Temperature for generation
 
         Returns:
             str: LLM response content
-
-        Raises:
-            Exception: If API call fails
         """
         if not OPENROUTER_API_KEY:
             raise ValueError("OPENROUTER_API_KEY not set")
-
-        messages = [{"role": "user", "content": prompt}]
 
         payload: Dict[str, Any] = {
             "model": OPENROUTER_MODEL,
             "messages": messages,
             "temperature": temperature,
+            "response_format": {"type": "json_object"},
         }
-
-        if response_format:
-            payload["response_format"] = {"type": response_format}
 
         headers = {
             "Authorization": f"Bearer {OPENROUTER_API_KEY}",
@@ -104,240 +170,96 @@ class AgentService:
 
     @staticmethod
     def _format_conversation(messages: List[Message]) -> str:
-        """
-        Format conversation history for LLM context.
-
-        Args:
-            messages: List of messages
-
-        Returns:
-            str: Formatted conversation string
-        """
+        """Format conversation history for context."""
         lines = []
         for msg in messages:
-            role_label = "User" if msg.role.value == "user" else "Agent"
+            role_label = "Utilisateur" if msg.role.value == "user" else "Agent"
             lines.append(f"{role_label}: {msg.content}")
         return "\n".join(lines)
 
     @staticmethod
-    async def analyze_completeness(messages: List[Message]) -> CompletenessAnalysis:
-        """
-        Analyze if conversation has enough info for extraction (MODERATE mode).
+    def _clean_json(content: str) -> str:
+        """Clean JSON response from LLM."""
+        cleaned = content.strip()
 
-        Thresholds:
-        - >= 0.9: Extract immediately (very confident)
-        - 0.6-0.9: Ask one confirmation question
-        - < 0.6: Need clarification
+        # Remove markdown code blocks
+        if cleaned.startswith("```"):
+            lines = cleaned.splitlines()
+            if lines and lines[0].startswith("```"):
+                lines = lines[1:]
+            if lines and lines[-1].startswith("```"):
+                lines = lines[:-1]
+            cleaned = "\n".join(lines).strip()
+
+        # Extract JSON object
+        start = cleaned.find("{")
+        end = cleaned.rfind("}")
+        if start != -1 and end != -1:
+            cleaned = cleaned[start:end + 1]
+
+        return cleaned
+
+    @staticmethod
+    async def process_message(messages: List[Message]) -> AgentResponse:
+        """
+        Process user message(s) and decide whether to extract or clarify.
+
+        ONE LLM call that:
+        1. Analyzes the conversation
+        2. Decides: extract or clarify
+        3. Returns extraction result OR question
 
         Args:
             messages: Conversation history
 
         Returns:
-            CompletenessAnalysis: Analysis result
+            AgentResponse: Action (extract/clarify) with result or question
         """
-        conversation_text = AgentService._format_conversation(messages)
-
-        prompt = f"""Analyse cette conversation sur la recherche d'entreprises françaises.
-
-CONVERSATION:
+        # Build conversation context
+        if len(messages) == 1:
+            user_content = messages[0].content
+        else:
+            # Multi-turn: include conversation history
+            conversation_text = AgentService._format_conversation(messages)
+            user_content = f"""CONVERSATION:
 {conversation_text}
 
-RÈGLES:
-- Requis (au moins 1) : Activité/secteur OU Localisation
-- Optionnel : Taille, critères financiers/juridiques
+Analyse la conversation complète et décide si tu peux extraire les critères ou si tu dois poser une question."""
 
-MODE: MODÉRÉ
-- is_complete=true si confiance >= 0.9 (tous critères clairs, ex: "PME restauration Bretagne CA > 1M€")
-- is_complete=false si confiance < 0.9 (même si requête acceptable, proposer confirmation/enrichissement)
-
-EXEMPLE MODE MODÉRÉ:
-- "PME restauration" → confiance=0.7 → is_complete=false, question="Souhaitez-vous préciser la localisation?"
-- "PME" → confiance=0.3 → is_complete=false, question="Une PME de quoi exactement?"
-- "PME restauration en Bretagne CA > 1M€" → confiance=0.95 → is_complete=true
-
-Réponds en JSON:
-{{
-  "is_complete": boolean,
-  "missing_fields": ["activite", "localisation", "taille_entreprise", "criteres_financiers"],
-  "confidence": 0.0-1.0,
-  "suggested_question": "question à poser" ou null si is_complete=true,
-  "reasoning": "explication brève du score"
-}}
-"""
+        # Single LLM call
+        llm_messages = [
+            {"role": "system", "content": AGENT_SYSTEM_PROMPT},
+            {"role": "user", "content": user_content},
+        ]
 
         try:
-            response = AgentService._call_llm(prompt, response_format="json_object")
-            data = json.loads(response)
-            return CompletenessAnalysis(**data)
+            response = AgentService._call_llm(llm_messages)
+            data = json.loads(AgentService._clean_json(response))
+
+            action = data.get("action", "clarify")
+
+            if action == "extract":
+                # Build extraction result (remove "action" key)
+                extraction = {k: v for k, v in data.items() if k != "action"}
+                return AgentResponse(
+                    action="extract",
+                    message="Parfait ! J'ai tous les critères nécessaires. Lancement de la recherche...",
+                    extraction_result=extraction,
+                )
+            else:
+                # Clarification needed
+                question = data.get("question", "Pouvez-vous préciser votre recherche ?")
+                return AgentResponse(
+                    action="clarify",
+                    message=question,
+                    extraction_result=None,
+                )
+
         except Exception as e:
-            # Fallback: conservative analysis
-            print(f"Completeness analysis failed: {e}")
-            return CompletenessAnalysis(
-                is_complete=False,
-                missing_fields=["activite", "localisation"],
-                confidence=0.3,
-                suggested_question="Pouvez-vous préciser votre recherche ?",
-                reasoning=f"Error in analysis: {str(e)}",
+            print(f"Agent processing failed: {e}")
+            # Fallback: ask for clarification
+            return AgentResponse(
+                action="clarify",
+                message="Pouvez-vous préciser votre recherche ? (secteur d'activité, localisation...)",
+                extraction_result=None,
             )
-
-    @staticmethod
-    def _try_template_match(missing_fields: List[str], messages: List[Message]) -> Optional[str]:
-        """
-        Try to match situation to a question template.
-
-        Args:
-            missing_fields: List of missing required fields
-            messages: Conversation history
-
-        Returns:
-            str or None: Template question if matched
-        """
-        # Extract all user text
-        user_text = " ".join([
-            msg.content.lower()
-            for msg in messages
-            if msg.role.value == "user"
-        ])
-
-        # Detect company type mentioned
-        company_type = "entreprise"
-        for term in ["pme", "tpe", "eti"]:
-            if term in user_text:
-                company_type = term.upper()
-                break
-
-        # Priority 1: Activity completely missing
-        if "activite" in missing_fields and not any(
-            word in user_text
-            for word in ["secteur", "activité", "domaine", "restauration", "informatique", "construction"]
-        ):
-            return QUESTION_TEMPLATES["missing_activity"].format(company_type=company_type)
-
-        # Priority 2: Vague activity term like "PME" alone
-        if any(word in user_text for word in ["pme", "tpe", "entreprise"]) and "activite" in missing_fields:
-            return QUESTION_TEMPLATES["vague_activity"]
-
-        # Priority 3: Location missing
-        if "localisation" in missing_fields and len(missing_fields) >= 2:
-            return QUESTION_TEMPLATES["missing_location"]
-
-        # Priority 4: Very broad query
-        if len(missing_fields) >= 3:
-            return QUESTION_TEMPLATES["very_broad"]
-
-        return None
-
-    @staticmethod
-    async def generate_question(
-        messages: List[Message], analysis: CompletenessAnalysis
-    ) -> str:
-        """
-        Generate next question to ask user.
-
-        Uses hybrid approach:
-        1. Try template matching (fast)
-        2. Fall back to LLM generation (contextual)
-
-        Args:
-            messages: Conversation history
-            analysis: Completeness analysis result
-
-        Returns:
-            str: Question to ask user
-        """
-        # If already complete, no question needed
-        if analysis.is_complete:
-            return "Parfait ! J'ai tous les critères nécessaires. Lancement de la recherche..."
-
-        # Try template first
-        template_question = AgentService._try_template_match(analysis.missing_fields, messages)
-        if template_question:
-            return template_question
-
-        # Fall back to LLM generation
-        conversation_text = AgentService._format_conversation(messages)
-
-        prompt = f"""Tu es un assistant aidant à chercher des entreprises françaises.
-
-CONVERSATION:
-{conversation_text}
-
-ANALYSE:
-- Champs manquants : {', '.join(analysis.missing_fields) if analysis.missing_fields else 'aucun'}
-- Raisonnement : {analysis.reasoning}
-- Confiance : {analysis.confidence}
-
-TÂCHE:
-Génère UNE question naturelle en français pour obtenir l'info la plus importante manquante.
-La question doit :
-- Être amicale et conversationnelle
-- Être spécifique à ce qui a été discuté
-- Demander le champ manquant le PLUS critique
-- Inclure des exemples concrets entre parenthèses
-
-Réponds UNIQUEMENT avec la question, sans JSON ni explication.
-
-EXEMPLES:
-- "Dans quel secteur d'activité ? (par exemple : restauration, informatique, BTP...)"
-- "Souhaitez-vous préciser la région ? (Bretagne, Île-de-France, Hauts-de-France...)"
-"""
-
-        try:
-            return AgentService._call_llm(prompt, temperature=0.3).strip()
-        except Exception as e:
-            print(f"Question generation failed: {e}")
-            # Fallback to generic question
-            return "Pouvez-vous me donner plus de détails sur votre recherche ?"
-
-    @staticmethod
-    async def merge_conversation(messages: List[Message]) -> str:
-        """
-        Merge multi-turn conversation into single coherent query.
-
-        Args:
-            messages: Conversation history
-
-        Returns:
-            str: Merged query for extraction
-        """
-        # If only one user message, return it
-        user_messages = [msg for msg in messages if msg.role.value == "user"]
-        if len(user_messages) == 1:
-            return user_messages[0].content
-
-        # Get last 10 messages for context (limit context window)
-        recent_messages = messages[-10:] if len(messages) > 10 else messages
-        conversation_text = AgentService._format_conversation(recent_messages)
-
-        prompt = f"""Synthétise cette conversation en UNE phrase décrivant la recherche d'entreprises.
-
-CONVERSATION:
-{conversation_text}
-
-TÂCHE:
-Combine TOUS les critères mentionnés par l'utilisateur (activité, lieu, taille, finances, juridique).
-Retourne SEULEMENT la phrase synthétisée, rien d'autre.
-
-EXEMPLES:
-Conversation:
-User: "Je cherche des PME"
-User: "Dans la restauration"
-User: "En Bretagne"
-→ OUTPUT: "PME dans la restauration en Bretagne"
-
-Conversation:
-User: "entreprises de construction"
-User: "avec plus de 50 salariés"
-User: "créées après 2020"
-→ OUTPUT: "Entreprises de construction avec plus de 50 salariés créées après 2020"
-"""
-
-        try:
-            merged = AgentService._call_llm(prompt, temperature=0.0).strip()
-            # Clean up any markdown or extra formatting
-            merged = merged.strip('"').strip("'")
-            return merged
-        except Exception as e:
-            print(f"Conversation merge failed: {e}")
-            # Fallback: just join user messages
-            return " ".join([msg.content for msg in user_messages])

@@ -17,11 +17,9 @@ from schemas import (
     ConversationCreate,
     ConversationResponse,
     MessageCreate,
-    ErrorResponse,
 )
 from services.conversation_service import ConversationService, MessageService
 from services.agent_service import AgentService
-from services.extraction_service import extract_criteria
 
 # Create router
 router = APIRouter(prefix="/api/v1/conversations", tags=["conversations"])
@@ -34,12 +32,11 @@ async def create_conversation(
     """
     Start a new conversation with an initial user query.
 
-    Workflow:
+    Simplified workflow:
     1. Create conversation in database
     2. Add user's initial message
-    3. Analyze completeness
-    4. If complete: extract criteria and return result
-    5. If incomplete: ask clarifying question
+    3. Process with agent (ONE LLM call: decide extract or clarify)
+    4. Return result
 
     Args:
         payload: Initial message from user
@@ -60,41 +57,26 @@ async def create_conversation(
             content=payload.initial_message,
         )
 
-        # 3. Analyze completeness
-        messages = [user_message]
-        analysis = await AgentService.analyze_completeness(messages)
+        # 3. Process with agent (single LLM call)
+        agent_response = await AgentService.process_message([user_message])
 
-        # 4. Generate response
-        if analysis.is_complete:
-            # Extract criteria immediately
-            try:
-                extraction_result = extract_criteria(payload.initial_message)
-                await ConversationService.complete(
-                    db, conversation.id, extraction_result
-                )
-                assistant_content = (
-                    "Parfait ! J'ai tous les critères nécessaires. "
-                    "Voici les résultats de l'extraction."
-                )
-            except Exception as e:
-                # Extraction failed, ask user for corrections
-                print(f"Extraction failed: {e}")
-                assistant_content = (
-                    "J'ai rencontré un problème lors de l'extraction. "
-                    "Pouvez-vous reformuler votre requête ?"
-                )
-                analysis.is_complete = False
+        # 4. Handle response
+        if agent_response.action == "extract":
+            # Complete conversation with extraction result
+            await ConversationService.complete(
+                db, conversation.id, agent_response.extraction_result
+            )
+            assistant_content = agent_response.message
         else:
-            # Ask clarifying question
-            assistant_content = await AgentService.generate_question(messages, analysis)
+            # Need clarification
+            assistant_content = agent_response.message
 
         # 5. Store assistant response
-        assistant_message = await MessageService.create(
+        await MessageService.create(
             db,
             conversation_id=conversation.id,
             role="assistant",
             content=assistant_content,
-            analysis_result=analysis.model_dump() if not analysis.is_complete else None,
         )
 
         # 6. Return conversation with messages
@@ -115,12 +97,11 @@ async def send_message(
     """
     Send a message in an existing conversation.
 
-    Workflow:
+    Simplified workflow:
     1. Validate conversation exists and is active
     2. Add user message
-    3. Analyze completeness with full history
-    4. If complete: merge conversation + extract criteria
-    5. If incomplete: ask next question
+    3. Process with agent (ONE LLM call with full history)
+    4. Return result
 
     Args:
         conversation_id: UUID of the conversation
@@ -150,35 +131,19 @@ async def send_message(
         # 3. Get full message history
         messages = await MessageService.get_by_conversation(db, conversation_id)
 
-        # 4. Analyze completeness
-        analysis = await AgentService.analyze_completeness(messages)
+        # 4. Process with agent (single LLM call)
+        agent_response = await AgentService.process_message(messages)
 
-        # 5. Generate response
-        if analysis.is_complete:
-            # Merge conversation into single query
-            merged_query = await AgentService.merge_conversation(messages)
-
-            # Extract criteria
-            try:
-                extraction_result = extract_criteria(merged_query)
-                await ConversationService.complete(
-                    db, conversation_id, extraction_result
-                )
-                assistant_content = (
-                    "Parfait ! J'ai tous les critères nécessaires. "
-                    "Lancement de la recherche..."
-                )
-            except Exception as e:
-                # Extraction failed
-                print(f"Extraction failed: {e}")
-                assistant_content = (
-                    "J'ai rencontré un problème lors de l'extraction. "
-                    "Pouvez-vous vérifier les critères ?"
-                )
-                analysis.is_complete = False
+        # 5. Handle response
+        if agent_response.action == "extract":
+            # Complete conversation with extraction result
+            await ConversationService.complete(
+                db, conversation_id, agent_response.extraction_result
+            )
+            assistant_content = agent_response.message
         else:
-            # Ask next question
-            assistant_content = await AgentService.generate_question(messages, analysis)
+            # Need more clarification
+            assistant_content = agent_response.message
 
         # 6. Store assistant response
         await MessageService.create(
@@ -186,7 +151,6 @@ async def send_message(
             conversation_id=conversation_id,
             role="assistant",
             content=assistant_content,
-            analysis_result=analysis.model_dump() if not analysis.is_complete else None,
         )
 
         # 7. Update last activity
