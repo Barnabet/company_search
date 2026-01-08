@@ -82,7 +82,7 @@ Si EXTRAIRE, renvoie l'extraction complète :
   },
   "taille_entreprise": {
     "present": true/false,
-    "tranche_effectif": string ou null,
+    "tranche_effectif": array of strings ou null,
     "acronyme": string ou null
   },
   "criteres_financiers": {
@@ -119,9 +119,34 @@ RÈGLES D'EXTRACTION (si action=extract)
 - libelle_secteur : reprendre le terme utilisé (restauration, informatique...)
 - activite_entreprise : code NAF UNIQUEMENT si explicitement mentionné, sinon null
 - region : liste autorisée = Ile-de-France, Bretagne, Normandie, Occitanie, etc.
-- tranche_effectif : "10 a 19 salaries", "20 a 49 salaries", etc.
-- acronyme : TPE, PME, ETI, grand groupe
 - Ne jamais inventer de valeurs non mentionnées
+
+TRANCHES D'EFFECTIF INSEE (mapping automatique)
+------------------------------------------------
+Quand l'utilisateur mentionne un acronyme, converti-le en tranches INSEE :
+
+MIC (Micro-entreprise) :
+  → tranche_effectif = ["0 salarie", "1 ou 2 salaries", "3 a 5 salaries", "6 a 9 salaries"]
+  → acronyme = "MIC"
+
+TPE (Très Petite Entreprise) :
+  → tranche_effectif = ["0 salarie", "1 ou 2 salaries", "3 a 5 salaries", "6 a 9 salaries"]
+  → acronyme = "TPE"
+
+PME (Petite et Moyenne Entreprise) :
+  → tranche_effectif = ["10 a 19 salaries", "20 a 49 salaries", "50 a 99 salaries", "100 a 199 salaries", "200 a 249 salaries"]
+  → acronyme = "PME"
+
+ETI (Entreprise de Taille Intermédiaire) :
+  → tranche_effectif = ["250 a 499 salaries", "500 a 999 salaries", "1 000 a 1 999 salaries", "2 000 a 4 999 salaries"]
+  → acronyme = "ETI"
+
+GE (Grand Groupe / Grande Entreprise) :
+  → tranche_effectif = ["5 000 a 9 999 salaries", "10 000 salaries et plus"]
+  → acronyme = "GE"
+
+IMPORTANT : tranche_effectif doit être un ARRAY de strings, pas un string unique.
+Si l'utilisateur dit "PME informatique", renvoie tranche_effectif comme array de toutes les tranches PME.
 
 Réponds UNIQUEMENT avec le JSON, sans texte autour.
 """
