@@ -249,6 +249,71 @@ COMPLEX_TESTS = [
     ),
 ]
 
+# Tests de mapping INVERSE INSEE (nombre de salariés → acronyme)
+INSEE_INVERSE_TESTS = [
+    TestCase(
+        name="50 salariés informatique → PME",
+        user_message="entreprise informatique avec 50 salariés",
+        expected_action="extract",
+        expected_criteria={
+            "taille_entreprise": {
+                "present": True,
+                "acronyme": "PME"
+            },
+            "activite": {"present": True}
+        },
+        description="50 salariés doit être déduit comme PME"
+    ),
+    TestCase(
+        name="5 employés restauration → TPE",
+        user_message="restaurant avec 5 employés",
+        expected_action="extract",
+        expected_criteria={
+            "taille_entreprise": {
+                "present": True,
+                "acronyme": "TPE"
+            }
+        },
+        description="5 employés doit être déduit comme TPE"
+    ),
+    TestCase(
+        name="300 salariés BTP → ETI",
+        user_message="entreprise BTP avec 300 salariés",
+        expected_action="extract",
+        expected_criteria={
+            "taille_entreprise": {
+                "present": True,
+                "acronyme": "ETI"
+            }
+        },
+        description="300 salariés doit être déduit comme ETI"
+    ),
+    TestCase(
+        name="10000 employés → GE",
+        user_message="entreprise industrielle de plus de 10000 employés",
+        expected_action="extract",
+        expected_criteria={
+            "taille_entreprise": {
+                "present": True,
+                "acronyme": "GE"
+            }
+        },
+        description="10000+ employés doit être déduit comme GE"
+    ),
+    TestCase(
+        name="Moins de 10 salariés → TPE",
+        user_message="petite entreprise de conseil avec moins de 10 salariés",
+        expected_action="extract",
+        expected_criteria={
+            "taille_entreprise": {
+                "present": True,
+                "acronyme": "TPE"
+            }
+        },
+        description="<10 salariés doit être déduit comme TPE"
+    ),
+]
+
 
 # ============================================================================
 # API Client
@@ -456,14 +521,14 @@ def main():
     parser.add_argument(
         "--suite",
         type=str,
-        choices=["basic", "clarify", "insee", "complex", "all"],
+        choices=["basic", "clarify", "insee", "insee-inverse", "complex", "all"],
         default="all",
         help="Suite de tests à exécuter"
     )
 
     args = parser.parse_args()
 
-    print(f"\n🚀 Démarrage des tests sur : {args.base_url}\n")
+    print(f"\nDemarrage des tests sur : {args.base_url}\n")
 
     client = AgentAPIClient(args.base_url)
 
@@ -478,11 +543,15 @@ def main():
         all_results.extend(results)
 
     if args.suite in ["insee", "all"]:
-        results = run_test_suite(client, INSEE_MAPPING_TESTS, "MAPPING TRANCHES INSEE")
+        results = run_test_suite(client, INSEE_MAPPING_TESTS, "MAPPING TRANCHES INSEE (acronyme -> tranches)")
+        all_results.extend(results)
+
+    if args.suite in ["insee-inverse", "all"]:
+        results = run_test_suite(client, INSEE_INVERSE_TESTS, "MAPPING INSEE INVERSE (nombre -> acronyme)")
         all_results.extend(results)
 
     if args.suite in ["complex", "all"]:
-        results = run_test_suite(client, COMPLEX_TESTS, "REQUÊTES COMPLEXES")
+        results = run_test_suite(client, COMPLEX_TESTS, "REQUETES COMPLEXES")
         all_results.extend(results)
 
     print_summary(all_results)

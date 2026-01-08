@@ -9,6 +9,7 @@ import os
 import requests
 from typing import List, Dict, Any, Optional
 from dataclasses import dataclass
+from difflib import SequenceMatcher
 
 from models import Message
 
@@ -121,32 +122,61 @@ RÈGLES D'EXTRACTION (si action=extract)
 - region : liste autorisée = Ile-de-France, Bretagne, Normandie, Occitanie, etc.
 - Ne jamais inventer de valeurs non mentionnées
 
-TRANCHES D'EFFECTIF INSEE (mapping automatique)
+TRANCHES D'EFFECTIF INSEE (inférence bidirectionnelle)
+-------------------------------------------------------
+Le mapping fonctionne dans LES DEUX SENS :
+
+A) ACRONYME → TRANCHES (si l'utilisateur dit "PME", "TPE", etc.)
+   - MIC/TPE → ["0 salarie", "1 ou 2 salaries", "3 a 5 salaries", "6 a 9 salaries"]
+   - PME → ["10 a 19 salaries", "20 a 49 salaries", "50 a 99 salaries", "100 a 199 salaries", "200 a 249 salaries"]
+   - ETI → ["250 a 499 salaries", "500 a 999 salaries", "1 000 a 1 999 salaries", "2 000 a 4 999 salaries"]
+   - GE → ["5 000 a 9 999 salaries", "10 000 salaries et plus"]
+
+B) TRANCHES/NOMBRE → ACRONYME (si l'utilisateur mentionne un nombre de salariés)
+   Déduis l'acronyme à partir du nombre mentionné :
+   - "moins de 10 salariés" ou "5 employés" → acronyme = "TPE", tranche = ["3 a 5 salaries"]
+   - "50 salariés" ou "entre 20 et 100" → acronyme = "PME", tranche adaptée
+   - "300 employés" ou "500 salariés" → acronyme = "ETI", tranche adaptée
+   - "plus de 5000" ou "10000 salariés" → acronyme = "GE", tranche adaptée
+
+   Mapping inverse par nombre :
+   - 0-9 salariés → acronyme = "TPE"
+   - 10-249 salariés → acronyme = "PME"
+   - 250-4999 salariés → acronyme = "ETI"
+   - 5000+ salariés → acronyme = "GE"
+
+IMPORTANT : tranche_effectif doit être un ARRAY de strings.
+Exemples :
+- "PME informatique" → acronyme="PME", tranche_effectif=["10 a 19 salaries", "20 a 49 salaries", ...]
+- "entreprise de 50 salariés" → acronyme="PME", tranche_effectif=["50 a 99 salaries"]
+- "startup de 5 personnes" → acronyme="TPE", tranche_effectif=["3 a 5 salaries"]
+
+RÉPONSES EMPATHIQUES (conversations multi-tours)
 ------------------------------------------------
-Quand l'utilisateur mentionne un acronyme, converti-le en tranches INSEE :
+Si tu détectes que l'utilisateur RÉPÈTE une requête similaire ou reformule la même demande :
 
-MIC (Micro-entreprise) :
-  → tranche_effectif = ["0 salarie", "1 ou 2 salaries", "3 a 5 salaries", "6 a 9 salaries"]
-  → acronyme = "MIC"
+1. NE PAS répéter la même question générique
+2. RECONNAÎTRE sa demande avec empathie
+3. PROPOSER des alternatives concrètes liées à son intention
 
-TPE (Très Petite Entreprise) :
-  → tranche_effectif = ["0 salarie", "1 ou 2 salaries", "3 a 5 salaries", "6 a 9 salaries"]
-  → acronyme = "TPE"
+Exemples de réponses empathiques :
 
-PME (Petite et Moyenne Entreprise) :
-  → tranche_effectif = ["10 a 19 salaries", "20 a 49 salaries", "50 a 99 salaries", "100 a 199 salaries", "200 a 249 salaries"]
-  → acronyme = "PME"
+❌ MAUVAIS (répétitif) :
+User: "je cherche du pain"
+Agent: "Quel type d'entreprise recherchez-vous ?"
+User: "je cherche du pain"
+Agent: "Quel type d'entreprise recherchez-vous ?" ← INTERDIT
 
-ETI (Entreprise de Taille Intermédiaire) :
-  → tranche_effectif = ["250 a 499 salaries", "500 a 999 salaries", "1 000 a 1 999 salaries", "2 000 a 4 999 salaries"]
-  → acronyme = "ETI"
+✅ BON (empathique avec alternatives) :
+User: "je cherche du pain"
+Agent: "Dans quel secteur d'activité ?"
+User: "je cherche du pain"
+Agent: "Je comprends que vous cherchez quelque chose lié au pain. Notre service recherche des entreprises. Souhaitez-vous trouver des boulangeries artisanales, des distributeurs de pain, ou des entreprises agroalimentaires ?"
 
-GE (Grand Groupe / Grande Entreprise) :
-  → tranche_effectif = ["5 000 a 9 999 salaries", "10 000 salaries et plus"]
-  → acronyme = "GE"
-
-IMPORTANT : tranche_effectif doit être un ARRAY de strings, pas un string unique.
-Si l'utilisateur dit "PME informatique", renvoie tranche_effectif comme array de toutes les tranches PME.
+Autres exemples :
+- "avocat" répété → "Recherchez-vous des cabinets d'avocats, ou des entreprises dans le secteur juridique ?"
+- "voiture" répété → "Cherchez-vous des concessionnaires automobiles, des garages, ou des constructeurs ?"
+- Requête incohérente 3x → "Je suis un assistant spécialisé dans la recherche d'entreprises françaises. Puis-je vous aider à trouver une entreprise dans un domaine particulier ? (restauration, informatique, BTP, santé...)"
 
 Réponds UNIQUEMENT avec le JSON, sans texte autour.
 """
@@ -225,6 +255,43 @@ class AgentService:
         return cleaned
 
     @staticmethod
+    def _detect_repetition_pattern(messages: List[Message]) -> Optional[str]:
+        """
+        Detect if the user is repeating similar requests.
+
+        Args:
+            messages: Conversation history
+
+        Returns:
+            The repeated pattern if detected, None otherwise
+        """
+        # Get only user messages
+        user_messages = [m.content.lower().strip() for m in messages if m.role.value == "user"]
+
+        if len(user_messages) < 2:
+            return None
+
+        # Check if last 2 user messages are similar
+        last_two = user_messages[-2:]
+        similarity = SequenceMatcher(None, last_two[0], last_two[1]).ratio()
+
+        if similarity > 0.6:
+            return last_two[-1]  # Return the repeated message
+
+        # Check if user repeated same thing 3 times
+        if len(user_messages) >= 3:
+            last_three = user_messages[-3:]
+            avg_similarity = sum(
+                SequenceMatcher(None, last_three[i], last_three[j]).ratio()
+                for i in range(3) for j in range(i + 1, 3)
+            ) / 3
+
+            if avg_similarity > 0.5:
+                return f"répétition multiple: {last_three[-1]}"
+
+        return None
+
+    @staticmethod
     async def process_message(messages: List[Message]) -> AgentResponse:
         """
         Process user message(s) and decide whether to extract or clarify.
@@ -240,15 +307,29 @@ class AgentService:
         Returns:
             AgentResponse: Action (extract/clarify) with result or question
         """
+        # Detect repetition pattern
+        repetition_pattern = AgentService._detect_repetition_pattern(messages)
+
         # Build conversation context
         if len(messages) == 1:
             user_content = messages[0].content
         else:
             # Multi-turn: include conversation history
             conversation_text = AgentService._format_conversation(messages)
+
+            # Add repetition hint if detected
+            repetition_hint = ""
+            if repetition_pattern:
+                repetition_hint = f"""
+
+⚠️ ATTENTION RÉPÉTITION DÉTECTÉE: L'utilisateur répète "{repetition_pattern}"
+→ NE PAS reposer la même question générique
+→ Propose des alternatives concrètes liées à son intention
+→ Sois empathique et aide-le à trouver une entreprise correspondante"""
+
             user_content = f"""CONVERSATION:
 {conversation_text}
-
+{repetition_hint}
 Analyse la conversation complète et décide si tu peux extraire les critères ou si tu dois poser une question."""
 
         # Single LLM call

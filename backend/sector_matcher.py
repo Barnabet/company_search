@@ -136,9 +136,10 @@ class SectorMatcher:
     Uses multiple matching strategies:
     1. Exact match (case-insensitive, accent-insensitive)
     2. Containment match (prediction contained in reference)
-    3. Fuzzy similarity matching
+    3. Semantic matching (embeddings) - NEW
+    4. Fuzzy similarity matching (fallback)
     """
-    
+
     def __init__(self, sectors_file: str = "data/libelle_secteur.txt"):
         self.sectors = load_sectors(sectors_file)
         self.sectors_normalized = {
@@ -146,6 +147,39 @@ class SectorMatcher:
         }
         # Precompute lowercase versions for faster lookup
         self.sectors_lower = {s.lower(): s for s in self.sectors}
+        # Semantic search enabled flag
+        self._semantic_available = None
+
+    def _check_semantic_available(self) -> bool:
+        """Check if semantic search is available."""
+        if self._semantic_available is None:
+            try:
+                from services.embedding_service import get_model
+                self._semantic_available = get_model() is not None
+            except ImportError:
+                self._semantic_available = False
+        return self._semantic_available
+
+    def match_semantic(self, prediction: str, threshold: float = 0.4) -> Optional[str]:
+        """
+        Semantic matching using embeddings.
+
+        Args:
+            prediction: The text to match
+            threshold: Minimum similarity score (0.0-1.0)
+
+        Returns:
+            Matched sector or None
+        """
+        if not self._check_semantic_available():
+            return None
+
+        try:
+            from services.embedding_service import find_best_sector
+            return find_best_sector(prediction, self.sectors, threshold)
+        except Exception as e:
+            print(f"Semantic matching failed: {e}")
+            return None
     
     def match(self, prediction: str, threshold: float = 0.6) -> Optional[str]:
         """
@@ -180,13 +214,18 @@ class SectorMatcher:
             if pred_normalized in ref_norm:
                 # Prediction is contained in reference - good match
                 containment_matches.append((ref_original, len(ref_norm)))
-        
+
         if containment_matches:
             # Return the shortest containing match (most specific)
             containment_matches.sort(key=lambda x: x[1])
             return containment_matches[0][0]
-        
-        # Strategy 4: Word-based matching (prioritize word overlap over character similarity)
+
+        # Strategy 4: Semantic matching (embeddings) - NEW
+        semantic_result = self.match_semantic(prediction, threshold=0.4)
+        if semantic_result:
+            return semantic_result
+
+        # Strategy 5: Word-based matching (prioritize word overlap over character similarity)
         best_match = None
         best_score = 0.0
         
