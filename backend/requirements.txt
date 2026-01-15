@@ -13,8 +13,7 @@ psycopg2-binary==2.9.10
 # Background tasks
 apscheduler==3.10.4
 
-# Semantic search (optional - falls back to text matching if unavailable)
-sentence-transformers>=2.2.0
+# Numpy for embeddings computation (cosine similarity)
 numpy>=1.24.0
 
 
