@@ -197,28 +197,28 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <ResultSection
                 title="Localisation"
-                data={result.localisation}
-                present={result.localisation.present}
+                data={result.localisation || {}}
+                present={result.localisation?.present ?? false}
               />
               <ResultSection
                 title="Activité"
-                data={result.activite}
-                present={result.activite.present}
+                data={result.activite || {}}
+                present={result.activite?.present ?? false}
               />
               <ResultSection
                 title="Taille"
-                data={result.taille_entreprise}
-                present={result.taille_entreprise.present}
+                data={result.taille_entreprise || {}}
+                present={result.taille_entreprise?.present ?? false}
               />
               <ResultSection
                 title="Financier"
-                data={result.criteres_financiers}
-                present={result.criteres_financiers.present}
+                data={result.criteres_financiers || {}}
+                present={result.criteres_financiers?.present ?? false}
               />
               <ResultSection
                 title="Juridique"
-                data={result.criteres_juridiques}
-                present={result.criteres_juridiques.present}
+                data={result.criteres_juridiques || {}}
+                present={result.criteres_juridiques?.present ?? false}
               />
             </div>
 
