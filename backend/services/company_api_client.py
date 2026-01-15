@@ -12,9 +12,9 @@ from dataclasses import dataclass
 
 
 # Configuration from environment
-COMPANY_API_URL = os.getenv("COMPANY_API_URL", "http://185.246.84.224:5002")
+COMPANY_API_URL = os.getenv("COMPANY_API_URL", "http://185.246.84.224:5001")
 COMPANY_API_KEY = os.getenv("COMPANY_API_KEY", "")
-API_TIMEOUT = int(os.getenv("COMPANY_API_TIMEOUT", "30"))
+API_TIMEOUT = int(os.getenv("COMPANY_API_TIMEOUT", "60"))
 
 
 @dataclass
@@ -92,7 +92,7 @@ class CompanyAPIClient:
         Raises:
             CompanyAPIError: If the API call fails
         """
-        endpoint = f"{self.base_url}/count_bot_v2"
+        endpoint = f"{self.base_url}/count_bot_v1"
 
         try:
             response = requests.post(
@@ -105,7 +105,8 @@ class CompanyAPIClient:
             # Handle response codes
             if response.status_code == 200:
                 data = response.json()
-                count = data.get("count", data.get("total", 0))
+                # API returns count_legal as the main count
+                count = data.get("count_legal", data.get("count", 0))
                 return APIResponse(
                     success=True,
                     count=count,
