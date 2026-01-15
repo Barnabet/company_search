@@ -34,7 +34,7 @@ export const useConversationStore = create<ConversationState>((set, get) => ({
     try {
       const payload: ConversationCreateRequest = { initial_message: message }
 
-      const response = await fetch(`${API_URL}/api/v1/conversations`, {
+      const response = await fetch(`${API_URL}/api/v1/conversations/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
