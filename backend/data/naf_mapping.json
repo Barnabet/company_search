@@ -1,135 +1,2199 @@
 {
-  "_comment": "PLACEHOLDER - Ce fichier doit être remplacé par le mapping complet fourni par l'utilisateur",
-  "_format": "Chaque clé est un libellé d'activité de libelle_activite.txt, la valeur est un array de codes NAF",
-  "Programmation informatique": ["6201Z"],
-  "Conseil en systemes et logiciels informatiques": ["6202A", "6202B"],
-  "Tierce maintenance de systemes et d'applications informatiques": ["6203Z"],
-  "Gestion d'installations informatiques": ["6203Z"],
-  "Autres activites informatiques": ["6209Z"],
-  "Traitement de donnees, hebergement et activites connexes": ["6311Z"],
-  "Portails Internet": ["6312Z"],
-  "Restauration traditionnelle": ["5610A"],
-  "Cafeterias et autres libres services": ["5610B"],
-  "Restauration de type rapide": ["5610C"],
-  "Services des traiteurs": ["5621Z"],
-  "Autres services de restauration n.c.a.": ["5629A", "5629B"],
-  "Debits de boissons": ["5630Z"],
-  "Hotels et hebergement similaire": ["5510Z"],
-  "Hebergement touristique et autre hebergement de courte duree": ["5520Z"],
-  "Terrains de camping et parcs pour caravanes ou vehicules de loisirs": ["5530Z"],
-  "Autres hebergements": ["5590Z"],
-  "Construction de maisons individuelles": ["4120A"],
-  "Construction d'autres batiments": ["4120B"],
-  "Construction de routes et autoroutes": ["4211Z"],
-  "Construction de voies ferrees de surface et souterraines": ["4212Z"],
-  "Construction de ponts et tunnels": ["4213A", "4213B"],
-  "Construction de reseaux pour fluides": ["4221Z"],
-  "Construction de reseaux electriques et de telecommunications": ["4222Z"],
-  "Travaux de terrassement courants et travaux preparatoires": ["4312A"],
-  "Travaux de terrassement specialises ou de grande masse": ["4312B"],
-  "Forages et sondages": ["4313Z"],
-  "Travaux d'installation electrique dans tous locaux": ["4321A"],
-  "Travaux d'installation electrique sur la voie publique": ["4321B"],
-  "Travaux d'installation d'eau et de gaz en tous locaux": ["4322A"],
-  "Travaux d'installation d'equipements thermiques et de climatisation": ["4322B"],
-  "Travaux de platrerie": ["4331Z"],
-  "Travaux de menuiserie bois et PVC": ["4332A"],
-  "Travaux de menuiserie metallique et serrurerie": ["4332B"],
-  "Travaux de revetement des sols et des murs": ["4333Z"],
-  "Travaux de peinture et vitrerie": ["4334Z"],
-  "Autres travaux de finition": ["4339Z"],
-  "Travaux de couverture par elements": ["4391A"],
-  "Travaux de charpente": ["4391B"],
-  "Travaux de maconnerie generale et gros oeuvre de batiment": ["4399A"],
-  "Travaux en beton arme": ["4399B"],
-  "Montage de structures metalliques": ["4399C"],
-  "Travaux de montage et de demontage d'echafaudages": ["4399D"],
-  "Autres travaux specialises de construction": ["4399E"],
-  "Activites juridiques": ["6910Z"],
-  "Activites comptables": ["6920Z"],
-  "Activites de sante humaine non classees ailleurs": ["8690A", "8690B", "8690C", "8690D", "8690E", "8690F"],
-  "Activite des medecins generalistes": ["8621Z"],
-  "Activites chirurgicales": ["8622A"],
-  "Autres activites des medecins specialistes": ["8622B", "8622C"],
-  "Activites des infirmiers et des sages femmes": ["8690D"],
-  "Activites des professionnels de la reeducation, de l'appareillage et des pedicures podologues": ["8690E"],
-  "Ambulances": ["8690A"],
-  "Laboratoires d'analyses medicales": ["8690B"],
-  "Commerce de voitures et de vehicules automobiles legers": ["4511Z"],
-  "Commerce d'autres vehicules automobiles": ["4519Z"],
-  "Entretien et reparation de vehicules automobiles legers": ["4520A"],
-  "Entretien et reparation d'autres vehicules automobiles": ["4520B"],
-  "Commerce de gros d'equipements automobiles": ["4531Z"],
-  "Commerce de detail d'equipements automobiles": ["4532Z"],
-  "Commerce et reparation de motocycles": ["4540Z"],
-  "Transports urbains et suburbains de voyageurs": ["4931Z"],
-  "Transports de voyageurs par taxis": ["4932Z"],
-  "Autres transports terrestres de voyageurs n.c.a.": ["4939A", "4939B", "4939C"],
-  "Transports routiers de fret interurbains": ["4941A"],
-  "Transports routiers de fret de proximite": ["4941B"],
-  "Services de demenagement": ["4942Z"],
-  "Transports par conduites": ["4950Z"],
-  "Coiffure": ["9602A"],
-  "Soins de beaute": ["9602B"],
-  "Activites photographiques": ["7420Z"],
-  "Activites de traduction et interpretation": ["7430Z"],
-  "Location de courte duree de voitures et de vehicules automobiles legers": ["7711A"],
-  "Location de longue duree de voitures et de vehicules automobiles legers": ["7711B"],
-  "Location et location bail de camions": ["7712Z"],
-  "Location et location bail d'autres machines, equipements et biens materiels n.c.a.": ["7739Z"],
-  "Agences immobilieres": ["6831Z"],
-  "Administration d'immeubles et autres biens immobiliers": ["6832A", "6832B"],
-  "Supports juridiques de gestion de patrimoine immobilier": ["6820A", "6820B"],
-  "Activites des agences de publicite": ["7311Z"],
-  "Regie publicitaire de medias": ["7312Z"],
-  "Etudes de marche et sondages": ["7320Z"],
-  "Conseil en relations publiques et communication": ["7021Z"],
-  "Conseil pour les affaires et autres conseils de gestion": ["7022Z"],
-  "Ingenierie, etudes techniques": ["7112A", "7112B"],
-  "Activite des economistes de la construction": ["7111Z"],
-  "Activites de controle et analyses techniques": ["7120A", "7120B"],
-  "Recherche developpement en sciences physiques et naturelles": ["7211Z"],
-  "Recherche developpement en sciences humaines et sociales": ["7220Z"],
-  "Activites des agences de placement de main d'oeuvre": ["7810Z"],
-  "Activites des agences de travail temporaire": ["7820Z"],
-  "Autre mise a disposition de ressources humaines": ["7830Z"],
-  "Activites des agences de voyage": ["7911Z"],
-  "Activites des voyagistes": ["7912Z"],
-  "Autres services de reservation et activites connexes": ["7990Z"],
-  "Activites de securite privee": ["8010Z"],
-  "Activites liees aux systemes de securite": ["8020Z"],
-  "Activites d'enquete": ["8030Z"],
-  "Services administratifs combines de bureau": ["8211Z"],
-  "Photocopie, preparation de documents et autres activites specialisees de soutien de bureau": ["8219Z"],
-  "Activites de centres d'appels": ["8220Z"],
-  "Organisation de foires, salons professionnels et congres": ["8230Z"],
-  "Activites de conditionnement": ["8292Z"],
-  "Autres activites de soutien aux entreprises n.c.a.": ["8299Z"],
-  "Nettoyage courant des batiments": ["8121Z"],
-  "Autres activites de nettoyage des batiments et nettoyage industriel": ["8122Z"],
-  "Desinfection, desinsectisation, deratisation": ["8129A"],
-  "Autres activites de nettoyage n.c.a.": ["8129B"],
-  "Services d'amenagement paysager": ["8130Z"],
-  "Enseignement primaire": ["8520Z"],
-  "Enseignement secondaire general": ["8531Z"],
-  "Enseignement secondaire technique ou professionnel": ["8532Z"],
-  "Enseignement superieur": ["8542Z"],
-  "Enseignement de disciplines sportives et d'activites de loisirs": ["8551Z"],
-  "Enseignement culturel": ["8552Z"],
-  "Enseignement de la conduite": ["8553Z"],
-  "Autres enseignements": ["8559A", "8559B"],
-  "Activites de soutien a l'enseignement": ["8560Z"],
-  "Boulangerie et boulangerie patisserie": ["1071A", "1071B", "1071C", "1071D"],
-  "Patisserie": ["1071C"],
-  "Cuisson de produits de boulangerie": ["1071D"],
-  "Commerce de detail de pain, patisserie et confiserie en magasin specialise": ["4724Z"],
-  "Charcuterie": ["1013A"],
-  "Commerce de detail de viandes et de produits a base de viande en magasin specialise": ["4722Z"],
-  "Commerce de detail de poissons, crustaces et mollusques en magasin specialise": ["4723Z"],
-  "Commerce de detail de fruits et legumes en magasin specialise": ["4721Z"],
-  "Commerce de detail de boissons en magasin specialise": ["4725Z"],
-  "Commerce d'alimentation generale": ["4711A", "4711B", "4711C", "4711D", "4711E", "4711F"],
-  "Superettes": ["4711C"],
-  "Supermarches": ["4711D"],
-  "Hypermarches": ["4711F"]
+  "Accueil de jeunes enfants": [
+    "8891A"
+  ],
+  "Accueil ou accompagnement sans hébergement d'adultes handicapés ou de personnes âgées": [
+    "8810B"
+  ],
+  "Accueil ou accompagnement sans hébergement d'enfants handicapes": [
+    "8891B"
+  ],
+  "Action sociale sans hébergement n.c.a.": [
+    "8899B"
+  ],
+  "Activites des menages en tant qu'employeurs de personnel domestique": [
+    "9700Z"
+  ],
+  "Activité des géomètres": [
+    "7112A"
+  ],
+  "Activité des médecins généralistes": [
+    "8621Z"
+  ],
+  "Activité des économistes de la construction": [
+    "7490A"
+  ],
+  "Activités chirurgicales": [
+    "8622B"
+  ],
+  "Activités combinées de soutien lie aux bâtiments": [
+    "8110Z"
+  ],
+  "Activités comptables": [
+    "6920Z"
+  ],
+  "Activités d'architecture": [
+    "7111Z"
+  ],
+  "Activités d'enquête": [
+    "8030Z"
+  ],
+  "Activités d'ordre public et de sécurité": [
+    "8424Z"
+  ],
+  "Activités de banque centrale": [
+    "6411Z"
+  ],
+  "Activités de centres d'appels": [
+    "8220Z"
+  ],
+  "Activités de clubs de sports": [
+    "9312Z"
+  ],
+  "Activités de conditionnement": [
+    "8292Z"
+  ],
+  "Activités de poste dans le cadre d'une obligation de service universel": [
+    "5310Z"
+  ],
+  "Activités de pré presse": [
+    "1813Z"
+  ],
+  "Activités de radiodiagnostic et de radiothérapie": [
+    "8622A"
+  ],
+  "Activités de sante humaine non classées ailleurs": [
+    "8690F"
+  ],
+  "Activités de soutien au spectacle vivant": [
+    "9002Z"
+  ],
+  "Activités de soutien aux autres industries extractives": [
+    "0990Z"
+  ],
+  "Activités de soutien aux cultures": [
+    "0161Z"
+  ],
+  "Activités de soutien à l'enseignement": [
+    "8560Z"
+  ],
+  "Activités de soutien à l'extraction d'hydrocarbures": [
+    "0910Z"
+  ],
+  "Activités de soutien à la production animale": [
+    "0162Z"
+  ],
+  "Activités de sécurité privée": [
+    "8010Z"
+  ],
+  "Activités des agences de placement de main d'œuvre": [
+    "7810Z"
+  ],
+  "Activités des agences de presse": [
+    "6391Z"
+  ],
+  "Activités des agences de publicité": [
+    "7311Z"
+  ],
+  "Activités des agences de recouvrement de factures et des sociétés d'information financière sur la clientèle": [
+    "8291Z"
+  ],
+  "Activités des agences de travail temporaire": [
+    "7820Z"
+  ],
+  "Activités des agences de voyage": [
+    "7911Z"
+  ],
+  "Activités des agents et courtiers d'assurances": [
+    "6622Z"
+  ],
+  "Activités des centres de culture physique": [
+    "9313Z"
+  ],
+  "Activités des infirmiers et des sages-femmes": [
+    "8690D"
+  ],
+  "Activités des marchands de biens immobiliers": [
+    "6810Z"
+  ],
+  "Activités des organisations et organismes extraterritoriaux": [
+    "9900Z"
+  ],
+  "Activités des organisations patronales et consulaires": [
+    "9411Z"
+  ],
+  "Activités des organisations politiques": [
+    "9492Z"
+  ],
+  "Activités des organisations professionnelles": [
+    "9412Z"
+  ],
+  "Activités des organisations religieuses": [
+    "9491Z"
+  ],
+  "Activités des parcs d'attractions et parcs à thèmes": [
+    "9321Z"
+  ],
+  "Activités des professionnels de la rééducation, de l'appareillage et des pédicures podologues": [
+    "8690E"
+  ],
+  "Activités des sièges sociaux": [
+    "7010Z"
+  ],
+  "Activités des sociétés holding": [
+    "6420Z"
+  ],
+  "Activités des syndicats de salaries": [
+    "9420Z"
+  ],
+  "Activités des voyagistes": [
+    "7912Z"
+  ],
+  "Activités générales de sécurité sociale": [
+    "8430A"
+  ],
+  "Activités hospitalières": [
+    "8610Z"
+  ],
+  "Activités juridiques": [
+    "6910Z"
+  ],
+  "Activités liées aux systèmes de sécurité": [
+    "8020Z"
+  ],
+  "Activités photographiques": [
+    "7420Z"
+  ],
+  "Activités spécialisées de design": [
+    "7410Z"
+  ],
+  "Activités spécialisées, scientifiques et techniques diverses": [
+    "7490B"
+  ],
+  "Activités vétérinaires": [
+    "7500Z"
+  ],
+  "Administration d'immeubles et autres biens immobiliers": [
+    "6832A"
+  ],
+  "Administration de marches financiers": [
+    "6611Z"
+  ],
+  "Administration publique (tutelle) de la sante, de la formation, de la culture et des services sociaux, autre que sécurité sociale": [
+    "8412Z"
+  ],
+  "Administration publique (tutelle) des activités économiques": [
+    "8413Z"
+  ],
+  "Administration publique générale": [
+    "8411Z"
+  ],
+  "Affaires étrangères": [
+    "8421Z"
+  ],
+  "Affrètement et organisation des transports": [
+    "5229B"
+  ],
+  "Agencement de lieux de vente": [
+    "4332C"
+  ],
+  "Agences immobilières": [
+    "6831Z"
+  ],
+  "Aide a domicile": [
+    "8810A"
+  ],
+  "Aide par le travail": [
+    "8810C"
+  ],
+  "Ambulances": [
+    "8690A"
+  ],
+  "Analyses, essais et inspections techniques": [
+    "7120B"
+  ],
+  "Apprêt et tannage des cuirs ; préparation et teinture des fourrures": [
+    "1511Z"
+  ],
+  "Aquaculture en eau douce": [
+    "0322Z"
+  ],
+  "Aquaculture en mer": [
+    "0321Z"
+  ],
+  "Arts du spectacle vivant": [
+    "9001Z"
+  ],
+  "Assurance vie": [
+    "6511Z"
+  ],
+  "Autre accueil ou accompagnement sans hébergement d'enfants et d'adolescents": [
+    "8899A"
+  ],
+  "Autre création artistique": [
+    "9003B"
+  ],
+  "Autre distribution de crédit": [
+    "6492Z"
+  ],
+  "Autre imprimerie (labeur)": [
+    "1812Z"
+  ],
+  "Autre mise à disposition de ressources humaines": [
+    "7830Z"
+  ],
+  "Autre transformation et conservation de légumes": [
+    "1039A"
+  ],
+  "Autres activités auxiliaires d'assurance et de caisses de retraite": [
+    "6629Z"
+  ],
+  "Autres activités auxiliaires de services financiers, hors assurance et caisses de retraite, n.c.a.": [
+    "6619B"
+  ],
+  "Autres activités de nettoyage des bâtiments et nettoyage industriel": [
+    "8122Z"
+  ],
+  "Autres activités de nettoyage n.c.a.": [
+    "8129B"
+  ],
+  "Autres activités de poste et de courrier": [
+    "5320Z"
+  ],
+  "Autres activités de soutien aux entreprises n.c.a.": [
+    "8299Z"
+  ],
+  "Autres activités de télécommunication": [
+    "6190Z"
+  ],
+  "Autres activités des médecins spécialistes": [
+    "8622C"
+  ],
+  "Autres activités des services financiers, hors assurance et caisses de retraite, n.c.a.": [
+    "6499Z"
+  ],
+  "Autres activités du travail des grains": [
+    "1061B"
+  ],
+  "Autres activités d’édition": [
+    "5819Z"
+  ],
+  "Autres activités extractives n.c.a.": [
+    "0899Z"
+  ],
+  "Autres activités informatiques": [
+    "6209Z"
+  ],
+  "Autres activités liées au sport": [
+    "9319Z"
+  ],
+  "Autres activités manufacturières n.c.a.": [
+    "3299Z"
+  ],
+  "Autres activités récréatives et de loisirs": [
+    "9329Z"
+  ],
+  "Autres assurances": [
+    "6512Z"
+  ],
+  "Autres commerces de détail alimentaires en magasin spécialisé": [
+    "4729Z"
+  ],
+  "Autres commerces de détail en magasin non spécialisé": [
+    "4719B"
+  ],
+  "Autres commerces de détail spécialisés divers": [
+    "4778C"
+  ],
+  "Autres commerces de détail sur éventaires et marches": [
+    "4789Z"
+  ],
+  "Autres cultures non permanentes": [
+    "0119Z"
+  ],
+  "Autres cultures permanentes": [
+    "0129Z"
+  ],
+  "Autres enseignements": [
+    "8559B"
+  ],
+  "Autres hébergements": [
+    "5590Z"
+  ],
+  "Autres intermédiaires du commerce en combustibles, métaux, minéraux et produits chimiques": [
+    "4612B"
+  ],
+  "Autres intermédiaires du commerce en denrées, boissons et tabac": [
+    "4617B"
+  ],
+  "Autres intermédiaires du commerce en produits divers": [
+    "4619B"
+  ],
+  "Autres intermédiations monétaires": [
+    "6419Z"
+  ],
+  "Autres organisations fonctionnant par adhésion volontaire": [
+    "9499Z"
+  ],
+  "Autres services d'information n.c.a.": [
+    "6399Z"
+  ],
+  "Autres services de restauration n.c.a.": [
+    "5629B"
+  ],
+  "Autres services de réservation et activités connexes": [
+    "7990Z"
+  ],
+  "Autres services personnels n.c.a.": [
+    "9609Z"
+  ],
+  "Autres transports routiers de voyageurs": [
+    "4939B"
+  ],
+  "Autres travaux d'installation n.c.a.": [
+    "4329B"
+  ],
+  "Autres travaux de finition": [
+    "4339Z"
+  ],
+  "Autres travaux spécialisés de construction": [
+    "4399D"
+  ],
+  "Blanchisserie teinturerie de détail": [
+    "9601B"
+  ],
+  "Blanchisserie teinturerie de gros": [
+    "9601A"
+  ],
+  "Boulangerie et boulangerie pâtisserie": [
+    "1071C"
+  ],
+  "Cafeterias et autres libres services": [
+    "5610B"
+  ],
+  "Caisses de retraite": [
+    "6530Z"
+  ],
+  "Captage, traitement et distribution d'eau": [
+    "3600Z"
+  ],
+  "Centrales d'achat alimentaires": [
+    "4617A"
+  ],
+  "Centrales d'achat de carburant": [
+    "4612A"
+  ],
+  "Centrales d'achat non alimentaires": [
+    "4619A"
+  ],
+  "Centres de collecte et banques d'organes": [
+    "8690C"
+  ],
+  "Charcuterie": [
+    "1013B"
+  ],
+  "Chasse, piégeage et services annexes": [
+    "0170Z"
+  ],
+  "Code hors nomenclature": [
+    "522P",
+    "741A"
+  ],
+  "Coiffure": [
+    "9602A"
+  ],
+  "Cokéfaction": [
+    "1910Z"
+  ],
+  "Collecte des déchets dangereux": [
+    "3812Z"
+  ],
+  "Collecte des déchets non dangereux": [
+    "3811Z"
+  ],
+  "Collecte et traitement des eaux usées": [
+    "3700Z"
+  ],
+  "Commerce d'alimentation générale": [
+    "4711B"
+  ],
+  "Commerce d'autres véhicules automobiles": [
+    "4519Z"
+  ],
+  "Commerce d'électricité": [
+    "3514Z"
+  ],
+  "Commerce de combustibles gazeux par conduites": [
+    "3523Z"
+  ],
+  "Commerce de détail alimentaire sur éventaires et marches": [
+    "4781Z"
+  ],
+  "Commerce de détail d'appareils électroménagers en magasin spécialisé": [
+    "4754Z"
+  ],
+  "Commerce de détail d'articles d'horlogerie et de bijouterie en magasin spécialisé": [
+    "4777Z"
+  ],
+  "Commerce de détail d'articles de sport en magasin spécialisé": [
+    "4764Z"
+  ],
+  "Commerce de détail d'articles médicaux et orthopédiques en magasin spécialisé": [
+    "4774Z"
+  ],
+  "Commerce de détail d'autres équipements du foyer": [
+    "4759B"
+  ],
+  "Commerce de détail d'enregistrements musicaux et vidéo en magasin spécialisé": [
+    "4763Z"
+  ],
+  "Commerce de détail d'habillement en magasin spécialisé": [
+    "4771Z"
+  ],
+  "Commerce de détail d'ordinateurs, d'unités périphériques et de logiciels en magasin spécialisé": [
+    "4741Z"
+  ],
+  "Commerce de détail d'équipements automobiles": [
+    "4532Z"
+  ],
+  "Commerce de détail de biens d'occasion en magasin": [
+    "4779Z"
+  ],
+  "Commerce de détail de boissons en magasin spécialisé": [
+    "4725Z"
+  ],
+  "Commerce de détail de carburants en magasin spécialisé": [
+    "4730Z"
+  ],
+  "Commerce de détail de fleurs, plantes, graines, engrais, animaux de compagnie et aliments pour ces animaux en magasin spécialisé": [
+    "4776Z"
+  ],
+  "Commerce de détail de fruits et légumes en magasin spécialisé": [
+    "4721Z"
+  ],
+  "Commerce de détail de jeux et jouets en magasin spécialisé": [
+    "4765Z"
+  ],
+  "Commerce de détail de journaux et papeterie en magasin spécialisé": [
+    "4762Z"
+  ],
+  "Commerce de détail de la chaussure": [
+    "4772A"
+  ],
+  "Commerce de détail de livres en magasin spécialisé": [
+    "4761Z"
+  ],
+  "Commerce de détail de maroquinerie et d'articles de voyage": [
+    "4772B"
+  ],
+  "Commerce de détail de matériels audio et vidéo en magasin spécialisé": [
+    "4743Z"
+  ],
+  "Commerce de détail de matériels de télécommunication en magasin spécialisé": [
+    "4742Z"
+  ],
+  "Commerce de détail de meubles": [
+    "4759A"
+  ],
+  "Commerce de détail de pain, pâtisserie et confiserie en magasin spécialisé": [
+    "4724Z"
+  ],
+  "Commerce de détail de parfumerie et de produits de beauté en magasin spécialisé": [
+    "4775Z"
+  ],
+  "Commerce de détail de poissons, crustacés et mollusques en magasin spécialisé": [
+    "4723Z"
+  ],
+  "Commerce de détail de produits pharmaceutiques en magasin spécialisé": [
+    "4773Z"
+  ],
+  "Commerce de détail de produits surgelés": [
+    "4711A"
+  ],
+  "Commerce de détail de produits à base de tabac en magasin spécialisé": [
+    "4726Z"
+  ],
+  "Commerce de détail de quincaillerie, peintures et verres en grandes surfaces (400 m 2 et plus)": [
+    "4752B"
+  ],
+  "Commerce de détail de quincaillerie, peintures et verres en petites surfaces (moins de 400 m 2)": [
+    "4752A"
+  ],
+  "Commerce de détail de tapis, moquettes et revêtements de murs et de sols en magasin spécialisé": [
+    "4753Z"
+  ],
+  "Commerce de détail de textiles en magasin spécialisé": [
+    "4751Z"
+  ],
+  "Commerce de détail de textiles, d'habillement et de chaussures sur éventaires et marches": [
+    "4782Z"
+  ],
+  "Commerce de détail de viandes et de produits à base de viande en magasin spécialisé": [
+    "4722Z"
+  ],
+  "Commerce de gros (commerce interentreprises) alimentaire non spécialisé": [
+    "4639B"
+  ],
+  "Commerce de gros (commerce interentreprises) alimentaire spécialisé divers": [
+    "4638B"
+  ],
+  "Commerce de gros (commerce interentreprises) d'animaux vivants": [
+    "4623Z"
+  ],
+  "Commerce de gros (commerce interentreprises) d'appareils sanitaires et de produits de décoration": [
+    "4673B"
+  ],
+  "Commerce de gros (commerce interentreprises) d'appareils électroménagers": [
+    "4643Z"
+  ],
+  "Commerce de gros (commerce interentreprises) d'articles d'horlogerie et de bijouterie": [
+    "4648Z"
+  ],
+  "Commerce de gros (commerce interentreprises) d'autres biens domestiques": [
+    "4649Z"
+  ],
+  "Commerce de gros (commerce interentreprises) d'autres machines et équipements de bureau": [
+    "4666Z"
+  ],
+  "Commerce de gros (commerce interentreprises) d'autres produits intermédiaires": [
+    "4676Z"
+  ],
+  "Commerce de gros (commerce interentreprises) d'habillement et de chaussures": [
+    "4642Z"
+  ],
+  "Commerce de gros (commerce interentreprises) d'ordinateurs, d'équipements informatiques périphériques et de logiciels": [
+    "4651Z"
+  ],
+  "Commerce de gros (commerce interentreprises) de bois et de matériaux de construction": [
+    "4673A"
+  ],
+  "Commerce de gros (commerce interentreprises) de boissons": [
+    "4634Z"
+  ],
+  "Commerce de gros (commerce interentreprises) de café, the, cacao et épices": [
+    "4637Z"
+  ],
+  "Commerce de gros (commerce interentreprises) de combustibles et de produits annexes": [
+    "4671Z"
+  ],
+  "Commerce de gros (commerce interentreprises) de composants et d'équipements électroniques et de télécommunication": [
+    "4652Z"
+  ],
+  "Commerce de gros (commerce interentreprises) de cuirs et peaux": [
+    "4624Z"
+  ],
+  "Commerce de gros (commerce interentreprises) de céréales, de tabac non manufacture, de semences et d'aliments pour le bétail": [
+    "4621Z"
+  ],
+  "Commerce de gros (commerce interentreprises) de déchets et débris": [
+    "4677Z"
+  ],
+  "Commerce de gros (commerce interentreprises) de fleurs et plantes": [
+    "4622Z"
+  ],
+  "Commerce de gros (commerce interentreprises) de fournitures et équipements divers pour le commerce et les services": [
+    "4669C"
+  ],
+  "Commerce de gros (commerce interentreprises) de fournitures et équipements industriels divers": [
+    "4669B"
+  ],
+  "Commerce de gros (commerce interentreprises) de fournitures pour la plomberie et le chauffage": [
+    "4674B"
+  ],
+  "Commerce de gros (commerce interentreprises) de fruits et légumes": [
+    "4631Z"
+  ],
+  "Commerce de gros (commerce interentreprises) de machines pour l'extraction, la construction et le génie civil": [
+    "4663Z"
+  ],
+  "Commerce de gros (commerce interentreprises) de machines pour l'industrie textile et l'habillement": [
+    "4664Z"
+  ],
+  "Commerce de gros (commerce interentreprises) de machines-outils": [
+    "4662Z"
+  ],
+  "Commerce de gros (commerce interentreprises) de matériel agricole": [
+    "4661Z"
+  ],
+  "Commerce de gros (commerce interentreprises) de matériel électrique": [
+    "4669A"
+  ],
+  "Commerce de gros (commerce interentreprises) de meubles, de tapis et d'appareils d'éclairage": [
+    "4647Z"
+  ],
+  "Commerce de gros (commerce interentreprises) de minerais et métaux": [
+    "4672Z"
+  ],
+  "Commerce de gros (commerce interentreprises) de mobilier de bureau": [
+    "4665Z"
+  ],
+  "Commerce de gros (commerce interentreprises) de parfumerie et de produits de beauté": [
+    "4645Z"
+  ],
+  "Commerce de gros (commerce interentreprises) de poissons, crustacés et mollusques": [
+    "4638A"
+  ],
+  "Commerce de gros (commerce interentreprises) de produits chimiques": [
+    "4675Z"
+  ],
+  "Commerce de gros (commerce interentreprises) de produits laitiers, œufs, huiles et matières grasses comestibles": [
+    "4633Z"
+  ],
+  "Commerce de gros (commerce interentreprises) de produits pharmaceutiques": [
+    "4646Z"
+  ],
+  "Commerce de gros (commerce interentreprises) de produits surgelés": [
+    "4639A"
+  ],
+  "Commerce de gros (commerce interentreprises) de produits à base de tabac": [
+    "4635Z"
+  ],
+  "Commerce de gros (commerce interentreprises) de produits à base de viande": [
+    "4632B"
+  ],
+  "Commerce de gros (commerce interentreprises) de quincaillerie": [
+    "4674A"
+  ],
+  "Commerce de gros (commerce interentreprises) de sucre, chocolat et confiserie": [
+    "4636Z"
+  ],
+  "Commerce de gros (commerce interentreprises) de textiles": [
+    "4641Z"
+  ],
+  "Commerce de gros (commerce interentreprises) de vaisselle, verrerie et produits d'entretien": [
+    "4644Z"
+  ],
+  "Commerce de gros (commerce interentreprises) de viandes de boucherie": [
+    "4632A"
+  ],
+  "Commerce de gros (commerce interentreprises) de volailles et gibier": [
+    "4632C"
+  ],
+  "Commerce de gros (commerce interentreprises) non spécialisé": [
+    "4690Z"
+  ],
+  "Commerce de gros d'équipements automobiles": [
+    "4531Z"
+  ],
+  "Commerce de voitures et de véhicules automobiles légers": [
+    "4511Z"
+  ],
+  "Commerce et réparation de motocycles": [
+    "4540Z"
+  ],
+  "Commerces de détail d'optique": [
+    "4778A"
+  ],
+  "Commerces de détail de charbons et combustibles": [
+    "4778B"
+  ],
+  "Conception d'ensemble et assemblage sur site industriel d'équipements de contrôle des processus industriels": [
+    "3320C"
+  ],
+  "Conseil en relations publiques et communication": [
+    "7021Z"
+  ],
+  "Conseil en systèmes et logiciels informatiques": [
+    "6202A"
+  ],
+  "Conseil pour les affaires et autres conseils de gestion": [
+    "7022Z"
+  ],
+  "Construction aéronautique et spatiale": [
+    "3030Z"
+  ],
+  "Construction d'autres bâtiments": [
+    "4120B"
+  ],
+  "Construction d'autres ouvrages de génie civil n.c.a.": [
+    "4299Z"
+  ],
+  "Construction d'ouvrages d'art": [
+    "4213A"
+  ],
+  "Construction d'ouvrages maritimes et fluviaux": [
+    "4291Z"
+  ],
+  "Construction de bateaux de plaisance": [
+    "3012Z"
+  ],
+  "Construction de locomotives et d'autre matériel ferroviaire roulant": [
+    "3020Z"
+  ],
+  "Construction de maisons individuelles": [
+    "4120A"
+  ],
+  "Construction de navires et de structures flottantes": [
+    "3011Z"
+  ],
+  "Construction de routes et autoroutes": [
+    "4211Z"
+  ],
+  "Construction de réseaux pour fluides": [
+    "4221Z"
+  ],
+  "Construction de réseaux électriques et de télécommunications": [
+    "4222Z"
+  ],
+  "Construction de voies ferrées de surface et souterraines": [
+    "4212Z"
+  ],
+  "Construction de véhicules automobiles": [
+    "2910Z"
+  ],
+  "Construction de véhicules militaires de combat": [
+    "3040Z"
+  ],
+  "Construction et entretien de tunnels": [
+    "4213B"
+  ],
+  "Contrôle technique automobile": [
+    "7120A"
+  ],
+  "Courtage de valeurs mobilières et de marchandises": [
+    "6612Z"
+  ],
+  "Création artistique relevant des arts plastiques": [
+    "9003A"
+  ],
+  "Crédit-bail": [
+    "6491Z"
+  ],
+  "Cuisson de produits de boulangerie": [
+    "1071B"
+  ],
+  "Culture d'agrumes": [
+    "0123Z"
+  ],
+  "Culture d'autres fruits d'arbres ou d'arbustes et de fruits à coque": [
+    "0125Z"
+  ],
+  "Culture de céréales (à l'exception du riz), de légumineuses et de graines oléagineuses": [
+    "0111Z"
+  ],
+  "Culture de fruits a pepins et a noyau": [
+    "0124Z"
+  ],
+  "Culture de fruits oléagineux": [
+    "0126Z"
+  ],
+  "Culture de fruits tropicaux et subtropicaux": [
+    "0122Z"
+  ],
+  "Culture de la canne à sucre": [
+    "0114Z"
+  ],
+  "Culture de la vigne": [
+    "0121Z"
+  ],
+  "Culture de légumes, de melons, de racines et de tubercules": [
+    "0113Z"
+  ],
+  "Culture de légumes, maraichage": [
+    "011C"
+  ],
+  "Culture de plantes à boissons": [
+    "0127Z"
+  ],
+  "Culture de plantes à fibres": [
+    "0116Z"
+  ],
+  "Culture de plantes à épices, aromatiques, médicinales et pharmaceutiques": [
+    "0128Z"
+  ],
+  "Culture du riz": [
+    "0112Z"
+  ],
+  "Culture du tabac": [
+    "0115Z"
+  ],
+  "Culture et élevage associes": [
+    "0150Z"
+  ],
+  "Distribution d'électricité": [
+    "3513Z"
+  ],
+  "Distribution de combustibles gazeux par conduites": [
+    "3522Z"
+  ],
+  "Distribution de films cinématographiques": [
+    "5913A"
+  ],
+  "Distribution sociale de revenus": [
+    "8430C"
+  ],
+  "Débits de boissons": [
+    "5630Z"
+  ],
+  "Décolletage": [
+    "2562A"
+  ],
+  "Découpage, emboutissage": [
+    "2550B"
+  ],
+  "Défense": [
+    "8422Z"
+  ],
+  "Démantèlement d'épaves": [
+    "3831Z"
+  ],
+  "Dépollution et autres services de gestion des déchets": [
+    "3900Z"
+  ],
+  "Désinfection, désinsectisation, dératisation": [
+    "8129A"
+  ],
+  "Edition de chaines généralistes": [
+    "6020A"
+  ],
+  "Edition de chaines thématiques": [
+    "6020B"
+  ],
+  "Edition de jeux électroniques": [
+    "5821Z"
+  ],
+  "Edition de journaux": [
+    "5813Z"
+  ],
+  "Edition de livres": [
+    "5811Z"
+  ],
+  "Edition de logiciels applicatifs": [
+    "5829C"
+  ],
+  "Edition de logiciels outils de développement et de langages": [
+    "5829B"
+  ],
+  "Edition de logiciels système et de réseau": [
+    "5829A"
+  ],
+  "Edition de revues et périodiques": [
+    "5814Z"
+  ],
+  "Edition de répertoires et de fichiers d'adresses": [
+    "5812Z"
+  ],
+  "Edition et diffusion de programmes radio": [
+    "6010Z"
+  ],
+  "Edition et distribution vidéo": [
+    "5913B"
+  ],
+  "Elaboration et transformation de matières nucléaires": [
+    "2446Z"
+  ],
+  "Elevage d'autres animaux": [
+    "0149Z"
+  ],
+  "Elevage d'autres bovins et de buffles": [
+    "0142Z"
+  ],
+  "Elevage d'ovins et de caprins": [
+    "0145Z"
+  ],
+  "Elevage de chameaux et d'autres camélidés": [
+    "0144Z"
+  ],
+  "Elevage de chevaux et d'autres équidés": [
+    "0143Z"
+  ],
+  "Elevage de porcins": [
+    "0146Z"
+  ],
+  "Elevage de vaches laitières": [
+    "0141Z"
+  ],
+  "Elevage de volailles": [
+    "0147Z"
+  ],
+  "Ennoblissement textile": [
+    "1330Z"
+  ],
+  "Enregistrement sonore et édition musicale": [
+    "5920Z"
+  ],
+  "Enrichissement et retraitement de matières nucléaires": [
+    "2013A"
+  ],
+  "Enseignement culturel": [
+    "8552Z"
+  ],
+  "Enseignement de disciplines sportives et d'activités de loisirs": [
+    "8551Z"
+  ],
+  "Enseignement de la conduite": [
+    "8553Z"
+  ],
+  "Enseignement post secondaire non supérieur": [
+    "8541Z"
+  ],
+  "Enseignement primaire": [
+    "8520Z"
+  ],
+  "Enseignement pré primaire": [
+    "8510Z"
+  ],
+  "Enseignement secondaire général": [
+    "8531Z"
+  ],
+  "Enseignement secondaire technique ou professionnel": [
+    "8532Z"
+  ],
+  "Enseignement supérieur": [
+    "8542Z"
+  ],
+  "Entreposage et stockage frigorifique": [
+    "5210A"
+  ],
+  "Entreposage et stockage non frigorifique": [
+    "5210B"
+  ],
+  "Entretien corporel": [
+    "9604Z"
+  ],
+  "Entretien et réparation d'autres véhicules automobiles": [
+    "4520B"
+  ],
+  "Entretien et réparation de véhicules automobiles légers": [
+    "4520A"
+  ],
+  "Etirage à froid de barres": [
+    "2431Z"
+  ],
+  "Etudes de marche et sondages": [
+    "7320Z"
+  ],
+  "Evaluation des risques et dommages": [
+    "6621Z"
+  ],
+  "Exploitation de gravières et sablières, extraction d'argiles et de kaolin": [
+    "0812Z"
+  ],
+  "Exploitation forestière": [
+    "0220Z"
+  ],
+  "Extraction d'autres minerais de métaux non ferreux": [
+    "0729Z"
+  ],
+  "Extraction de gaz naturel": [
+    "0620Z"
+  ],
+  "Extraction de houille": [
+    "0510Z"
+  ],
+  "Extraction de minerais d'uranium et de thorium": [
+    "0721Z"
+  ],
+  "Extraction de minerais de fer": [
+    "0710Z"
+  ],
+  "Extraction de pierres ornementales et de construction, de calcaire industriel, de gypse, de craie et d'ardoise": [
+    "0811Z"
+  ],
+  "Extraction de pétrole brut": [
+    "0610Z"
+  ],
+  "Extraction de tourbe": [
+    "0892Z"
+  ],
+  "Extraction des minéraux chimiques et d'engrais minéraux": [
+    "0891Z"
+  ],
+  "Fabrication d'aliments homogénéisés et diététiques": [
+    "1086Z"
+  ],
+  "Fabrication d'aliments pour animaux de compagnie": [
+    "1092Z"
+  ],
+  "Fabrication d'aliments pour animaux de ferme": [
+    "1091Z"
+  ],
+  "Fabrication d'appareils d'éclairage électrique": [
+    "2740Z"
+  ],
+  "Fabrication d'appareils ménagers non électriques": [
+    "2752Z"
+  ],
+  "Fabrication d'appareils sanitaires en céramique": [
+    "2342Z"
+  ],
+  "Fabrication d'appareils électroménagers": [
+    "2751Z"
+  ],
+  "Fabrication d'armes et de munitions": [
+    "2540Z"
+  ],
+  "Fabrication d'articles chaussants à mailles": [
+    "1431Z"
+  ],
+  "Fabrication d'articles céramiques à usage domestique ou ornemental": [
+    "2341Z"
+  ],
+  "Fabrication d'articles de bijouterie fantaisie et articles similaires": [
+    "3213Z"
+  ],
+  "Fabrication d'articles de brosserie": [
+    "3291Z"
+  ],
+  "Fabrication d'articles de joaillerie et bijouterie": [
+    "3212Z"
+  ],
+  "Fabrication d'articles de papeterie": [
+    "1723Z"
+  ],
+  "Fabrication d'articles de sport": [
+    "3230Z"
+  ],
+  "Fabrication d'articles de voyage, de maroquinerie et de sellerie": [
+    "1512Z"
+  ],
+  "Fabrication d'articles en fils métalliques, de chaines et de ressorts": [
+    "2593Z"
+  ],
+  "Fabrication d'articles en fourrure": [
+    "1420Z"
+  ],
+  "Fabrication d'articles en papier à usage sanitaire ou domestique": [
+    "1722Z"
+  ],
+  "Fabrication d'articles métalliques ménagers": [
+    "2599A"
+  ],
+  "Fabrication d'articles textiles, sauf habillement": [
+    "1392Z"
+  ],
+  "Fabrication d'autres articles de robinetterie": [
+    "2814Z"
+  ],
+  "Fabrication d'autres articles en caoutchouc": [
+    "2219Z"
+  ],
+  "Fabrication d'autres articles en papier ou en carton": [
+    "1729Z"
+  ],
+  "Fabrication d'autres articles métalliques": [
+    "2599B"
+  ],
+  "Fabrication d'autres articles à mailles": [
+    "1439Z"
+  ],
+  "Fabrication d'autres fils et câbles électroniques ou électriques": [
+    "2732Z"
+  ],
+  "Fabrication d'autres machines d'usage général": [
+    "2829B"
+  ],
+  "Fabrication d'autres machines spécialisées": [
+    "2899B"
+  ],
+  "Fabrication d'autres machines-outils": [
+    "2849Z"
+  ],
+  "Fabrication d'autres matériels électriques": [
+    "2790Z"
+  ],
+  "Fabrication d'autres meubles et industries connexes de l'ameublement": [
+    "3109B"
+  ],
+  "Fabrication d'autres outillages": [
+    "2573B"
+  ],
+  "Fabrication d'autres ouvrages en béton, en ciment ou en plâtre": [
+    "2369Z"
+  ],
+  "Fabrication d'autres pompes et compresseurs": [
+    "2813Z"
+  ],
+  "Fabrication d'autres produits alimentaires n.c.a.": [
+    "1089Z"
+  ],
+  "Fabrication d'autres produits chimiques inorganiques de base n.c.a.": [
+    "2013B"
+  ],
+  "Fabrication d'autres produits chimiques n.c.a.": [
+    "2059Z"
+  ],
+  "Fabrication d'autres produits chimiques organiques de base": [
+    "2014Z"
+  ],
+  "Fabrication d'autres produits céramiques": [
+    "2349Z"
+  ],
+  "Fabrication d'autres produits céramiques à usage technique": [
+    "2344Z"
+  ],
+  "Fabrication d'autres produits laitiers": [
+    "1051D"
+  ],
+  "Fabrication d'autres produits minéraux non métalliques n.c.a.": [
+    "2399Z"
+  ],
+  "Fabrication d'autres réservoirs, citernes et conteneurs métalliques": [
+    "2529Z"
+  ],
+  "Fabrication d'autres textiles n.c.a.": [
+    "1399Z"
+  ],
+  "Fabrication d'autres textiles techniques et industriels": [
+    "1396Z"
+  ],
+  "Fabrication d'autres vêtements et accessoires": [
+    "1419Z"
+  ],
+  "Fabrication d'autres équipements automobiles": [
+    "2932Z"
+  ],
+  "Fabrication d'autres équipements de transport n.c.a.": [
+    "3099Z"
+  ],
+  "Fabrication d'emballages en bois": [
+    "1624Z"
+  ],
+  "Fabrication d'emballages en matières plastiques": [
+    "2222Z"
+  ],
+  "Fabrication d'emballages en papier": [
+    "1721C"
+  ],
+  "Fabrication d'emballages métalliques légers": [
+    "2592Z"
+  ],
+  "Fabrication d'engrenages et d'organes mécaniques de transmission": [
+    "2815Z"
+  ],
+  "Fabrication d'huiles essentielles": [
+    "2053Z"
+  ],
+  "Fabrication d'huiles et graisses brutes": [
+    "1041A"
+  ],
+  "Fabrication d'huiles et graisses raffinées": [
+    "1041B"
+  ],
+  "Fabrication d'instrumentation scientifique et technique": [
+    "2651B"
+  ],
+  "Fabrication d'instruments de musique": [
+    "3220Z"
+  ],
+  "Fabrication d'isolateurs et pièces isolantes en céramique": [
+    "2343Z"
+  ],
+  "Fabrication d'objets divers en bois ; fabrication d'objets en liège, vannerie et sparterie": [
+    "1629Z"
+  ],
+  "Fabrication d'ordinateurs et d'équipements périphériques": [
+    "2620Z"
+  ],
+  "Fabrication d'outillage portatif à moteur incorpore": [
+    "2824Z"
+  ],
+  "Fabrication d'ouvrages en fibre ciment": [
+    "2365Z"
+  ],
+  "Fabrication d'éléments en béton pour la construction": [
+    "2361Z"
+  ],
+  "Fabrication d'éléments en matières plastiques pour la construction": [
+    "2223Z"
+  ],
+  "Fabrication d'éléments en plâtre pour la construction": [
+    "2362Z"
+  ],
+  "Fabrication d'équipements aérauliques et frigorifiques industriels": [
+    "2825Z"
+  ],
+  "Fabrication d'équipements d'aide à la navigation": [
+    "2651A"
+  ],
+  "Fabrication d'équipements d'emballage, de conditionnement et de pesage": [
+    "2829A"
+  ],
+  "Fabrication d'équipements d'irradiation médicale, d'équipements électromédicaux et électrotherapeutiques": [
+    "2660Z"
+  ],
+  "Fabrication d'équipements de communication": [
+    "2630Z"
+  ],
+  "Fabrication d'équipements hydrauliques et pneumatiques": [
+    "2812Z"
+  ],
+  "Fabrication d'équipements électriques et électroniques automobiles": [
+    "2931Z"
+  ],
+  "Fabrication d'étoffes à mailles": [
+    "1391Z"
+  ],
+  "Fabrication de beurre": [
+    "1051B"
+  ],
+  "Fabrication de bicyclettes et de véhicules pour invalides": [
+    "3092Z"
+  ],
+  "Fabrication de biscuits, biscottes et pâtisseries de conservation": [
+    "1072Z"
+  ],
+  "Fabrication de bière": [
+    "1105Z"
+  ],
+  "Fabrication de briques, tuiles et produits de construction, en terre cuite": [
+    "2332Z"
+  ],
+  "Fabrication de béton prêt a l'emploi": [
+    "2363Z"
+  ],
+  "Fabrication de cacao, chocolat et de produits de confiserie": [
+    "1082Z"
+  ],
+  "Fabrication de caoutchouc synthétique": [
+    "2017Z"
+  ],
+  "Fabrication de carreaux en céramique": [
+    "2331Z"
+  ],
+  "Fabrication de carrosseries et remorques": [
+    "2920Z"
+  ],
+  "Fabrication de cartes électroniques assemblées": [
+    "2612Z"
+  ],
+  "Fabrication de carton ondule": [
+    "1721A"
+  ],
+  "Fabrication de cartonnages": [
+    "1721B"
+  ],
+  "Fabrication de charpentes et d'autres menuiseries": [
+    "1623Z"
+  ],
+  "Fabrication de chaussures": [
+    "1520Z"
+  ],
+  "Fabrication de chaux et plâtre": [
+    "2352Z"
+  ],
+  "Fabrication de cidre et de vins de fruits": [
+    "1103Z"
+  ],
+  "Fabrication de ciment": [
+    "2351Z"
+  ],
+  "Fabrication de colles": [
+    "2052Z"
+  ],
+  "Fabrication de colorants et de pigments": [
+    "2012Z"
+  ],
+  "Fabrication de composants électroniques": [
+    "2611Z"
+  ],
+  "Fabrication de condiments et assaisonnements": [
+    "1084Z"
+  ],
+  "Fabrication de coutellerie": [
+    "2571Z"
+  ],
+  "Fabrication de câbles de fibres optiques": [
+    "2731Z"
+  ],
+  "Fabrication de fibres artificielles ou synthétiques": [
+    "2060Z"
+  ],
+  "Fabrication de fibres de verre": [
+    "2314Z"
+  ],
+  "Fabrication de ficelles, cordes et filets": [
+    "1394Z"
+  ],
+  "Fabrication de fours et bruleurs": [
+    "2821Z"
+  ],
+  "Fabrication de fromage": [
+    "1051C"
+  ],
+  "Fabrication de futs et emballages métalliques similaires": [
+    "2591Z"
+  ],
+  "Fabrication de gaz industriels": [
+    "2011Z"
+  ],
+  "Fabrication de glaces et sorbets": [
+    "1052Z"
+  ],
+  "Fabrication de générateurs de vapeur, a l'exception des chaudières pour le chauffage central": [
+    "2530Z"
+  ],
+  "Fabrication de jeux et jouets": [
+    "3240Z"
+  ],
+  "Fabrication de lait liquide et de produits frais": [
+    "1051A"
+  ],
+  "Fabrication de lunettes": [
+    "3250B"
+  ],
+  "Fabrication de machines agricoles et forestières": [
+    "2830Z"
+  ],
+  "Fabrication de machines d'imprimerie": [
+    "2899A"
+  ],
+  "Fabrication de machines et d'équipements de bureau (à l'exception des ordinateurs et équipements périphériques)": [
+    "2823Z"
+  ],
+  "Fabrication de machines pour l'extraction ou la construction": [
+    "2892Z"
+  ],
+  "Fabrication de machines pour l'industrie agroalimentaire": [
+    "2893Z"
+  ],
+  "Fabrication de machines pour la métallurgie": [
+    "2891Z"
+  ],
+  "Fabrication de machines pour le travail du caoutchouc ou des plastiques": [
+    "2896Z"
+  ],
+  "Fabrication de machines pour les industries du papier et du carton": [
+    "2895Z"
+  ],
+  "Fabrication de machines pour les industries textiles": [
+    "2894Z"
+  ],
+  "Fabrication de machines-outils pour le travail des métaux": [
+    "2841Z"
+  ],
+  "Fabrication de malt": [
+    "1106Z"
+  ],
+  "Fabrication de margarine et graisses comestibles similaires": [
+    "1042Z"
+  ],
+  "Fabrication de matelas": [
+    "3103Z"
+  ],
+  "Fabrication de matières plastiques de base": [
+    "2016Z"
+  ],
+  "Fabrication de matériel d'installation électrique": [
+    "2733Z"
+  ],
+  "Fabrication de matériel de distribution et de commande électrique": [
+    "2712Z"
+  ],
+  "Fabrication de matériel de levage et de manutention": [
+    "2822Z"
+  ],
+  "Fabrication de matériel médico chirurgical et dentaire": [
+    "3250A"
+  ],
+  "Fabrication de matériels optique et photographique": [
+    "2670Z"
+  ],
+  "Fabrication de meubles de bureau et de magasin": [
+    "3101Z"
+  ],
+  "Fabrication de meubles de cuisine": [
+    "3102Z"
+  ],
+  "Fabrication de meubles meublants": [
+    "361G"
+  ],
+  "Fabrication de mortiers et bétons secs": [
+    "2364Z"
+  ],
+  "Fabrication de moteurs et turbines, a l'exception des moteurs d'avions et de véhicules": [
+    "2811Z"
+  ],
+  "Fabrication de moteurs, génératrices et transformateurs électriques": [
+    "2711Z"
+  ],
+  "Fabrication de motocycles": [
+    "3091Z"
+  ],
+  "Fabrication de moules et modèles": [
+    "2573A"
+  ],
+  "Fabrication de non tisses, sauf habillement": [
+    "1395Z"
+  ],
+  "Fabrication de papier et de carton": [
+    "1712Z"
+  ],
+  "Fabrication de papiers peints": [
+    "1724Z"
+  ],
+  "Fabrication de parfums et de produits pour la toilette": [
+    "2042Z"
+  ],
+  "Fabrication de parquets assembles": [
+    "1622Z"
+  ],
+  "Fabrication de peintures, vernis, encres et mastics": [
+    "2030Z"
+  ],
+  "Fabrication de pesticides et d'autres produits agrochimiques": [
+    "2020Z"
+  ],
+  "Fabrication de piles et d'accumulateurs électriques": [
+    "2720Z"
+  ],
+  "Fabrication de pièces techniques à base de matières plastiques": [
+    "2229A"
+  ],
+  "Fabrication de placage et de panneaux de bois": [
+    "1621Z"
+  ],
+  "Fabrication de plaques, feuilles, tubes et profiles en matières plastiques": [
+    "2221Z"
+  ],
+  "Fabrication de plats préparés": [
+    "1085Z"
+  ],
+  "Fabrication de portes et fenêtres en métal": [
+    "2512Z"
+  ],
+  "Fabrication de produits abrasifs": [
+    "2391Z"
+  ],
+  "Fabrication de produits amylacés": [
+    "1062Z"
+  ],
+  "Fabrication de produits azotes et d'engrais": [
+    "2015Z"
+  ],
+  "Fabrication de produits de consommation courante en matières plastiques": [
+    "2229B"
+  ],
+  "Fabrication de produits explosifs": [
+    "2051Z"
+  ],
+  "Fabrication de produits pharmaceutiques de base": [
+    "2110Z"
+  ],
+  "Fabrication de produits réfractaires": [
+    "2320Z"
+  ],
+  "Fabrication de produits à base de tabac": [
+    "1200Z"
+  ],
+  "Fabrication de produits électroniques grand public": [
+    "2640Z"
+  ],
+  "Fabrication de préparations pharmaceutiques": [
+    "2120Z"
+  ],
+  "Fabrication de pâte à papier": [
+    "1711Z"
+  ],
+  "Fabrication de pâtes alimentaires": [
+    "1073Z"
+  ],
+  "Fabrication de radiateurs et de chaudières pour le chauffage central": [
+    "2521Z"
+  ],
+  "Fabrication de savons, détergents et produits d'entretien": [
+    "2041Z"
+  ],
+  "Fabrication de serrures et de ferrures": [
+    "2572Z"
+  ],
+  "Fabrication de sièges d'ameublement d'intérieur": [
+    "3109A"
+  ],
+  "Fabrication de structures métalliques et de parties de structures": [
+    "2511Z"
+  ],
+  "Fabrication de sucre": [
+    "1081Z"
+  ],
+  "Fabrication de supports magnétiques et optiques": [
+    "2680Z"
+  ],
+  "Fabrication de tapis et moquettes": [
+    "1393Z"
+  ],
+  "Fabrication de tubes, tuyaux, profiles creux et accessoires correspondants en acier": [
+    "2420Z"
+  ],
+  "Fabrication de verre creux": [
+    "2313Z"
+  ],
+  "Fabrication de verre plat": [
+    "2311Z"
+  ],
+  "Fabrication de vins effervescents": [
+    "1102A"
+  ],
+  "Fabrication de vis et de boulons": [
+    "2594Z"
+  ],
+  "Fabrication de vêtements de dessous": [
+    "1414Z"
+  ],
+  "Fabrication de vêtements de dessus": [
+    "1413Z"
+  ],
+  "Fabrication de vêtements de travail": [
+    "1412Z"
+  ],
+  "Fabrication de vêtements en cuir": [
+    "1411Z"
+  ],
+  "Fabrication et façonnage d'autres articles en verre, y compris verre technique": [
+    "2319Z"
+  ],
+  "Fabrication et rechapage de pneumatiques": [
+    "2211Z"
+  ],
+  "Fabrication industrielle de pain et de pâtisserie fraiche": [
+    "1071A"
+  ],
+  "Façonnage et transformation du verre plat": [
+    "2312Z"
+  ],
+  "Fonderie d'acier": [
+    "2452Z"
+  ],
+  "Fonderie d'autres métaux non ferreux": [
+    "2454Z"
+  ],
+  "Fonderie de fonte": [
+    "2451Z"
+  ],
+  "Fonderie de métaux légers": [
+    "2453Z"
+  ],
+  "Fonds de placement et entités financières similaires": [
+    "6430Z"
+  ],
+  "Forages et sondages": [
+    "4313Z"
+  ],
+  "Forge, estampage, matriçage ; métallurgie des poudres": [
+    "2550A"
+  ],
+  "Formation continue d'adultes": [
+    "8559A"
+  ],
+  "Frappe de monnaie": [
+    "3211Z"
+  ],
+  "Gestion d'installations informatiques": [
+    "6203Z"
+  ],
+  "Gestion d'installations sportives": [
+    "9311Z"
+  ],
+  "Gestion de fonds": [
+    "6630Z"
+  ],
+  "Gestion de salles de spectacles": [
+    "9004Z"
+  ],
+  "Gestion des bibliothèques et des archives": [
+    "9101Z"
+  ],
+  "Gestion des jardins botaniques et zoologiques et des réserves naturelles": [
+    "9104Z"
+  ],
+  "Gestion des musées": [
+    "9102Z"
+  ],
+  "Gestion des retraites complémentaires": [
+    "8430B"
+  ],
+  "Gestion des sites et monuments historiques et des attractions touristiques similaires": [
+    "9103Z"
+  ],
+  "Grands magasins": [
+    "4719A"
+  ],
+  "Horlogerie": [
+    "2652Z"
+  ],
+  "Hotels et hébergement similaire": [
+    "5510Z"
+  ],
+  "Hypermarchés": [
+    "4711F"
+  ],
+  "Hébergement médicalisé pour adultes handicapes et autre hébergement médicalisé": [
+    "8710C"
+  ],
+  "Hébergement médicalisé pour enfants handicapes": [
+    "8710B"
+  ],
+  "Hébergement médicalisé pour personnes âgées": [
+    "8710A"
+  ],
+  "Hébergement social pour adultes et familles en difficultés et autre hébergement social": [
+    "8790B"
+  ],
+  "Hébergement social pour enfants en difficultés": [
+    "8790A"
+  ],
+  "Hébergement social pour handicapés mentaux et malades mentaux": [
+    "8720A"
+  ],
+  "Hébergement social pour handicapés physiques": [
+    "8730B"
+  ],
+  "Hébergement social pour personnes âgées": [
+    "8730A"
+  ],
+  "Hébergement social pour toxicomanes": [
+    "8720B"
+  ],
+  "Hébergement touristique et autre hébergement de courte durée": [
+    "5520Z"
+  ],
+  "Imprimerie de journaux": [
+    "1811Z"
+  ],
+  "Imprégnation du bois": [
+    "1610B"
+  ],
+  "Industrie des eaux de table": [
+    "1107A"
+  ],
+  "Ingénierie, études techniques": [
+    "7112B"
+  ],
+  "Installation d'équipements électriques, de matériels électroniques et optiques ou d'autres matériels": [
+    "3320D"
+  ],
+  "Installation de machines et équipements mécaniques": [
+    "3320B"
+  ],
+  "Installation de structures métalliques, chaudronnées et de tuyauterie": [
+    "3320A"
+  ],
+  "Intermédiaires du commerce en bois et matériaux de construction": [
+    "4613Z"
+  ],
+  "Intermédiaires du commerce en machines, équipements industriels, navires et avions": [
+    "4614Z"
+  ],
+  "Intermédiaires du commerce en matières premières agricoles, animaux vivants, matières premières textiles et produits semi finis": [
+    "4611Z"
+  ],
+  "Intermédiaires du commerce en meubles, articles de ménage et quincaillerie": [
+    "4615Z"
+  ],
+  "Intermédiaires du commerce en textiles, habillement, fourrures, chaussures et articles en cuir": [
+    "4616Z"
+  ],
+  "Intermédiaires spécialisés dans le commerce d'autres produits spécifiques": [
+    "4618Z"
+  ],
+  "Justice": [
+    "8423Z"
+  ],
+  "Laboratoires d'analyses médicales": [
+    "8690B"
+  ],
+  "Laminage à froid de feuillards": [
+    "2432Z"
+  ],
+  "Location avec operateur de matériel de construction": [
+    "4399E"
+  ],
+  "Location bail de propriété intellectuelle et de produits similaires, a l'exception des œuvres soumises à copyright": [
+    "7740Z"
+  ],
+  "Location de camions avec chauffeur": [
+    "4941C"
+  ],
+  "Location de courte durée de voitures et de véhicules automobiles légers": [
+    "7711A"
+  ],
+  "Location de logements": [
+    "6820A"
+  ],
+  "Location de longue durée de voitures et de véhicules automobiles légers": [
+    "7711B"
+  ],
+  "Location de terrains et d'autres biens immobiliers": [
+    "6820B"
+  ],
+  "Location de vidéocassettes et disques vidéo": [
+    "7722Z"
+  ],
+  "Location et location bail d'articles de loisirs et de sport": [
+    "7721Z"
+  ],
+  "Location et location bail d'autres biens personnels et domestiques": [
+    "7729Z"
+  ],
+  "Location et location bail d'autres machines, équipements et biens matériels n.c.a.": [
+    "7739Z"
+  ],
+  "Location et location bail de camions": [
+    "7712Z"
+  ],
+  "Location et location bail de machines de bureau et de matériel informatique": [
+    "7733Z"
+  ],
+  "Location et location bail de machines et équipements agricoles": [
+    "7731Z"
+  ],
+  "Location et location bail de machines et équipements pour la construction": [
+    "7732Z"
+  ],
+  "Location et location bail de matériels de transport aérien": [
+    "7735Z"
+  ],
+  "Location et location bail de matériels de transport par eau": [
+    "7734Z"
+  ],
+  "Magasins multi commerces": [
+    "4711E"
+  ],
+  "Manutention non portuaire": [
+    "5224B"
+  ],
+  "Manutention portuaire": [
+    "5224A"
+  ],
+  "Messagerie, fret express": [
+    "5229A"
+  ],
+  "Meunerie": [
+    "1061A"
+  ],
+  "Mécanique industrielle": [
+    "2562B"
+  ],
+  "Métallurgie de l'aluminium": [
+    "2442Z"
+  ],
+  "Métallurgie des autres métaux non ferreux": [
+    "2445Z"
+  ],
+  "Métallurgie du cuivre": [
+    "2444Z"
+  ],
+  "Métallurgie du plomb, du zinc ou de l'étain": [
+    "2443Z"
+  ],
+  "Nettoyage courant des bâtiments": [
+    "8121Z"
+  ],
+  "Organisation de foires, salons professionnels et congres": [
+    "8230Z"
+  ],
+  "Organisation de jeux de hasard et d'argent": [
+    "9200Z"
+  ],
+  "Photocopie, préparation de documents et autres activités spécialisées de soutien de bureau": [
+    "8219Z"
+  ],
+  "Portails Internet": [
+    "6312Z"
+  ],
+  "Post production de films cinématographiques, de vidéo et de programmes de télévision": [
+    "5912Z"
+  ],
+  "Pratique dentaire": [
+    "8623Z"
+  ],
+  "Production d'autres boissons fermentées non distillées": [
+    "1104Z"
+  ],
+  "Production d'électricité": [
+    "3511Z"
+  ],
+  "Production de boissons alcooliques distillées": [
+    "1101Z"
+  ],
+  "Production de boissons rafraichissantes": [
+    "1107B"
+  ],
+  "Production de combustibles gazeux": [
+    "3521Z"
+  ],
+  "Production de films et de programmes pour la télévision": [
+    "5911A"
+  ],
+  "Production de films institutionnels et publicitaires": [
+    "5911B"
+  ],
+  "Production de films pour le cinéma": [
+    "5911C"
+  ],
+  "Production de métaux précieux": [
+    "2441Z"
+  ],
+  "Production de sel": [
+    "0893Z"
+  ],
+  "Production et distribution de vapeur et d'air conditionne": [
+    "3530Z"
+  ],
+  "Profilage à froid par formage ou pliage": [
+    "2433Z"
+  ],
+  "Programmation informatique": [
+    "6201Z"
+  ],
+  "Projection de films cinématographiques": [
+    "5914Z"
+  ],
+  "Promotion immobilière d'autres bâtiments": [
+    "4110C"
+  ],
+  "Promotion immobilière de bureaux": [
+    "4110B"
+  ],
+  "Promotion immobilière de logements": [
+    "4110A"
+  ],
+  "Préparation de fibres textiles et filature": [
+    "1310Z"
+  ],
+  "Préparation de jus de fruits et légumes": [
+    "1032Z"
+  ],
+  "Préparation industrielle de produits à base de viande": [
+    "1013A"
+  ],
+  "Pâtisserie": [
+    "1071D"
+  ],
+  "Pêche en eau douce": [
+    "0312Z"
+  ],
+  "Pêche en mer": [
+    "0311Z"
+  ],
+  "Raffinage du pétrole": [
+    "1920Z"
+  ],
+  "Recherche développement en autres sciences physiques et naturelles": [
+    "7219Z"
+  ],
+  "Recherche développement en biotechnologie": [
+    "7211Z"
+  ],
+  "Recherche développement en sciences humaines et sociales": [
+    "7220Z"
+  ],
+  "Reliure et activités connexes": [
+    "1814Z"
+  ],
+  "Reproduction d'enregistrements": [
+    "1820Z"
+  ],
+  "Reproduction de plantes": [
+    "0130Z"
+  ],
+  "Restauration collective sous contrat": [
+    "5629A"
+  ],
+  "Restauration de type rapide": [
+    "5610C"
+  ],
+  "Restauration traditionnelle": [
+    "5610A"
+  ],
+  "Réassurance": [
+    "6520Z"
+  ],
+  "Récolte de produits forestiers non ligneux poussant à l'état sauvage": [
+    "0230Z"
+  ],
+  "Récupération de déchets tries": [
+    "3832Z"
+  ],
+  "Régie publicitaire de médias": [
+    "7312Z"
+  ],
+  "Réparation d'appareils électroménagers et d'équipements pour la maison et le jardin": [
+    "9522Z"
+  ],
+  "Réparation d'articles d'horlogerie et de bijouterie": [
+    "9525Z"
+  ],
+  "Réparation d'autres biens personnels et domestiques": [
+    "9529Z"
+  ],
+  "Réparation d'autres équipements": [
+    "3319Z"
+  ],
+  "Réparation d'ordinateurs et d'équipements périphériques": [
+    "9511Z"
+  ],
+  "Réparation d'ouvrages en métaux": [
+    "3311Z"
+  ],
+  "Réparation d'équipements de communication": [
+    "9512Z"
+  ],
+  "Réparation d'équipements électriques": [
+    "3314Z"
+  ],
+  "Réparation de chaussures et d'articles en cuir": [
+    "9523Z"
+  ],
+  "Réparation de machines et équipements mécaniques": [
+    "3312Z"
+  ],
+  "Réparation de matériels électroniques et optiques": [
+    "3313Z"
+  ],
+  "Réparation de meubles et d'équipements du foyer": [
+    "9524Z"
+  ],
+  "Réparation de produits électroniques grand public": [
+    "9521Z"
+  ],
+  "Réparation et maintenance d'autres équipements de transport": [
+    "3317Z"
+  ],
+  "Réparation et maintenance d'aéronefs et d'engins spatiaux": [
+    "3316Z"
+  ],
+  "Réparation et maintenance navale": [
+    "3315Z"
+  ],
+  "Sciage et rabotage du bois, hors imprégnation": [
+    "1610A"
+  ],
+  "Services administratifs combines de bureau": [
+    "8211Z"
+  ],
+  "Services auxiliaires des transports aériens": [
+    "5223Z"
+  ],
+  "Services auxiliaires des transports par eau": [
+    "5222Z"
+  ],
+  "Services auxiliaires des transports terrestres": [
+    "5221Z"
+  ],
+  "Services d'aménagement paysager": [
+    "8130Z"
+  ],
+  "Services de déménagement": [
+    "4942Z"
+  ],
+  "Services de soutien à l'exploitation forestière": [
+    "0240Z"
+  ],
+  "Services des traiteurs": [
+    "5621Z"
+  ],
+  "Services du feu et de secours": [
+    "8425Z"
+  ],
+  "Services funéraires": [
+    "9603Z"
+  ],
+  "Sidérurgie": [
+    "2410Z"
+  ],
+  "Soins de beauté": [
+    "9602B"
+  ],
+  "Superettes": [
+    "4711C"
+  ],
+  "Supermarchés": [
+    "4711D"
+  ],
+  "Supports juridiques de gestion de patrimoine immobilier": [
+    "6832B"
+  ],
+  "Supports juridiques de gestion de patrimoine mobilier": [
+    "6619A"
+  ],
+  "Supports juridiques de programmes": [
+    "4110D"
+  ],
+  "Sylviculture et autres activités forestières": [
+    "0210Z"
+  ],
+  "Taille, façonnage et finissage de pierres": [
+    "2370Z"
+  ],
+  "Terrains de camping et parcs pour caravanes ou véhicules de loisirs": [
+    "5530Z"
+  ],
+  "Tierce maintenance de systèmes et d'applications informatiques": [
+    "6202B"
+  ],
+  "Tissage": [
+    "1320Z"
+  ],
+  "Traduction et interprétation": [
+    "7430Z"
+  ],
+  "Traitement de données, hébergement et activités connexes": [
+    "6311Z"
+  ],
+  "Traitement des semences": [
+    "0164Z"
+  ],
+  "Traitement et revêtement des métaux": [
+    "2561Z"
+  ],
+  "Traitement et élimination des déchets dangereux": [
+    "3822Z"
+  ],
+  "Traitement et élimination des déchets non dangereux": [
+    "3821Z"
+  ],
+  "Traitement primaire des récoltes": [
+    "0163Z"
+  ],
+  "Transformation du thé et du café": [
+    "1083Z"
+  ],
+  "Transformation et conservation de fruits": [
+    "1039B"
+  ],
+  "Transformation et conservation de la viande de boucherie": [
+    "1011Z"
+  ],
+  "Transformation et conservation de la viande de volaille": [
+    "1012Z"
+  ],
+  "Transformation et conservation de poisson, de crustacés et de mollusques": [
+    "1020Z"
+  ],
+  "Transformation et conservation de pommes de terre": [
+    "1031Z"
+  ],
+  "Transport d'électricité": [
+    "3512Z"
+  ],
+  "Transport ferroviaire interurbain de voyageurs": [
+    "4910Z"
+  ],
+  "Transports aériens de fret": [
+    "5121Z"
+  ],
+  "Transports aériens de passagers": [
+    "5110Z"
+  ],
+  "Transports de voyageurs par taxis": [
+    "4932Z"
+  ],
+  "Transports ferroviaires de fret": [
+    "4920Z"
+  ],
+  "Transports fluviaux de fret": [
+    "5040Z"
+  ],
+  "Transports fluviaux de passagers": [
+    "5030Z"
+  ],
+  "Transports maritimes et côtiers de fret": [
+    "5020Z"
+  ],
+  "Transports maritimes et côtiers de passagers": [
+    "5010Z"
+  ],
+  "Transports par conduites": [
+    "4950Z"
+  ],
+  "Transports routiers de fret de proximité": [
+    "4941B"
+  ],
+  "Transports routiers de fret interurbains": [
+    "4941A"
+  ],
+  "Transports routiers réguliers de voyageurs": [
+    "4939A"
+  ],
+  "Transports spatiaux": [
+    "5122Z"
+  ],
+  "Transports urbains et suburbains de voyageurs": [
+    "4931Z"
+  ],
+  "Travaux d'installation d'eau et de gaz en tous locaux": [
+    "4322A"
+  ],
+  "Travaux d'installation d'équipements thermiques et de climatisation": [
+    "4322B"
+  ],
+  "Travaux d'installation électrique dans tous locaux": [
+    "4321A"
+  ],
+  "Travaux d'installation électrique sur la voie publique": [
+    "4321B"
+  ],
+  "Travaux d'isolation": [
+    "4329A"
+  ],
+  "Travaux d'étanchéification": [
+    "4399A"
+  ],
+  "Travaux de charpente": [
+    "4391A"
+  ],
+  "Travaux de couverture par éléments": [
+    "4391B"
+  ],
+  "Travaux de démolition": [
+    "4311Z"
+  ],
+  "Travaux de maçonnerie générale et gros œuvre de bâtiment": [
+    "4399C"
+  ],
+  "Travaux de menuiserie bois et PVC": [
+    "4332A"
+  ],
+  "Travaux de menuiserie métallique et serrurerie": [
+    "4332B"
+  ],
+  "Travaux de montage de structures métalliques": [
+    "4399B"
+  ],
+  "Travaux de peinture et vitrerie": [
+    "4334Z"
+  ],
+  "Travaux de plâtrerie": [
+    "4331Z"
+  ],
+  "Travaux de revêtement des sols et des murs": [
+    "4333Z"
+  ],
+  "Travaux de terrassement courants et travaux préparatoires": [
+    "4312A"
+  ],
+  "Travaux de terrassement spécialisés ou de grande masse": [
+    "4312B"
+  ],
+  "Tréfilage à froid": [
+    "2434Z"
+  ],
+  "Télécommunications filaires": [
+    "6110Z"
+  ],
+  "Télécommunications par satellite": [
+    "6130Z"
+  ],
+  "Télécommunications sans fil": [
+    "6120Z"
+  ],
+  "Téléphériques et remontées mécaniques": [
+    "4939C"
+  ],
+  "Vente par automates et autres commerces de détail hors magasin, éventaires ou marches n.c.a.": [
+    "4799B"
+  ],
+  "Vente à distance sur catalogue général": [
+    "4791A"
+  ],
+  "Vente à distance sur catalogue spécialisé": [
+    "4791B"
+  ],
+  "Vente à domicile": [
+    "4799A"
+  ],
+  "Vinification": [
+    "1102B"
+  ]
 }
