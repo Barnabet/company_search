@@ -2,6 +2,7 @@
 Agent service for intelligent conversation management.
 
 Simplified approach: ONE LLM call that decides whether to extract or clarify.
+Then queries external API and handles refinement if too many results.
 """
 
 import json
@@ -22,9 +23,12 @@ OPENROUTER_MODEL = os.getenv("OPENROUTER_MODEL", "google/gemini-2.5-flash-lite")
 @dataclass
 class AgentResponse:
     """Response from the agent processing"""
-    action: str  # "extract" or "clarify"
+    action: str  # "extract", "clarify", or "refine"
     message: str  # Question to ask or confirmation message
     extraction_result: Optional[Dict[str, Any]] = None  # Extracted criteria if action="extract"
+    company_count: Optional[int] = None  # Number of matching companies (from API)
+    api_result: Optional[Dict[str, Any]] = None  # Full API response data
+    naf_codes: Optional[List[str]] = None  # Matched NAF codes from activity matcher
 
 
 # ============================================================================
@@ -368,4 +372,111 @@ Analyse la conversation complète et décide si tu peux extraire les critères o
                 action="clarify",
                 message="Pouvez-vous préciser votre recherche ? (secteur d'activité, localisation...)",
                 extraction_result=None,
+            )
+
+    @staticmethod
+    async def process_with_api(
+        extraction_result: Dict[str, Any],
+        refinement_round: int = 1
+    ) -> AgentResponse:
+        """
+        Process extraction result through external company API.
+
+        1. Match activities to NAF codes using embeddings
+        2. Transform to API format
+        3. Call external API for company count
+        4. Decide: deliver results or ask for refinement
+
+        Args:
+            extraction_result: Extraction result from process_message
+            refinement_round: Current refinement round (1-3)
+
+        Returns:
+            AgentResponse with API results or refinement question
+        """
+        # Import services here to avoid circular imports
+        from services.activity_matcher import get_activity_matcher
+        from services.api_transformer import transform_extraction_to_api_request
+        from services.company_api_client import get_company_api_client, CompanyAPIError
+        from services.refinement_service import get_refinement_service
+
+        naf_codes = []
+        api_result = None
+        company_count = 0
+
+        try:
+            # Step 1: Match activities to NAF codes using embeddings
+            activity_matcher = get_activity_matcher()
+            activite = extraction_result.get("activite", {})
+            activity_query = activite.get("libelle_secteur") or activite.get("activite_entreprise")
+
+            if activity_query:
+                naf_codes = activity_matcher.get_naf_codes_for_query(activity_query, top_k=3)
+                print(f"[Agent] Activity '{activity_query}' matched to NAF codes: {naf_codes}")
+
+            # Step 2: Transform to API format
+            api_request = transform_extraction_to_api_request(extraction_result, naf_codes)
+            print(f"[Agent] API request: {json.dumps(api_request, ensure_ascii=False)}")
+
+            # Step 3: Call external API
+            api_client = get_company_api_client()
+            api_response = api_client.count_companies(api_request)
+
+            company_count = api_response.count
+            api_result = api_response.data
+            print(f"[Agent] API returned {company_count} companies")
+
+        except CompanyAPIError as e:
+            print(f"[Agent] API error: {e}")
+            # Return extraction result with error message
+            return AgentResponse(
+                action="extract",
+                message=f"Critères extraits, mais impossible de contacter la base de données: {e}",
+                extraction_result=extraction_result,
+                company_count=None,
+                api_result=None,
+                naf_codes=naf_codes if naf_codes else None,
+            )
+
+        except Exception as e:
+            print(f"[Agent] Unexpected error in process_with_api: {e}")
+            return AgentResponse(
+                action="extract",
+                message="Critères extraits. Une erreur est survenue lors de la recherche.",
+                extraction_result=extraction_result,
+                company_count=None,
+                api_result=None,
+                naf_codes=naf_codes if naf_codes else None,
+            )
+
+        # Step 4: Check if refinement needed
+        refinement_service = get_refinement_service()
+
+        if refinement_service.should_deliver_results(company_count, extraction_result, refinement_round):
+            # Deliver results
+            forced = company_count > refinement_service.threshold
+            message = refinement_service.get_delivery_message(company_count, extraction_result, forced)
+
+            return AgentResponse(
+                action="extract",
+                message=message,
+                extraction_result=extraction_result,
+                company_count=company_count,
+                api_result=api_result,
+                naf_codes=naf_codes if naf_codes else None,
+            )
+
+        else:
+            # Need refinement - ask follow-up question
+            question, _criterion = refinement_service.generate_refinement_question(
+                company_count, extraction_result, refinement_round
+            )
+
+            return AgentResponse(
+                action="refine",
+                message=question,
+                extraction_result=extraction_result,
+                company_count=company_count,
+                api_result=None,  # Don't include full results yet
+                naf_codes=naf_codes if naf_codes else None,
             )

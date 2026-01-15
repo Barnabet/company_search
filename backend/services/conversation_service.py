@@ -136,6 +136,30 @@ class ConversationService:
         await db.flush()
 
     @staticmethod
+    async def update_extraction(
+        db: AsyncSession, conversation_id: UUID, extraction_result: dict
+    ) -> None:
+        """
+        Update extraction result without completing the conversation.
+
+        Used during refinement to store partial extraction state.
+
+        Args:
+            db: Database session
+            conversation_id: Conversation UUID
+            extraction_result: Partial extraction data with refinement info
+        """
+        await db.execute(
+            update(Conversation)
+            .where(Conversation.id == conversation_id)
+            .values(
+                extraction_result=extraction_result,
+                updated_at=datetime.utcnow(),
+            )
+        )
+        await db.flush()
+
+    @staticmethod
     async def delete(db: AsyncSession, conversation_id: UUID) -> None:
         """
         Delete a conversation and all its messages.

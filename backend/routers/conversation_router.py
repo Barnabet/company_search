@@ -21,6 +21,38 @@ from schemas import (
 from services.conversation_service import ConversationService, MessageService
 from services.agent_service import AgentService
 
+from typing import Dict, Any
+
+
+def _merge_extractions(old: Dict[str, Any], new: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Merge two extraction results, preferring new values when present.
+
+    This is used during refinement to combine the initial extraction
+    with new criteria provided by the user.
+    """
+    merged = {}
+
+    # List of criteria sections
+    sections = ["localisation", "activite", "taille_entreprise", "criteres_financiers", "criteres_juridiques"]
+
+    for section in sections:
+        old_section = old.get(section, {})
+        new_section = new.get(section, {})
+
+        # If new section is present and has data, use it
+        if new_section.get("present", False):
+            merged[section] = new_section
+        # Otherwise keep old section if it was present
+        elif old_section.get("present", False):
+            merged[section] = old_section
+        else:
+            # Neither has data, keep the structure
+            merged[section] = new_section if new_section else old_section
+
+    return merged
+
+
 # Create router
 router = APIRouter(prefix="/api/v1/conversations", tags=["conversations"])
 
@@ -62,11 +94,35 @@ async def create_conversation(
 
         # 4. Handle response
         if agent_response.action == "extract":
-            # Complete conversation with extraction result
-            await ConversationService.complete(
-                db, conversation.id, agent_response.extraction_result
+            # Query external API for company count
+            api_response = await AgentService.process_with_api(
+                agent_response.extraction_result,
+                refinement_round=1
             )
-            assistant_content = agent_response.message
+
+            if api_response.action == "refine":
+                # Too many results - ask for refinement, keep conversation active
+                assistant_content = api_response.message
+                # Store partial extraction for next round
+                await ConversationService.update_extraction(
+                    db, conversation.id, {
+                        "partial_extraction": api_response.extraction_result,
+                        "company_count": api_response.company_count,
+                        "refinement_round": 1,
+                        "naf_codes": api_response.naf_codes,
+                    }
+                )
+            else:
+                # Complete conversation with full results
+                await ConversationService.complete(
+                    db, conversation.id, {
+                        "extraction": api_response.extraction_result,
+                        "company_count": api_response.company_count,
+                        "naf_codes": api_response.naf_codes,
+                        "api_result": api_response.api_result,
+                    }
+                )
+                assistant_content = api_response.message
         else:
             # Need clarification
             assistant_content = agent_response.message
@@ -136,11 +192,49 @@ async def send_message(
 
         # 5. Handle response
         if agent_response.action == "extract":
-            # Complete conversation with extraction result
-            await ConversationService.complete(
-                db, conversation_id, agent_response.extraction_result
+            # Check if we're in a refinement flow
+            current_extraction = conversation.extraction_result or {}
+            refinement_round = current_extraction.get("refinement_round", 0) + 1
+
+            # Merge with previous extraction if exists
+            if current_extraction.get("partial_extraction"):
+                # Merge new extraction with previous partial extraction
+                merged_extraction = _merge_extractions(
+                    current_extraction.get("partial_extraction", {}),
+                    agent_response.extraction_result or {}
+                )
+            else:
+                merged_extraction = agent_response.extraction_result
+
+            # Query external API for company count
+            api_response = await AgentService.process_with_api(
+                merged_extraction,
+                refinement_round=refinement_round
             )
-            assistant_content = agent_response.message
+
+            if api_response.action == "refine":
+                # Still too many results - ask for more refinement
+                assistant_content = api_response.message
+                # Update partial extraction
+                await ConversationService.update_extraction(
+                    db, conversation_id, {
+                        "partial_extraction": api_response.extraction_result,
+                        "company_count": api_response.company_count,
+                        "refinement_round": refinement_round,
+                        "naf_codes": api_response.naf_codes,
+                    }
+                )
+            else:
+                # Complete conversation with full results
+                await ConversationService.complete(
+                    db, conversation_id, {
+                        "extraction": api_response.extraction_result,
+                        "company_count": api_response.company_count,
+                        "naf_codes": api_response.naf_codes,
+                        "api_result": api_response.api_result,
+                    }
+                )
+                assistant_content = api_response.message
         else:
             # Need more clarification
             assistant_content = agent_response.message

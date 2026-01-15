@@ -5,7 +5,9 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(git push:*)",
-      "Bash(git reset:*)"
+      "Bash(git reset:*)",
+      "Bash(dir \"c:\\\\Users\\\\paulk\\\\Documents\\\\GitHub\\\\company_search\")",
+      "Bash(dir:*)"
     ]
   }
 }

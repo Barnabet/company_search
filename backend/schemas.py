@@ -63,8 +63,17 @@ class ConversationResponse(ConversationBase):
     messages: List[MessageResponse] = []
     extraction_result: Optional[Dict[str, Any]] = None
     completed_at: Optional[datetime] = None
+    # Extended fields for API integration
+    company_count: Optional[int] = Field(None, description="Number of matching companies from external API")
 
     model_config = ConfigDict(from_attributes=True)
+
+    @property
+    def company_count_from_extraction(self) -> Optional[int]:
+        """Extract company_count from extraction_result if present."""
+        if self.extraction_result:
+            return self.extraction_result.get("company_count")
+        return None
 
 
 class ConversationListItem(ConversationBase):
