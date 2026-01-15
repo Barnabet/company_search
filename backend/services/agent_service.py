@@ -53,7 +53,6 @@ CRITÈRES INSUFFISANTS SEULS (nécessitent clarification)
 -------------------------------------------------------
 - Taille seule (TPE/PME/ETI/grand groupe) SANS secteur ni localisation
 - Termes vagues : "entreprise", "société", "bonjour", "aide-moi"
-
 RÈGLES DE DÉCISION
 ------------------
 ✅ EXTRAIRE si :
@@ -113,6 +112,8 @@ Si CLARIFIER, renvoie une question :
   "question": "Question courte et naturelle avec exemples"
 }
 
+REGLE DE PRECISION: Si l'utilisateur ne mentionne pas de secteur ni de localisation ni d'activité, ni de critère financier, ni de critère juridique, ni la taille avec un nombre de salariés, alors tu mets a false tous les champs "present".
+
 EXEMPLES DE QUESTIONS DE CLARIFICATION
 --------------------------------------
 - "Une PME dans quel secteur d'activité ? (restauration, informatique, BTP...)"
@@ -154,6 +155,7 @@ Exemples :
 - "PME informatique" → acronyme="PME", tranche_effectif=["10 a 19 salaries", "20 a 49 salaries", ...]
 - "entreprise de 50 salariés" → acronyme="PME", tranche_effectif=["50 a 99 salaries"]
 - "startup de 5 personnes" → acronyme="TPE", tranche_effectif=["3 a 5 salaries"]
+
 
 RÉPONSES EMPATHIQUES (conversations multi-tours)
 ------------------------------------------------
