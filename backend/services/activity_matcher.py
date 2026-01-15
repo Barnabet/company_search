@@ -1,71 +1,50 @@
 """
 Activity Matcher Service for semantic search of activities.
 
-Uses sentence-transformers to match user activity descriptions to
+Uses OpenAI embeddings API to match user activity descriptions to
 reference activities from libelle_activite.txt, then looks up NAF codes.
 """
 
 import json
+import os
 import pickle
+import requests
 from pathlib import Path
 from typing import List, Optional, Tuple, Dict
-
-# Lazy imports - only load when needed
-_model = None
-_embeddings_cache = None
-_naf_mapping_cache = None
+import numpy as np
 
 # Configuration
-MODEL_NAME = "paraphrase-multilingual-MiniLM-L12-v2"
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
+OPENAI_EMBEDDING_MODEL = os.getenv("OPENAI_EMBEDDING_MODEL", "text-embedding-3-small")
 DATA_DIR = Path(__file__).parent.parent / "data"
 ACTIVITIES_FILE = DATA_DIR / "libelle_activite.txt"
-EMBEDDINGS_FILE = DATA_DIR / "activites_embeddings.pkl"
+EMBEDDINGS_FILE = DATA_DIR / "activites_embeddings_openai.pkl"
 NAF_MAPPING_FILE = DATA_DIR / "naf_mapping.json"
 
-
-def get_model():
-    """
-    Load sentence-transformers model (lazy loading).
-
-    Returns:
-        SentenceTransformer model or None if unavailable
-    """
-    global _model
-    if _model is None:
-        try:
-            from sentence_transformers import SentenceTransformer
-            _model = SentenceTransformer(MODEL_NAME)
-            print(f"[ActivityMatcher] Loaded embedding model: {MODEL_NAME}")
-        except ImportError:
-            print("[ActivityMatcher] sentence-transformers not installed, falling back to text matching")
-            return None
-        except Exception as e:
-            print(f"[ActivityMatcher] Failed to load embedding model: {e}")
-            return None
-    return _model
+# Cache
+_embeddings_cache = None
+_activities_cache = None
+_naf_mapping_cache = None
 
 
 def load_activities() -> List[str]:
-    """
-    Load activity labels from libelle_activite.txt.
+    """Load activity labels from libelle_activite.txt."""
+    global _activities_cache
+    if _activities_cache is not None:
+        return _activities_cache
 
-    Returns:
-        List of activity labels (729 entries)
-    """
     if not ACTIVITIES_FILE.exists():
         raise FileNotFoundError(f"Activities file not found: {ACTIVITIES_FILE}")
 
     with open(ACTIVITIES_FILE, 'r', encoding='utf-8') as f:
-        return [line.strip() for line in f if line.strip()]
+        _activities_cache = [line.strip() for line in f if line.strip()]
+
+    print(f"[ActivityMatcher] Loaded {len(_activities_cache)} activities")
+    return _activities_cache
 
 
 def load_naf_mapping() -> Dict[str, List[str]]:
-    """
-    Load NAF code mapping from JSON file.
-
-    Returns:
-        Dict mapping activity labels to NAF code arrays
-    """
+    """Load NAF code mapping from JSON file."""
     global _naf_mapping_cache
 
     if _naf_mapping_cache is not None:
@@ -78,7 +57,6 @@ def load_naf_mapping() -> Dict[str, List[str]]:
     try:
         with open(NAF_MAPPING_FILE, 'r', encoding='utf-8') as f:
             data = json.load(f)
-            # Filter out comment keys
             _naf_mapping_cache = {k: v for k, v in data.items() if not k.startswith('_')}
             print(f"[ActivityMatcher] Loaded NAF mapping: {len(_naf_mapping_cache)} entries")
             return _naf_mapping_cache
@@ -87,16 +65,48 @@ def load_naf_mapping() -> Dict[str, List[str]]:
         return {}
 
 
-def load_or_create_embeddings(activities: List[str], force_recreate: bool = False):
+def get_openai_embeddings(texts: List[str]) -> Optional[np.ndarray]:
     """
-    Load embeddings from cache or generate them.
+    Get embeddings from OpenAI API.
 
     Args:
-        activities: List of activity labels to embed
-        force_recreate: Force regeneration of embeddings
+        texts: List of texts to embed
 
     Returns:
-        numpy array of shape (n_activities, embedding_dim) or None if failed
+        numpy array of embeddings or None if failed
+    """
+    if not OPENAI_API_KEY:
+        print("[ActivityMatcher] OPENAI_API_KEY not set")
+        return None
+
+    try:
+        response = requests.post(
+            "https://api.openai.com/v1/embeddings",
+            headers={
+                "Authorization": f"Bearer {OPENAI_API_KEY}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "model": OPENAI_EMBEDDING_MODEL,
+                "input": texts,
+            },
+            timeout=60,
+        )
+        response.raise_for_status()
+        data = response.json()
+
+        # Extract embeddings in order
+        embeddings = [item["embedding"] for item in sorted(data["data"], key=lambda x: x["index"])]
+        return np.array(embeddings, dtype=np.float32)
+
+    except Exception as e:
+        print(f"[ActivityMatcher] OpenAI API error: {e}")
+        return None
+
+
+def load_or_create_embeddings(activities: List[str], force_recreate: bool = False) -> Optional[np.ndarray]:
+    """
+    Load embeddings from cache or generate them via OpenAI API.
     """
     global _embeddings_cache
 
@@ -108,95 +118,85 @@ def load_or_create_embeddings(activities: List[str], force_recreate: bool = Fals
         try:
             with open(EMBEDDINGS_FILE, 'rb') as f:
                 data = pickle.load(f)
-                # Verify activities match
-                if data.get('activities') == activities:
+                if data.get('activities') == activities and data.get('model') == OPENAI_EMBEDDING_MODEL:
                     _embeddings_cache = data['embeddings']
                     print(f"[ActivityMatcher] Loaded embeddings from cache: {len(activities)} activities")
                     return _embeddings_cache
                 else:
-                    print("[ActivityMatcher] Activities changed, regenerating embeddings...")
+                    print("[ActivityMatcher] Cache outdated, regenerating embeddings...")
         except Exception as e:
             print(f"[ActivityMatcher] Failed to load embeddings cache: {e}")
 
-    # Generate embeddings
-    model = get_model()
-    if model is None:
-        return None
+    # Generate embeddings via OpenAI API
+    print(f"[ActivityMatcher] Generating embeddings for {len(activities)} activities via OpenAI...")
 
+    # OpenAI has a limit, batch if needed
+    batch_size = 100
+    all_embeddings = []
+
+    for i in range(0, len(activities), batch_size):
+        batch = activities[i:i + batch_size]
+        print(f"[ActivityMatcher] Processing batch {i // batch_size + 1}/{(len(activities) + batch_size - 1) // batch_size}")
+        embeddings = get_openai_embeddings(batch)
+        if embeddings is None:
+            print("[ActivityMatcher] Failed to generate embeddings")
+            return None
+        all_embeddings.append(embeddings)
+
+    _embeddings_cache = np.vstack(all_embeddings)
+
+    # Save to cache
     try:
-        import numpy as np
-        print(f"[ActivityMatcher] Generating embeddings for {len(activities)} activities...")
-        embeddings = model.encode(activities, convert_to_numpy=True, show_progress_bar=False)
-
-        # Save to cache
         EMBEDDINGS_FILE.parent.mkdir(parents=True, exist_ok=True)
         with open(EMBEDDINGS_FILE, 'wb') as f:
-            pickle.dump({'activities': activities, 'embeddings': embeddings}, f)
+            pickle.dump({
+                'activities': activities,
+                'embeddings': _embeddings_cache,
+                'model': OPENAI_EMBEDDING_MODEL,
+            }, f)
         print(f"[ActivityMatcher] Saved embeddings to {EMBEDDINGS_FILE}")
-
-        _embeddings_cache = embeddings
-        return embeddings
-
     except Exception as e:
-        print(f"[ActivityMatcher] Failed to generate embeddings: {e}")
-        return None
+        print(f"[ActivityMatcher] Failed to save embeddings: {e}")
+
+    return _embeddings_cache
 
 
 def semantic_search(query: str, activities: List[str], top_k: int = 5) -> List[Tuple[str, float]]:
     """
-    Semantic search among activities using embeddings.
-
-    Args:
-        query: User search query (activity description)
-        activities: List of reference activities
-        top_k: Number of top results to return
-
-    Returns:
-        List of (activity_label, similarity_score) tuples, sorted by score descending
+    Semantic search among activities using OpenAI embeddings.
     """
-    model = get_model()
     embeddings = load_or_create_embeddings(activities)
-
-    if model is None or embeddings is None:
-        return []  # Fallback to text matching in caller
-
-    try:
-        import numpy as np
-
-        # Encode query
-        query_embedding = model.encode([query], convert_to_numpy=True, show_progress_bar=False)
-
-        # Cosine similarity
-        similarities = np.dot(embeddings, query_embedding.T).flatten()
-
-        # Get top-k indices
-        top_indices = np.argsort(similarities)[::-1][:top_k]
-
-        return [(activities[i], float(similarities[i])) for i in top_indices]
-
-    except Exception as e:
-        print(f"[ActivityMatcher] Semantic search failed: {e}")
+    if embeddings is None:
         return []
+
+    # Get query embedding
+    query_embedding = get_openai_embeddings([query])
+    if query_embedding is None:
+        return []
+
+    # Cosine similarity
+    query_norm = query_embedding / np.linalg.norm(query_embedding)
+    embeddings_norm = embeddings / np.linalg.norm(embeddings, axis=1, keepdims=True)
+    similarities = np.dot(embeddings_norm, query_norm.T).flatten()
+
+    # Get top-k indices
+    top_indices = np.argsort(similarities)[::-1][:top_k]
+
+    return [(activities[i], float(similarities[i])) for i in top_indices]
 
 
 class ActivityMatcher:
     """
     Matches user activity descriptions to NAF codes using semantic search.
-
-    Uses embeddings to find the best matching activities from libelle_activite.txt,
-    then looks up corresponding NAF codes from naf_mapping.json.
     """
 
     def __init__(self):
         self.activities = load_activities()
         self.naf_mapping = load_naf_mapping()
-        self._initialized = False
 
     def initialize(self):
-        """Pre-load embeddings (call on startup for better performance)."""
-        if not self._initialized:
-            load_or_create_embeddings(self.activities)
-            self._initialized = True
+        """Pre-load embeddings (call on startup)."""
+        load_or_create_embeddings(self.activities)
 
     def find_matching_activities(
         self,
@@ -206,14 +206,6 @@ class ActivityMatcher:
     ) -> List[Tuple[str, float, List[str]]]:
         """
         Find activities matching the user's query with their NAF codes.
-
-        Args:
-            query: User's activity description (e.g., "services informatiques")
-            top_k: Number of top results to return
-            threshold: Minimum similarity score (0.0-1.0)
-
-        Returns:
-            List of (activity_label, similarity_score, naf_codes) tuples
         """
         if not query:
             return []
@@ -234,20 +226,9 @@ class ActivityMatcher:
         top_k: int = 3,
         threshold: float = 0.3
     ) -> List[str]:
-        """
-        Get NAF codes for a user query.
-
-        Args:
-            query: User's activity description
-            top_k: Number of top activities to consider
-            threshold: Minimum similarity score
-
-        Returns:
-            List of unique NAF codes from matched activities
-        """
+        """Get NAF codes for a user query."""
         matches = self.find_matching_activities(query, top_k, threshold)
 
-        # Collect unique NAF codes
         naf_codes = []
         seen = set()
         for _, _, codes in matches:
@@ -263,16 +244,7 @@ class ActivityMatcher:
         query: str,
         threshold: float = 0.3
     ) -> Optional[Tuple[str, float, List[str]]]:
-        """
-        Get the single best matching activity.
-
-        Args:
-            query: User's activity description
-            threshold: Minimum similarity score
-
-        Returns:
-            (activity_label, score, naf_codes) or None if no match above threshold
-        """
+        """Get the single best matching activity."""
         matches = self.find_matching_activities(query, top_k=1, threshold=threshold)
         return matches[0] if matches else None
 
@@ -289,22 +261,17 @@ def get_activity_matcher() -> ActivityMatcher:
     return _activity_matcher
 
 
-# Script to pre-generate embeddings
 if __name__ == "__main__":
-    print("Generating activity embeddings...")
+    print("Testing ActivityMatcher with OpenAI embeddings...")
 
     matcher = get_activity_matcher()
-    matcher.initialize()
 
-    # Test searches
     test_queries = [
         "informatique",
         "restaurant",
         "batiment",
         "coiffure",
         "comptable",
-        "avocat",
-        "boulangerie",
     ]
 
     print("\nTest searches:")

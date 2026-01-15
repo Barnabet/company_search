@@ -58,6 +58,7 @@ app = FastAPI(
     title="Company Search Criteria Extractor",
     description="API pour extraire les critères de recherche d'entreprises depuis une requête en langage naturel",
     version="1.0.0",
+    redirect_slashes=False,  # Disable automatic redirect to avoid CORS issues
 )
 
 # Configuration CORS pour permettre l'accès depuis le frontend Vercel
