@@ -99,7 +99,7 @@ def transform_extraction_to_api_request(
         extraction: Internal extraction result from agent:
             {
                 "localisation": {"present": bool, "commune": str, "departement": str, "region": str, "code_postal": str},
-                "activite": {"present": bool, "libelle_secteur": str, "activite_entreprise": str},
+                "activite": {"present": bool, "activite_entreprise": str},
                 "taille_entreprise": {"present": bool, "tranche_effectif": [], "acronyme": str},
                 "criteres_financiers": {"present": bool, "ca_plus_recent": number, ...},
                 "criteres_juridiques": {"present": bool, "siege_entreprise": str, ...}
@@ -156,7 +156,7 @@ def transform_extraction_to_api_request(
             activity["activity_codes_list"] = []
 
         # Original activity request (the human-readable description)
-        original_request = activite.get("libelle_secteur") or activite.get("activite_entreprise")
+        original_request = activite.get("activite_entreprise")
         if original_request:
             activity["original_activity_request"] = original_request
 

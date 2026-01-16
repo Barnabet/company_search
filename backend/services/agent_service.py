@@ -71,7 +71,6 @@ Si la requête contient AU MOINS UN critère exploitable :
   },
   "activite": {
     "present": true/false,
-    "libelle_secteur": string ou null,
     "activite_entreprise": string ou null
   },
   "taille_entreprise": {
@@ -104,8 +103,7 @@ Si la requête est TROP VAGUE (aucun critère) :
 
 RÈGLES D'EXTRACTION
 -------------------
-- libelle_secteur : reprendre le terme utilisé (restauration, informatique...)
-- activite_entreprise : code NAF UNIQUEMENT si explicitement mentionné, sinon null
+- activite_entreprise : reprendre le terme utilisé par l'utilisateur (restauration, informatique, BTP...)
 - region : liste autorisée = Ile-de-France, Bretagne, Normandie, Occitanie, etc.
 - Ne jamais inventer de valeurs non mentionnées
 
@@ -299,7 +297,7 @@ Extrais les critères de recherche de la conversation complète."""
             # Step 1: Match activities to NAF codes using embeddings
             activity_matcher = get_activity_matcher()
             activite = extraction_result.get("activite", {})
-            activity_query = activite.get("libelle_secteur") or activite.get("activite_entreprise")
+            activity_query = activite.get("activite_entreprise")
 
             if activity_query:
                 naf_codes = activity_matcher.get_naf_codes_for_query(activity_query, top_k=3)
