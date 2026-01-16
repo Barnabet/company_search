@@ -64,11 +64,12 @@ async def create_conversation(
     """
     Start a new conversation with an initial user query.
 
-    Simplified workflow:
+    Workflow:
     1. Create conversation in database
     2. Add user's initial message
-    3. Process with agent (ONE LLM call: decide extract or clarify)
-    4. Return result
+    3. LLM extracts criteria (or rejects if too vague)
+    4. If extracted: query API for count, refine if > 500
+    5. Return result
 
     Args:
         payload: Initial message from user
@@ -124,7 +125,7 @@ async def create_conversation(
                 )
                 assistant_content = api_response.message
         else:
-            # Need clarification
+            # Query too vague - rejected
             assistant_content = agent_response.message
 
         # 5. Store assistant response
@@ -153,11 +154,12 @@ async def send_message(
     """
     Send a message in an existing conversation.
 
-    Simplified workflow:
+    Workflow:
     1. Validate conversation exists and is active
     2. Add user message
-    3. Process with agent (ONE LLM call with full history)
-    4. Return result
+    3. LLM extracts criteria from full history (or rejects if too vague)
+    4. If extracted: query API for count, refine if > 500
+    5. Return result
 
     Args:
         conversation_id: UUID of the conversation
@@ -236,7 +238,7 @@ async def send_message(
                 )
                 assistant_content = api_response.message
         else:
-            # Need more clarification
+            # Query too vague - rejected
             assistant_content = agent_response.message
 
         # 6. Store assistant response

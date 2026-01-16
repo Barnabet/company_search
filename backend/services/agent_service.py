@@ -1,8 +1,11 @@
 """
 Agent service for intelligent conversation management.
 
-Simplified approach: ONE LLM call that decides whether to extract or clarify.
-Then queries external API and handles refinement if too many results.
+Flow:
+1. LLM extracts criteria from user query (or rejects if too vague)
+2. API returns company count for extracted criteria
+3. If count > 500: ask refinement question
+4. If count <= 500: deliver results
 """
 
 import json
@@ -10,7 +13,6 @@ import os
 import requests
 from typing import List, Dict, Any, Optional
 from dataclasses import dataclass
-from difflib import SequenceMatcher
 
 from models import Message
 
@@ -23,8 +25,8 @@ OPENROUTER_MODEL = os.getenv("OPENROUTER_MODEL", "google/gemini-2.5-flash-lite")
 @dataclass
 class AgentResponse:
     """Response from the agent processing"""
-    action: str  # "extract", "clarify", or "refine"
-    message: str  # Question to ask or confirmation message
+    action: str  # "extract", "reject", or "refine"
+    message: str  # Message to display to user
     extraction_result: Optional[Dict[str, Any]] = None  # Extracted criteria if action="extract"
     company_count: Optional[int] = None  # Number of matching companies (from API)
     api_result: Optional[Dict[str, Any]] = None  # Full API response data
@@ -39,37 +41,25 @@ AGENT_SYSTEM_PROMPT = """Tu es un agent intelligent pour rechercher des entrepri
 
 MISSION
 -------
-Analyse la requête utilisateur et décide :
-1. EXTRAIRE : si au moins un critère exploitable est présent
-2. CLARIFIER : si la requête est trop vague
+Extrais les critères de recherche de la requête utilisateur.
+Si la requête est trop vague (aucun critère exploitable), rejette-la.
 
-CRITÈRES EXPLOITABLES (au moins 1 requis pour extraire)
--------------------------------------------------------
+CRITÈRES EXPLOITABLES
+---------------------
 - Secteur/activité : restauration, informatique, BTP, santé, conseil, industrie...
 - Localisation : région, département, ville, code postal
 - Critères financiers : CA, résultat net, rentabilité avec montant
+- Taille : TPE/PME/ETI/GE ou nombre de salariés
 
-CRITÈRES INSUFFISANTS SEULS (nécessitent clarification)
--------------------------------------------------------
-- Taille seule (TPE/PME/ETI/grand groupe) SANS secteur ni localisation
-- Termes vagues : "entreprise", "société", "bonjour", "aide-moi"
-RÈGLES DE DÉCISION
-------------------
-✅ EXTRAIRE si :
-- "PME informatique" → activité présente
-- "restaurants en Bretagne" → activité + localisation
-- "entreprises à Paris" → localisation présente
-- "sociétés de conseil" → activité présente
-- "CA > 1M€" → critère financier exploitable
-
-❌ CLARIFIER si :
-- "une PME" → taille seule, demander secteur
-- "je cherche une entreprise" → trop vague
-- "bonjour" / "aide-moi" → pas de critère
+REQUÊTES TROP VAGUES (à rejeter)
+--------------------------------
+- "bonjour", "aide-moi", "help"
+- "je cherche une entreprise" (sans aucun critère)
+- Questions hors-sujet (météo, recettes, etc.)
 
 FORMAT DE SORTIE JSON
 ---------------------
-Si EXTRAIRE, renvoie l'extraction complète :
+Si la requête contient AU MOINS UN critère exploitable :
 {
   "action": "extract",
   "localisation": {
@@ -106,83 +96,34 @@ Si EXTRAIRE, renvoie l'extraction complète :
   }
 }
 
-Si CLARIFIER, renvoie une question :
+Si la requête est TROP VAGUE (aucun critère) :
 {
-  "action": "clarify",
-  "question": "Question courte et naturelle avec exemples"
+  "action": "reject",
+  "message": "Message expliquant ce que l'utilisateur peut rechercher"
 }
 
-REGLE DE PRECISION: Si l'utilisateur ne mentionne pas de secteur ni de localisation ni d'activité, ni de critère financier, ni de critère juridique, ni la taille avec un nombre de salariés, alors tu mets a false tous les champs "present".
-
-EXEMPLES DE QUESTIONS DE CLARIFICATION
---------------------------------------
-- "Une PME dans quel secteur d'activité ? (restauration, informatique, BTP...)"
-- "Quel type d'entreprise recherchez-vous ? (secteur, localisation...)"
-- "Dans quelle région ou département ?"
-
-RÈGLES D'EXTRACTION (si action=extract)
----------------------------------------
+RÈGLES D'EXTRACTION
+-------------------
 - libelle_secteur : reprendre le terme utilisé (restauration, informatique...)
 - activite_entreprise : code NAF UNIQUEMENT si explicitement mentionné, sinon null
 - region : liste autorisée = Ile-de-France, Bretagne, Normandie, Occitanie, etc.
 - Ne jamais inventer de valeurs non mentionnées
 
-TRANCHES D'EFFECTIF INSEE (inférence bidirectionnelle)
--------------------------------------------------------
-Le mapping fonctionne dans LES DEUX SENS :
-
-A) ACRONYME → TRANCHES (si l'utilisateur dit "PME", "TPE", etc.)
+TRANCHES D'EFFECTIF INSEE
+-------------------------
+A) ACRONYME → TRANCHES
    - MIC/TPE → ["0 salarie", "1 ou 2 salaries", "3 a 5 salaries", "6 a 9 salaries"]
    - PME → ["10 a 19 salaries", "20 a 49 salaries", "50 a 99 salaries", "100 a 199 salaries", "200 a 249 salaries"]
    - ETI → ["250 a 499 salaries", "500 a 999 salaries", "1 000 a 1 999 salaries", "2 000 a 4 999 salaries"]
    - GE → ["5 000 a 9 999 salaries", "10 000 salaries et plus"]
 
-B) TRANCHES/NOMBRE → ACRONYME (si l'utilisateur mentionne un nombre de salariés)
-   Déduis l'acronyme à partir du nombre mentionné :
-   - "moins de 10 salariés" ou "5 employés" → acronyme = "TPE", tranche = ["3 a 5 salaries"]
-   - "50 salariés" ou "entre 20 et 100" → acronyme = "PME", tranche adaptée
-   - "300 employés" ou "500 salariés" → acronyme = "ETI", tranche adaptée
-   - "plus de 5000" ou "10000 salariés" → acronyme = "GE", tranche adaptée
-
-   Mapping inverse par nombre :
+B) NOMBRE → ACRONYME
    - 0-9 salariés → acronyme = "TPE"
    - 10-249 salariés → acronyme = "PME"
    - 250-4999 salariés → acronyme = "ETI"
    - 5000+ salariés → acronyme = "GE"
 
 IMPORTANT : tranche_effectif doit être un ARRAY de strings.
-Exemples :
-- "PME informatique" → acronyme="PME", tranche_effectif=["10 a 19 salaries", "20 a 49 salaries", ...]
-- "entreprise de 50 salariés" → acronyme="PME", tranche_effectif=["50 a 99 salaries"]
-- "startup de 5 personnes" → acronyme="TPE", tranche_effectif=["3 a 5 salaries"]
-
-
-RÉPONSES EMPATHIQUES (conversations multi-tours)
-------------------------------------------------
-Si tu détectes que l'utilisateur RÉPÈTE une requête similaire ou reformule la même demande :
-
-1. NE PAS répéter la même question générique
-2. RECONNAÎTRE sa demande avec empathie
-3. PROPOSER des alternatives concrètes liées à son intention
-
-Exemples de réponses empathiques :
-
-❌ MAUVAIS (répétitif) :
-User: "je cherche du pain"
-Agent: "Quel type d'entreprise recherchez-vous ?"
-User: "je cherche du pain"
-Agent: "Quel type d'entreprise recherchez-vous ?" ← INTERDIT
-
-✅ BON (empathique avec alternatives) :
-User: "je cherche du pain"
-Agent: "Dans quel secteur d'activité ?"
-User: "je cherche du pain"
-Agent: "Je comprends que vous cherchez quelque chose lié au pain. Notre service recherche des entreprises. Souhaitez-vous trouver des boulangeries artisanales, des distributeurs de pain, ou des entreprises agroalimentaires ?"
-
-Autres exemples :
-- "avocat" répété → "Recherchez-vous des cabinets d'avocats, ou des entreprises dans le secteur juridique ?"
-- "voiture" répété → "Cherchez-vous des concessionnaires automobiles, des garages, ou des constructeurs ?"
-- Requête incohérente 3x → "Je suis un assistant spécialisé dans la recherche d'entreprises françaises. Puis-je vous aider à trouver une entreprise dans un domaine particulier ? (restauration, informatique, BTP, santé...)"
 
 Réponds UNIQUEMENT avec le JSON, sans texte autour.
 """
@@ -261,82 +202,30 @@ class AgentService:
         return cleaned
 
     @staticmethod
-    def _detect_repetition_pattern(messages: List[Message]) -> Optional[str]:
-        """
-        Detect if the user is repeating similar requests.
-
-        Args:
-            messages: Conversation history
-
-        Returns:
-            The repeated pattern if detected, None otherwise
-        """
-        # Get only user messages
-        user_messages = [m.content.lower().strip() for m in messages if m.role.value == "user"]
-
-        if len(user_messages) < 2:
-            return None
-
-        # Check if last 2 user messages are similar
-        last_two = user_messages[-2:]
-        similarity = SequenceMatcher(None, last_two[0], last_two[1]).ratio()
-
-        if similarity > 0.6:
-            return last_two[-1]  # Return the repeated message
-
-        # Check if user repeated same thing 3 times
-        if len(user_messages) >= 3:
-            last_three = user_messages[-3:]
-            avg_similarity = sum(
-                SequenceMatcher(None, last_three[i], last_three[j]).ratio()
-                for i in range(3) for j in range(i + 1, 3)
-            ) / 3
-
-            if avg_similarity > 0.5:
-                return f"répétition multiple: {last_three[-1]}"
-
-        return None
-
-    @staticmethod
     async def process_message(messages: List[Message]) -> AgentResponse:
         """
-        Process user message(s) and decide whether to extract or clarify.
+        Process user message(s) and extract search criteria.
 
         ONE LLM call that:
         1. Analyzes the conversation
-        2. Decides: extract or clarify
-        3. Returns extraction result OR question
+        2. Extracts criteria OR rejects if too vague
 
         Args:
             messages: Conversation history
 
         Returns:
-            AgentResponse: Action (extract/clarify) with result or question
+            AgentResponse: Action (extract/reject) with result or message
         """
-        # Detect repetition pattern
-        repetition_pattern = AgentService._detect_repetition_pattern(messages)
-
         # Build conversation context
         if len(messages) == 1:
             user_content = messages[0].content
         else:
             # Multi-turn: include conversation history
             conversation_text = AgentService._format_conversation(messages)
-
-            # Add repetition hint if detected
-            repetition_hint = ""
-            if repetition_pattern:
-                repetition_hint = f"""
-
-⚠️ ATTENTION RÉPÉTITION DÉTECTÉE: L'utilisateur répète "{repetition_pattern}"
-→ NE PAS reposer la même question générique
-→ Propose des alternatives concrètes liées à son intention
-→ Sois empathique et aide-le à trouver une entreprise correspondante"""
-
             user_content = f"""CONVERSATION:
 {conversation_text}
-{repetition_hint}
-Analyse la conversation complète et décide si tu peux extraire les critères ou si tu dois poser une question."""
+
+Extrais les critères de recherche de la conversation complète."""
 
         # Single LLM call
         llm_messages = [
@@ -348,31 +237,31 @@ Analyse la conversation complète et décide si tu peux extraire les critères o
             response = AgentService._call_llm(llm_messages)
             data = json.loads(AgentService._clean_json(response))
 
-            action = data.get("action", "clarify")
+            action = data.get("action", "reject")
 
             if action == "extract":
                 # Build extraction result (remove "action" key)
                 extraction = {k: v for k, v in data.items() if k != "action"}
                 return AgentResponse(
                     action="extract",
-                    message="Parfait ! J'ai tous les critères nécessaires. Lancement de la recherche...",
+                    message="Recherche en cours...",
                     extraction_result=extraction,
                 )
             else:
-                # Clarification needed
-                question = data.get("question", "Pouvez-vous préciser votre recherche ?")
+                # Query too vague - rejected
+                message = data.get("message", "Pouvez-vous préciser votre recherche ? (secteur d'activité, localisation, taille...)")
                 return AgentResponse(
-                    action="clarify",
-                    message=question,
+                    action="reject",
+                    message=message,
                     extraction_result=None,
                 )
 
         except Exception as e:
             print(f"Agent processing failed: {e}")
-            # Fallback: ask for clarification
+            # Fallback: reject
             return AgentResponse(
-                action="clarify",
-                message="Pouvez-vous préciser votre recherche ? (secteur d'activité, localisation...)",
+                action="reject",
+                message="Pouvez-vous préciser votre recherche ? (secteur d'activité, localisation, taille...)",
                 extraction_result=None,
             )
 
