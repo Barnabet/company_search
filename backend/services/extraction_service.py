@@ -7,10 +7,8 @@ using the OpenRouter API.
 
 import os
 import json
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 import requests
-
-from sector_matcher import SectorMatcher
 
 # ============================================================================
 # Configuration
@@ -84,19 +82,6 @@ RÈGLES GÉNÉRALES
 """
 
 # ============================================================================
-# Singleton SectorMatcher
-# ============================================================================
-
-_sector_matcher: Optional[SectorMatcher] = None
-
-def get_sector_matcher() -> SectorMatcher:
-    """Get or create the sector matcher singleton."""
-    global _sector_matcher
-    if _sector_matcher is None:
-        _sector_matcher = SectorMatcher()
-    return _sector_matcher
-
-# ============================================================================
 # Helper Functions
 # ============================================================================
 
@@ -128,24 +113,11 @@ def _clean_json_content(content: str) -> str:
 
 def _normalize_extraction_result(result: Dict[str, Any]) -> Dict[str, Any]:
     """
-    Post-process extraction result to normalize libelle_secteur to exact reference values
+    Post-process extraction result to clean up criteria.
+    Note: NAF code matching is now handled by activity_matcher.py in the conversation flow.
     """
     if not isinstance(result, dict):
         return result
-
-    # Normalize libelle_secteur
-    activite = result.get("activite")
-    if isinstance(activite, dict):
-        libelle = activite.get("libelle_secteur")
-        naf_code = activite.get("activite_entreprise")
-
-        if naf_code is not None and libelle is not None:
-            activite["libelle_secteur"] = None
-        elif libelle is not None and isinstance(libelle, str):
-            matcher = get_sector_matcher()
-            matched = matcher.match(libelle, threshold=0.5)
-            if matched:
-                activite["libelle_secteur"] = matched
 
     # Enforce criteres_juridiques rules
     criteres_juridiques = result.get("criteres_juridiques")
