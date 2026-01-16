@@ -107,12 +107,14 @@ class CompanyAPIClient:
                 data = response.json()
                 # API returns count_legal as the main count
                 count = data.get("count_legal", data.get("count", 0))
+                count_semantic = data.get("count_semantic", 0)
                 return APIResponse(
                     success=True,
                     count=count,
+                    count_semantic=count_semantic,
                     data=data,
                 )
-
+            
             elif response.status_code == 401:
                 raise CompanyAPIError(
                     "Unauthorized: Invalid or missing API key",
