@@ -1,10 +1,14 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import type { Message } from '@/types/conversation'
 
 interface ChatMessageProps {
-  message: Message
+  message: {
+    id: string
+    role: 'user' | 'assistant'
+    content: string
+    created_at: string
+  }
 }
 
 export default function ChatMessage({ message }: ChatMessageProps) {

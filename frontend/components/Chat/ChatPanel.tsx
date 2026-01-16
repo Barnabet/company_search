@@ -17,10 +17,9 @@ const EXAMPLE_QUERIES = [
 
 export default function ChatPanel() {
   const {
-    currentConversation,
+    messages,
     isLoading,
     error,
-    startConversation,
     sendMessage,
     resetConversation,
     clearError,
@@ -37,17 +36,13 @@ export default function ChatPanel() {
         scrollContainer.scrollTop = scrollContainer.scrollHeight
       }
     }
-  }, [currentConversation?.messages])
+  }, [messages])
 
   const handleSend = () => {
     const trimmed = input.trim()
     if (!trimmed || isLoading) return
 
-    if (currentConversation) {
-      sendMessage(trimmed)
-    } else {
-      startConversation(trimmed)
-    }
+    sendMessage(trimmed)
     setInput('')
   }
 
@@ -64,7 +59,7 @@ export default function ChatPanel() {
     setInput('')
   }
 
-  const hasMessages = currentConversation && currentConversation.messages.length > 0
+  const hasMessages = messages.length > 0
 
   return (
     <Card className="flex-1 flex flex-col overflow-hidden">
@@ -113,7 +108,7 @@ export default function ChatPanel() {
               </div>
             ) : (
               <div className="space-y-3">
-                {currentConversation.messages.map((message) => (
+                {messages.map((message) => (
                   <ChatMessage key={message.id} message={message} />
                 ))}
 

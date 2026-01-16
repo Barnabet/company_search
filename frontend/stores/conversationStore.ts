@@ -1,133 +1,150 @@
 /**
  * Zustand store for conversation state management
+ *
+ * Stateless architecture - messages are managed locally,
+ * backend processes the full history on each request.
  */
 
 import { create } from 'zustand'
-import type { Conversation, ConversationCreateRequest, MessageCreateRequest, ExtractionResult } from '@/types/conversation'
+import type { ExtractionResult } from '@/types/conversation'
 
-// Helper function to extract the current extraction from conversation
-function extractCurrentExtraction(conv: Conversation | null): ExtractionResult | null {
-  if (!conv?.extraction_result) return null
+// ============================================================================
+// Types
+// ============================================================================
 
-  const result = conv.extraction_result as Record<string, unknown>
-
-  // If it has partial_extraction, use that
-  if (result.partial_extraction && typeof result.partial_extraction === 'object') {
-    return result.partial_extraction as ExtractionResult
-  }
-
-  // If it has extraction, use that
-  if (result.extraction && typeof result.extraction === 'object') {
-    return result.extraction as ExtractionResult
-  }
-
-  // If it looks like an ExtractionResult directly (has localisation)
-  if ('localisation' in result) {
-    return result as unknown as ExtractionResult
-  }
-
-  return null
+interface ChatMessage {
+  id: string
+  role: 'user' | 'assistant'
+  content: string
+  created_at: string
 }
 
-// Helper function to extract company count from conversation
-function extractCompanyCount(conv: Conversation | null): number | null {
-  if (!conv?.extraction_result) return null
+interface ActivityMatch {
+  activity: string
+  naf_codes: string[]
+  score: number
+  selected: boolean
+}
 
-  const result = conv.extraction_result as Record<string, unknown>
-
-  if (typeof result.company_count === 'number') {
-    return result.company_count
-  }
-
-  return null
+interface ChatResponse {
+  message: string
+  extraction_result: ExtractionResult | null
+  company_count: number | null
+  count_semantic: number | null
+  naf_codes: string[] | null
+  api_result: Record<string, unknown> | null
+  activity_matches: ActivityMatch[] | null
 }
 
 interface ConversationState {
   // State
-  currentConversation: Conversation | null
+  messages: ChatMessage[]
+  extraction: ExtractionResult | null
+  companyCount: number | null
+  countSemantic: number | null
+  nafCodes: string[] | null
+  apiResult: Record<string, unknown> | null
+  activityMatches: ActivityMatch[] | null
   isLoading: boolean
+  isUpdatingSelection: boolean
   error: string | null
 
-  // Computed helpers
-  getCurrentExtraction: () => ExtractionResult | null
-  getCompanyCount: () => number | null
-
   // Actions
-  startConversation: (message: string) => Promise<void>
-  sendMessage: (message: string) => Promise<void>
+  sendMessage: (content: string) => Promise<void>
+  updateActivitySelection: (index: number) => Promise<void>
   resetConversation: () => void
   clearError: () => void
 }
 
+export type { ActivityMatch }
+
 // Get API URL from environment variable
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
+// ============================================================================
+// Store
+// ============================================================================
+
 export const useConversationStore = create<ConversationState>((set, get) => ({
   // Initial state
-  currentConversation: null,
+  messages: [],
+  extraction: null,
+  companyCount: null,
+  countSemantic: null,
+  nafCodes: null,
+  apiResult: null,
+  activityMatches: null,
   isLoading: false,
+  isUpdatingSelection: false,
   error: null,
 
-  // Computed helpers
-  getCurrentExtraction: () => extractCurrentExtraction(get().currentConversation),
-  getCompanyCount: () => extractCompanyCount(get().currentConversation),
+  // Send a message (works for both first message and follow-ups)
+  sendMessage: async (content: string) => {
+    const { messages } = get()
 
-  // Start a new conversation
-  startConversation: async (message: string) => {
-    set({ isLoading: true, error: null })
+    // Create user message
+    const userMessage: ChatMessage = {
+      id: `msg-${Date.now()}`,
+      role: 'user',
+      content,
+      created_at: new Date().toISOString(),
+    }
+
+    // Optimistic update: show user message immediately
+    set({
+      messages: [...messages, userMessage],
+      isLoading: true,
+      error: null,
+    })
 
     try {
-      const payload: ConversationCreateRequest = { initial_message: message }
+      // Build message history for API
+      const messageHistory = [...messages, userMessage].map(m => ({
+        role: m.role,
+        content: m.content,
+      }))
 
-      const response = await fetch(`${API_URL}/api/v1/conversations/`, {
+      // Get current extraction and activity matches for caching
+      const { extraction, activityMatches } = get()
+
+      const response = await fetch(`${API_URL}/api/v1/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({
+          messages: messageHistory,
+          previous_extraction: extraction,
+          previous_activity_matches: activityMatches,
+        }),
       })
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ detail: response.statusText }))
-        throw new Error(errorData.detail || 'Failed to start conversation')
-      }
-
-      const data: Conversation = await response.json()
-      set({ currentConversation: data, isLoading: false })
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'An error occurred'
-      set({ error: errorMessage, isLoading: false })
-      console.error('Error starting conversation:', error)
-    }
-  },
-
-  // Send a message in existing conversation
-  sendMessage: async (message: string) => {
-    const { currentConversation } = get()
-    if (!currentConversation) {
-      set({ error: 'No active conversation' })
-      return
-    }
-
-    set({ isLoading: true, error: null })
-
-    try {
-      const payload: MessageCreateRequest = { content: message }
-
-      const response = await fetch(
-        `${API_URL}/api/v1/conversations/${currentConversation.id}/messages`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        }
-      )
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ detail: response.statusText }))
         throw new Error(errorData.detail || 'Failed to send message')
       }
 
-      const data: Conversation = await response.json()
-      set({ currentConversation: data, isLoading: false })
+      const data: ChatResponse = await response.json()
+
+      // Create assistant message
+      const assistantMessage: ChatMessage = {
+        id: `msg-${Date.now()}-assistant`,
+        role: 'assistant',
+        content: data.message,
+        created_at: new Date().toISOString(),
+      }
+
+      // Update state with response
+      // Only update extraction/counts if we got new data (don't reset on rejection)
+      const currentState = get()
+      set({
+        messages: [...currentState.messages, assistantMessage],
+        extraction: data.extraction_result ?? currentState.extraction,
+        companyCount: data.company_count ?? currentState.companyCount,
+        countSemantic: data.count_semantic ?? currentState.countSemantic,
+        nafCodes: data.naf_codes ?? currentState.nafCodes,
+        apiResult: data.api_result ?? currentState.apiResult,
+        activityMatches: data.activity_matches ?? currentState.activityMatches,
+        isLoading: false,
+      })
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'An error occurred'
       set({ error: errorMessage, isLoading: false })
@@ -135,9 +152,66 @@ export const useConversationStore = create<ConversationState>((set, get) => ({
     }
   },
 
+  // Update activity selection and re-run search
+  updateActivitySelection: async (index: number) => {
+    const { activityMatches, extraction } = get()
+
+    if (!activityMatches || !extraction) return
+
+    // Toggle selection for the clicked activity
+    const updatedMatches = activityMatches.map((match, i) => ({
+      ...match,
+      selected: i === index ? !match.selected : match.selected
+    }))
+
+    // Optimistic update
+    set({ activityMatches: updatedMatches, isUpdatingSelection: true, error: null })
+
+    try {
+      const response = await fetch(`${API_URL}/api/v1/update-selection`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          extraction_result: extraction,
+          activity_matches: updatedMatches
+        }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ detail: response.statusText }))
+        throw new Error(errorData.detail || 'Failed to update selection')
+      }
+
+      const data = await response.json()
+
+      set({
+        companyCount: data.company_count,
+        countSemantic: data.count_semantic,
+        nafCodes: data.naf_codes,
+        activityMatches: data.activity_matches,
+        isUpdatingSelection: false,
+      })
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred'
+      set({ error: errorMessage, isUpdatingSelection: false })
+      console.error('Error updating selection:', error)
+    }
+  },
+
   // Reset conversation (start fresh)
   resetConversation: () => {
-    set({ currentConversation: null, error: null, isLoading: false })
+    set({
+      messages: [],
+      extraction: null,
+      companyCount: null,
+      countSemantic: null,
+      nafCodes: null,
+      apiResult: null,
+      activityMatches: null,
+      error: null,
+      isLoading: false,
+      isUpdatingSelection: false,
+    })
   },
 
   // Clear error message

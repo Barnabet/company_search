@@ -1,0 +1,23 @@
+Auvergne-Rhone-Alpes
+Bourgogne-Franche-Comte
+Bretagne
+Centre-Val de Loire
+Corse
+Grand Est
+Guadeloupe
+Guyane
+Hauts-de-France
+Ile-de-France
+La Réunion
+Martinique
+Mayotte
+Normandie
+Nouvelle Calédonie
+Nouvelle-Aquitaine
+Occitanie
+Pays de la Loire
+Polynésie Francaise
+Provence-Alpes-Cote d'Azur
+Saint-Martin
+Saint-Pierre et Miquelon
+Wallis et Futuna

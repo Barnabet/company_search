@@ -4,20 +4,32 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import type { ExtractionResult } from '@/types/conversation'
+import type { ActivityMatch } from '@/stores/conversationStore'
 import {
   MapPin,
   Building2,
   Users,
   TrendingUp,
   Scale,
-  Hash
+  Hash,
+  CheckCircle2,
+  Circle
 } from 'lucide-react'
 
 interface SearchFieldsPanelProps {
   extraction: ExtractionResult | null
   companyCount: number | null
+  activityMatches: ActivityMatch[] | null
   isLoading: boolean
+  isUpdatingSelection: boolean
+  onActivitySelect: (index: number) => void
 }
 
 // Helper to format financial values
@@ -26,6 +38,58 @@ function formatFinancial(value: number | null): string {
   if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}M€`
   if (value >= 1_000) return `${(value / 1_000).toFixed(0)}k€`
   return `${value}€`
+}
+
+// INSEE ranges with their min/max values
+const INSEE_RANGES: Record<string, [number, number | null]> = {
+  "0 salarie": [0, 0],
+  "1 ou 2 salaries": [1, 2],
+  "3 a 5 salaries": [3, 5],
+  "6 a 9 salaries": [6, 9],
+  "10 a 19 salaries": [10, 19],
+  "20 a 49 salaries": [20, 49],
+  "50 a 99 salaries": [50, 99],
+  "100 a 199 salaries": [100, 199],
+  "200 a 249 salaries": [200, 249],
+  "250 a 499 salaries": [250, 499],
+  "500 a 999 salaries": [500, 999],
+  "1 000 a 1 999 salaries": [1000, 1999],
+  "2 000 a 4 999 salaries": [2000, 4999],
+  "5 000 a 9 999 salaries": [5000, 9999],
+  "10 000 salaries et plus": [10000, null],
+}
+
+// Convert tranches array to simplified range string
+function formatSizeRange(tranches: string[]): string {
+  if (!tranches || tranches.length === 0) return ''
+
+  let minVal = Infinity
+  let maxVal = -Infinity
+  let hasUnbounded = false
+
+  for (const tranche of tranches) {
+    const range = INSEE_RANGES[tranche]
+    if (range) {
+      minVal = Math.min(minVal, range[0])
+      if (range[1] === null) {
+        hasUnbounded = true
+      } else {
+        maxVal = Math.max(maxVal, range[1])
+      }
+    }
+  }
+
+  if (minVal === Infinity) return tranches.join(', ')
+
+  const formatNum = (n: number) => n.toLocaleString('fr-FR')
+
+  if (hasUnbounded) {
+    return `${formatNum(minVal)}+ salariés`
+  }
+  if (minVal === maxVal) {
+    return `${formatNum(minVal)} salariés`
+  }
+  return `${formatNum(minVal)} - ${formatNum(maxVal)} salariés`
 }
 
 // Section component for each criteria group
@@ -73,7 +137,10 @@ function CriteriaField({ label, value }: { label: string; value: string | null |
 export default function SearchFieldsPanel({
   extraction,
   companyCount,
-  isLoading
+  activityMatches,
+  isLoading,
+  isUpdatingSelection,
+  onActivitySelect
 }: SearchFieldsPanelProps) {
 
   // Loading state
@@ -160,9 +227,64 @@ export default function SearchFieldsPanel({
             icon={Building2}
             present={activite?.present ?? false}
           >
-            {activite?.activite_entreprise && (
-              <Badge variant="outline">{activite.activite_entreprise}</Badge>
-            )}
+            <div className="space-y-3">
+              {activite?.activite_entreprise && (
+                <Badge variant="outline">{activite.activite_entreprise}</Badge>
+              )}
+
+              {/* NAF Matches inline */}
+              {activityMatches && activityMatches.length > 0 && (
+                <TooltipProvider delayDuration={300}>
+                  <div className={`space-y-2 ${isUpdatingSelection ? 'opacity-70' : ''}`}>
+                    <p className="text-xs text-muted-foreground">
+                      Correspondances NAF (cliquez pour modifier)
+                    </p>
+                    {activityMatches.map((match, index) => (
+                      <Tooltip key={index}>
+                        <TooltipTrigger asChild>
+                          <button
+                            onClick={() => onActivitySelect(index)}
+                            disabled={isUpdatingSelection}
+                            className={`w-full text-left p-2 rounded-md border text-sm transition-colors ${
+                              match.selected
+                                ? 'border-green-500 bg-green-50 dark:bg-green-950'
+                                : 'border-transparent bg-muted/30 hover:bg-muted/50'
+                            } ${isUpdatingSelection ? 'cursor-wait' : 'cursor-pointer'}`}
+                          >
+                            <div className="flex items-center gap-2">
+                              {match.selected ? (
+                                <CheckCircle2 className="h-3.5 w-3.5 text-green-600 shrink-0" />
+                              ) : (
+                                <Circle className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                              )}
+                              <span className={`flex-1 truncate ${match.selected ? 'text-green-700 dark:text-green-300' : ''}`}>
+                                {match.activity}
+                              </span>
+                              <Badge variant="outline" className="text-xs shrink-0">
+                                {(match.score * 100).toFixed(0)}%
+                              </Badge>
+                            </div>
+                            {match.naf_codes.length > 0 && (
+                              <p className="text-xs text-muted-foreground mt-1 pl-5">
+                                {match.naf_codes.join(', ')}
+                              </p>
+                            )}
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent side="left" className="max-w-xs">
+                          <p className="font-medium">{match.activity}</p>
+                          {match.naf_codes.length > 0 && (
+                            <p className="text-xs text-muted-foreground mt-1">
+                              NAF: {match.naf_codes.join(', ')}
+                            </p>
+                          )}
+                        </TooltipContent>
+                      </Tooltip>
+                    ))}
+                  </div>
+                </TooltipProvider>
+              )}
+            </div>
           </CriteriaSection>
 
           <Separator />
@@ -178,9 +300,9 @@ export default function SearchFieldsPanel({
                 <Badge>{taille_entreprise.acronyme}</Badge>
               )}
               {taille_entreprise?.tranche_effectif && (
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="text-sm">
                   {Array.isArray(taille_entreprise.tranche_effectif)
-                    ? taille_entreprise.tranche_effectif.join(', ')
+                    ? formatSizeRange(taille_entreprise.tranche_effectif)
                     : taille_entreprise.tranche_effectif
                   }
                 </p>
@@ -230,6 +352,7 @@ export default function SearchFieldsPanel({
           </CriteriaSection>
         </CardContent>
       </Card>
+
     </div>
   )
 }

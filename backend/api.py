@@ -1,26 +1,16 @@
 """
 API FastAPI pour l'extraction de critères de recherche d'entreprises
+
+Stateless chat API with file-based activity embeddings.
 """
 
 import os
-import json
 from pathlib import Path
 from typing import Any, Dict, Optional
-from datetime import datetime
-import requests
-from fastapi import FastAPI, HTTPException, Depends
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import text
-
-from database import get_db, init_db, close_db
-from schemas import HealthCheck
-from routers import conversation_router
-from services.extraction_service import extract_criteria, OpenRouterExtractorError
 
 # ============================================================================
 # Configuration et chargement de l'environnement
+# IMPORTANT: Must be done BEFORE importing modules that read env vars at import time
 # ============================================================================
 
 def load_env_from_file(env_path: Optional[str] = None, override: bool = True) -> None:
@@ -48,7 +38,19 @@ def load_env_from_file(env_path: Optional[str] = None, override: bool = True) ->
         break
 
 
+# Load .env BEFORE importing other modules that depend on env vars
 load_env_from_file()
+
+# Now import modules
+from datetime import datetime
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+
+from routers import chat_router
+from services.extraction_service import extract_criteria, OpenRouterExtractorError
+from services.activity_matcher import get_activity_matcher
+from services.location_matcher import get_location_matcher
 
 # ============================================================================
 # FastAPI Application
@@ -57,14 +59,14 @@ load_env_from_file()
 app = FastAPI(
     title="Company Search Criteria Extractor",
     description="API pour extraire les critères de recherche d'entreprises depuis une requête en langage naturel",
-    version="1.0.0",
-    redirect_slashes=False,  # Disable automatic redirect to avoid CORS issues
+    version="2.0.0",
+    redirect_slashes=False,
 )
 
-# Configuration CORS pour permettre l'accès depuis le frontend Vercel
+# Configuration CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # En production, spécifier les domaines autorisés
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -74,7 +76,7 @@ app.add_middleware(
 # Include Routers
 # ============================================================================
 
-app.include_router(conversation_router.router)
+app.include_router(chat_router.router)
 
 # ============================================================================
 # Models Pydantic
@@ -96,37 +98,56 @@ class ExtractResponse(BaseModel):
     result: Dict[str, Any]
 
 
+class HealthResponse(BaseModel):
+    status: str
+    version: str
+    embeddings: str
+    locations: str
+    timestamp: datetime
+
+
 # ============================================================================
 # Endpoints
 # ============================================================================
 
 @app.get("/")
 async def root():
-    """Endpoint de santé"""
+    """Health check endpoint"""
     return {
         "status": "ok",
         "message": "Company Search Criteria Extractor API",
-        "version": "1.0.0"
+        "version": "2.0.0"
     }
 
 
-@app.get("/health", response_model=HealthCheck)
-async def health(db: AsyncSession = Depends(get_db)):
-    """
-    Health check endpoint with database connection verification
-    """
-    db_status = "disconnected"
+@app.get("/health", response_model=HealthResponse)
+async def health():
+    """Health check endpoint with component status"""
+    # Check activity matcher
     try:
-        # Test database connection
-        await db.execute(text("SELECT 1"))
-        db_status = "connected"
+        matcher = await get_activity_matcher()
+        if matcher._initialized:
+            embeddings_status = "file-based"
+        else:
+            embeddings_status = "not initialized"
     except Exception as e:
-        print(f"Database health check failed: {e}")
-        db_status = f"error: {str(e)}"
+        embeddings_status = f"error: {str(e)}"
 
-    return HealthCheck(
-        status="healthy" if db_status == "connected" else "degraded",
-        database=db_status,
+    # Check location matcher
+    try:
+        loc_matcher = get_location_matcher()
+        if loc_matcher._initialized:
+            locations_status = f"{len(loc_matcher.communes)} communes, {len(loc_matcher.departements)} deps, {len(loc_matcher.regions)} regions"
+        else:
+            locations_status = "not initialized"
+    except Exception as e:
+        locations_status = f"error: {str(e)}"
+
+    return HealthResponse(
+        status="healthy",
+        version="2.0.0",
+        embeddings=embeddings_status,
+        locations=locations_status,
         timestamp=datetime.utcnow()
     )
 
@@ -135,15 +156,7 @@ async def health(db: AsyncSession = Depends(get_db)):
 async def extract_endpoint(payload: ExtractRequest) -> ExtractResponse:
     """
     Extrait les critères de recherche depuis une requête en langage naturel.
-    
-    Args:
-        payload: Objet contenant la requête utilisateur
-    
-    Returns:
-        ExtractResponse: La requête originale et les critères extraits
-    
-    Raises:
-        HTTPException: Si une erreur survient pendant l'extraction
+    Single-shot extraction without conversation context.
     """
     try:
         result = extract_criteria(payload.query)
@@ -154,7 +167,7 @@ async def extract_endpoint(payload: ExtractRequest) -> ExtractResponse:
             status_code=500,
             detail="Erreur inattendue lors de l'extraction."
         ) from exc
-    
+
     return ExtractResponse(query=payload.query, result=result)
 
 
@@ -164,20 +177,33 @@ async def extract_endpoint(payload: ExtractRequest) -> ExtractResponse:
 
 @app.on_event("startup")
 async def startup_event():
-    """Initialize database on application startup"""
+    """Initialize matchers on startup"""
     print("🚀 Starting Company Search API...")
-    print("📊 Initializing database connection...")
-    # Create tables if they don't exist (fallback when migrations don't run at build time)
-    await init_db()
-    print("✅ Database initialized")
+
+    # Initialize activity matcher (file-based embeddings)
+    print("📊 Initializing activity matcher...")
+    activity_matcher = await get_activity_matcher()
+    if activity_matcher._initialized:
+        print("✅ Activity matcher ready (file-based embeddings)")
+    else:
+        print("⚠️  Activity matcher not initialized - activity matching will be disabled")
+
+    # Initialize location matcher
+    print("📍 Initializing location matcher...")
+    location_matcher = get_location_matcher()
+    if location_matcher._initialized:
+        print("✅ Location matcher ready")
+    else:
+        print("⚠️  Location matcher not initialized - location matching will be disabled")
+
+    print("✅ API ready")
 
 
 @app.on_event("shutdown")
 async def shutdown_event():
-    """Clean up database connections on shutdown"""
+    """Clean up on shutdown"""
     print("🛑 Shutting down Company Search API...")
-    await close_db()
-    print("✅ Database connections closed")
+    print("✅ Shutdown complete")
 
 
 # ============================================================================
@@ -194,5 +220,3 @@ if __name__ == "__main__":
         port=port,
         reload=False,
     )
-
-

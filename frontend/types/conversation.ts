@@ -1,31 +1,6 @@
 /**
- * TypeScript types for conversational agent
+ * TypeScript types for extraction results
  */
-
-export interface Message {
-  id: string
-  role: 'user' | 'assistant' | 'system'
-  content: string
-  created_at: string
-  sequence_number: number
-  analysis_result?: {
-    is_complete: boolean
-    missing_fields: string[]
-    confidence: number
-    suggested_question?: string
-    reasoning: string
-  }
-}
-
-export interface Conversation {
-  id: string
-  status: 'active' | 'extracting' | 'completed' | 'abandoned'
-  created_at: string
-  updated_at: string
-  completed_at?: string
-  messages: Message[]
-  extraction_result?: ExtractionResult
-}
 
 export interface ExtractionResult {
   localisation: {
@@ -41,7 +16,7 @@ export interface ExtractionResult {
   }
   taille_entreprise: {
     present: boolean
-    tranche_effectif: string | null
+    tranche_effectif: string[] | null
     acronyme: string | null
   }
   criteres_financiers: {
@@ -59,12 +34,4 @@ export interface ExtractionResult {
     date_changement_dirigeant: string | null
     nombre_etablissements: number | null
   }
-}
-
-export interface ConversationCreateRequest {
-  initial_message: string
-}
-
-export interface MessageCreateRequest {
-  content: string
 }
