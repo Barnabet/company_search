@@ -21,7 +21,8 @@ API_TIMEOUT = int(os.getenv("COMPANY_API_TIMEOUT", "60"))
 class APIResponse:
     """Response from the company database API."""
     success: bool
-    count: int
+    count: int  # count_legal - nombre d'entreprises par codes NAF
+    count_semantic: int = 0  # count_semantic - nombre d'entreprises par recherche sémantique
     data: Optional[Dict[str, Any]] = None
     error: Optional[str] = None
 
@@ -107,7 +108,7 @@ class CompanyAPIClient:
                 data = response.json()
                 # API returns count_legal as the main count
                 count = data.get("count_legal", data.get("count", 0))
-                count_semantic = data.get("count_semantic", 0)
+                count_semantic = data.get("count_semantic", data.get("count_semantic", 0))
                 return APIResponse(
                     success=True,
                     count=count,

@@ -64,7 +64,8 @@ class ConversationResponse(ConversationBase):
     extraction_result: Optional[Dict[str, Any]] = None
     completed_at: Optional[datetime] = None
     # Extended fields for API integration
-    company_count: Optional[int] = Field(None, description="Number of matching companies from external API")
+    company_count: Optional[int] = Field(None, description="count_legal - Number of matching companies by NAF codes")
+    count_semantic: Optional[int] = Field(None, description="count_semantic - Number of matching companies by semantic search")
 
     model_config = ConfigDict(from_attributes=True)
 

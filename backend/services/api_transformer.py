@@ -90,7 +90,8 @@ def _transform_employee_sizes(tranches: Optional[List[str]]) -> List[str]:
 
 def transform_extraction_to_api_request(
     extraction: Dict[str, Any],
-    naf_codes: Optional[List[str]] = None
+    naf_codes: Optional[List[str]] = None,
+    original_activity_text: Optional[str] = None
 ) -> Dict[str, Any]:
     """
     Transform internal extraction result to external API format.
@@ -105,6 +106,7 @@ def transform_extraction_to_api_request(
                 "criteres_juridiques": {"present": bool, "siege_entreprise": str, ...}
             }
         naf_codes: NAF codes from ActivityMatcher (optional)
+        original_activity_text: Original activity text from user query for semantic search
 
     Returns:
         Dict formatted for external API:
@@ -155,10 +157,11 @@ def transform_extraction_to_api_request(
         else:
             activity["activity_codes_list"] = []
 
-        # Original activity request (the human-readable description)
-        original_request = activite.get("activite_entreprise")
-        if original_request:
-            activity["original_activity_request"] = original_request
+        # Original activity request for semantic search (human-readable text like "informatique")
+        if original_activity_text:
+            activity["original_activity_request"] = original_activity_text
+        elif activite.get("activite_entreprise"):
+            activity["original_activity_request"] = activite["activite_entreprise"]
 
     # Build company_size
     company_size = {

@@ -28,7 +28,8 @@ class AgentResponse:
     action: str  # "extract", "reject", or "refine"
     message: str  # Message to display to user
     extraction_result: Optional[Dict[str, Any]] = None  # Extracted criteria if action="extract"
-    company_count: Optional[int] = None  # Number of matching companies (from API)
+    company_count: Optional[int] = None  # count_legal - Number of matching companies by NAF codes
+    count_semantic: Optional[int] = None  # count_semantic - Number of matching companies by semantic search
     api_result: Optional[Dict[str, Any]] = None  # Full API response data
     naf_codes: Optional[List[str]] = None  # Matched NAF codes from activity matcher
 
@@ -292,6 +293,8 @@ Extrais les critères de recherche de la conversation complète."""
         naf_codes = []
         api_result = None
         company_count = 0
+        count_semantic = 0
+        original_activity_text = None
 
         try:
             # Step 1: Match activities to NAF codes using embeddings
@@ -300,20 +303,27 @@ Extrais les critères de recherche de la conversation complète."""
             activity_query = activite.get("activite_entreprise")
 
             if activity_query:
+                # Save original activity text for semantic search
+                original_activity_text = activity_query
                 naf_codes = activity_matcher.get_naf_codes_for_query(activity_query, top_k=3)
                 print(f"[Agent] Activity '{activity_query}' matched to NAF codes: {naf_codes}")
 
-            # Step 2: Transform to API format
-            api_request = transform_extraction_to_api_request(extraction_result, naf_codes)
+            # Step 2: Transform to API format (pass original activity text for semantic search)
+            api_request = transform_extraction_to_api_request(
+                extraction_result,
+                naf_codes,
+                original_activity_text=original_activity_text
+            )
             print(f"[Agent] API request: {json.dumps(api_request, ensure_ascii=False)}")
 
             # Step 3: Call external API
             api_client = get_company_api_client()
             api_response = api_client.count_companies(api_request)
 
-            company_count = api_response.count
+            company_count = api_response.count  # count_legal
+            count_semantic = api_response.count_semantic  # count_semantic
             api_result = api_response.data
-            print(f"[Agent] API returned {company_count} companies")
+            print(f"[Agent] API returned count_legal={company_count}, count_semantic={count_semantic}")
 
         except CompanyAPIError as e:
             print(f"[Agent] API error: {e}")
@@ -323,6 +333,7 @@ Extrais les critères de recherche de la conversation complète."""
                 message=f"Critères extraits, mais impossible de contacter la base de données: {e}",
                 extraction_result=extraction_result,
                 company_count=None,
+                count_semantic=None,
                 api_result=None,
                 naf_codes=naf_codes if naf_codes else None,
             )
@@ -334,6 +345,7 @@ Extrais les critères de recherche de la conversation complète."""
                 message="Critères extraits. Une erreur est survenue lors de la recherche.",
                 extraction_result=extraction_result,
                 company_count=None,
+                count_semantic=None,
                 api_result=None,
                 naf_codes=naf_codes if naf_codes else None,
             )
@@ -351,6 +363,7 @@ Extrais les critères de recherche de la conversation complète."""
                 message=message,
                 extraction_result=extraction_result,
                 company_count=company_count,
+                count_semantic=count_semantic,
                 api_result=api_result,
                 naf_codes=naf_codes if naf_codes else None,
             )
@@ -366,6 +379,7 @@ Extrais les critères de recherche de la conversation complète."""
                 message=question,
                 extraction_result=extraction_result,
                 company_count=company_count,
+                count_semantic=count_semantic,
                 api_result=None,  # Don't include full results yet
                 naf_codes=naf_codes if naf_codes else None,
             )

@@ -109,6 +109,7 @@ async def create_conversation(
                     db, conversation.id, {
                         "partial_extraction": api_response.extraction_result,
                         "company_count": api_response.company_count,
+                        "count_semantic": api_response.count_semantic,
                         "refinement_round": 1,
                         "naf_codes": api_response.naf_codes,
                     }
@@ -119,6 +120,7 @@ async def create_conversation(
                     db, conversation.id, {
                         "extraction": api_response.extraction_result,
                         "company_count": api_response.company_count,
+                        "count_semantic": api_response.count_semantic,
                         "naf_codes": api_response.naf_codes,
                         "api_result": api_response.api_result,
                     }
@@ -222,6 +224,7 @@ async def send_message(
                     db, conversation_id, {
                         "partial_extraction": api_response.extraction_result,
                         "company_count": api_response.company_count,
+                        "count_semantic": api_response.count_semantic,
                         "refinement_round": refinement_round,
                         "naf_codes": api_response.naf_codes,
                     }
@@ -232,6 +235,7 @@ async def send_message(
                     db, conversation_id, {
                         "extraction": api_response.extraction_result,
                         "company_count": api_response.company_count,
+                        "count_semantic": api_response.count_semantic,
                         "naf_codes": api_response.naf_codes,
                         "api_result": api_response.api_result,
                     }
