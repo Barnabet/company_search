@@ -3,13 +3,54 @@
  */
 
 import { create } from 'zustand'
-import type { Conversation, ConversationCreateRequest, MessageCreateRequest } from '@/types/conversation'
+import type { Conversation, ConversationCreateRequest, MessageCreateRequest, ExtractionResult } from '@/types/conversation'
+
+// Helper function to extract the current extraction from conversation
+function extractCurrentExtraction(conv: Conversation | null): ExtractionResult | null {
+  if (!conv?.extraction_result) return null
+
+  const result = conv.extraction_result as Record<string, unknown>
+
+  // If it has partial_extraction, use that
+  if (result.partial_extraction && typeof result.partial_extraction === 'object') {
+    return result.partial_extraction as ExtractionResult
+  }
+
+  // If it has extraction, use that
+  if (result.extraction && typeof result.extraction === 'object') {
+    return result.extraction as ExtractionResult
+  }
+
+  // If it looks like an ExtractionResult directly (has localisation)
+  if ('localisation' in result) {
+    return result as unknown as ExtractionResult
+  }
+
+  return null
+}
+
+// Helper function to extract company count from conversation
+function extractCompanyCount(conv: Conversation | null): number | null {
+  if (!conv?.extraction_result) return null
+
+  const result = conv.extraction_result as Record<string, unknown>
+
+  if (typeof result.company_count === 'number') {
+    return result.company_count
+  }
+
+  return null
+}
 
 interface ConversationState {
   // State
   currentConversation: Conversation | null
   isLoading: boolean
   error: string | null
+
+  // Computed helpers
+  getCurrentExtraction: () => ExtractionResult | null
+  getCompanyCount: () => number | null
 
   // Actions
   startConversation: (message: string) => Promise<void>
@@ -26,6 +67,10 @@ export const useConversationStore = create<ConversationState>((set, get) => ({
   currentConversation: null,
   isLoading: false,
   error: null,
+
+  // Computed helpers
+  getCurrentExtraction: () => extractCurrentExtraction(get().currentConversation),
+  getCompanyCount: () => extractCompanyCount(get().currentConversation),
 
   // Start a new conversation
   startConversation: async (message: string) => {

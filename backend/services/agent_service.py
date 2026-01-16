@@ -275,20 +275,19 @@ Extrais les critères de recherche de la conversation complète."""
         1. Match activities to NAF codes using embeddings
         2. Transform to API format
         3. Call external API for company count
-        4. Decide: deliver results or ask for refinement
+        4. Always return extraction with count (no threshold decisions)
 
         Args:
             extraction_result: Extraction result from process_message
-            refinement_round: Current refinement round (1-3)
+            refinement_round: Current refinement round (unused, kept for compatibility)
 
         Returns:
-            AgentResponse with API results or refinement question
+            AgentResponse with extraction and company_count
         """
         # Import services here to avoid circular imports
         from services.activity_matcher import get_activity_matcher
         from services.api_transformer import transform_extraction_to_api_request
         from services.company_api_client import get_company_api_client, CompanyAPIError
-        from services.refinement_service import get_refinement_service
 
         naf_codes = []
         api_result = None
@@ -350,36 +349,22 @@ Extrais les critères de recherche de la conversation complète."""
                 naf_codes=naf_codes if naf_codes else None,
             )
 
-        # Step 4: Check if refinement needed
-        refinement_service = get_refinement_service()
-
-        if refinement_service.should_deliver_results(company_count, extraction_result, refinement_round):
-            # Deliver results
-            forced = company_count > refinement_service.threshold
-            message = refinement_service.get_delivery_message(company_count, extraction_result, forced)
-
-            return AgentResponse(
-                action="extract",
-                message=message,
-                extraction_result=extraction_result,
-                company_count=company_count,
-                count_semantic=count_semantic,
-                api_result=api_result,
-                naf_codes=naf_codes if naf_codes else None,
-            )
-
+        # Step 4: Always return extraction with count (no threshold-based decisions)
+        if company_count == 0:
+            message = "Aucune entreprise ne correspond à ces critères. Essayez d'élargir votre recherche."
+        elif company_count <= 100:
+            message = f"J'ai trouvé {company_count} entreprises correspondant à vos critères."
+        elif company_count <= 500:
+            message = f"J'ai trouvé {company_count} entreprises. Vous pouvez affiner si besoin."
         else:
-            # Need refinement - ask follow-up question
-            question, _criterion = refinement_service.generate_refinement_question(
-                company_count, extraction_result, refinement_round
-            )
+            message = f"J'ai trouvé {company_count} entreprises. Affinez vos critères pour réduire ce nombre."
 
-            return AgentResponse(
-                action="refine",
-                message=question,
-                extraction_result=extraction_result,
-                company_count=company_count,
-                count_semantic=count_semantic,
-                api_result=None,  # Don't include full results yet
-                naf_codes=naf_codes if naf_codes else None,
-            )
+        return AgentResponse(
+            action="extract",
+            message=message,
+            extraction_result=extraction_result,
+            company_count=company_count,
+            count_semantic=count_semantic,
+            api_result=api_result,
+            naf_codes=naf_codes if naf_codes else None,
+        )

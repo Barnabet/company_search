@@ -68,15 +68,15 @@ async def create_conversation(
     1. Create conversation in database
     2. Add user's initial message
     3. LLM extracts criteria (or rejects if too vague)
-    4. If extracted: query API for count, refine if > 500
-    5. Return result
+    4. If extracted: query API for count, return with extraction
+    5. Conversation stays active for continued refinement
 
     Args:
         payload: Initial message from user
         db: Database session
 
     Returns:
-        ConversationResponse: Conversation with messages and optional extraction result
+        ConversationResponse: Conversation with messages and extraction result
     """
     try:
         # 1. Create conversation
@@ -101,31 +101,18 @@ async def create_conversation(
                 refinement_round=1
             )
 
-            if api_response.action == "refine":
-                # Too many results - ask for refinement, keep conversation active
-                assistant_content = api_response.message
-                # Store partial extraction for next round
-                await ConversationService.update_extraction(
-                    db, conversation.id, {
-                        "partial_extraction": api_response.extraction_result,
-                        "company_count": api_response.company_count,
-                        "count_semantic": api_response.count_semantic,
-                        "refinement_round": 1,
-                        "naf_codes": api_response.naf_codes,
-                    }
-                )
-            else:
-                # Complete conversation with full results
-                await ConversationService.complete(
-                    db, conversation.id, {
-                        "extraction": api_response.extraction_result,
-                        "company_count": api_response.company_count,
-                        "count_semantic": api_response.count_semantic,
-                        "naf_codes": api_response.naf_codes,
-                        "api_result": api_response.api_result,
-                    }
-                )
-                assistant_content = api_response.message
+            # Always store extraction, keep conversation active for refinement
+            await ConversationService.update_extraction(
+                db, conversation.id, {
+                    "partial_extraction": api_response.extraction_result,
+                    "company_count": api_response.company_count,
+                    "count_semantic": api_response.count_semantic,
+                    "refinement_round": 1,
+                    "naf_codes": api_response.naf_codes,
+                    "api_result": api_response.api_result,
+                }
+            )
+            assistant_content = api_response.message
         else:
             # Query too vague - rejected
             assistant_content = agent_response.message
@@ -157,11 +144,11 @@ async def send_message(
     Send a message in an existing conversation.
 
     Workflow:
-    1. Validate conversation exists and is active
+    1. Validate conversation exists
     2. Add user message
     3. LLM extracts criteria from full history (or rejects if too vague)
-    4. If extracted: query API for count, refine if > 500
-    5. Return result
+    4. If extracted: query API for count, return with extraction
+    5. Conversation stays active for continued refinement
 
     Args:
         conversation_id: UUID of the conversation
@@ -172,16 +159,10 @@ async def send_message(
         ConversationResponse: Updated conversation with new messages
     """
     try:
-        # 1. Validate conversation
+        # 1. Validate conversation (no status check - always allow messages)
         conversation = await ConversationService.get_with_messages(db, conversation_id)
         if not conversation:
             raise HTTPException(status_code=404, detail="Conversation not found")
-
-        if conversation.status.value != "active":
-            raise HTTPException(
-                status_code=400,
-                detail=f"Conversation is not active (status: {conversation.status.value})",
-            )
 
         # 2. Add user message
         await MessageService.create(
@@ -216,31 +197,18 @@ async def send_message(
                 refinement_round=refinement_round
             )
 
-            if api_response.action == "refine":
-                # Still too many results - ask for more refinement
-                assistant_content = api_response.message
-                # Update partial extraction
-                await ConversationService.update_extraction(
-                    db, conversation_id, {
-                        "partial_extraction": api_response.extraction_result,
-                        "company_count": api_response.company_count,
-                        "count_semantic": api_response.count_semantic,
-                        "refinement_round": refinement_round,
-                        "naf_codes": api_response.naf_codes,
-                    }
-                )
-            else:
-                # Complete conversation with full results
-                await ConversationService.complete(
-                    db, conversation_id, {
-                        "extraction": api_response.extraction_result,
-                        "company_count": api_response.company_count,
-                        "count_semantic": api_response.count_semantic,
-                        "naf_codes": api_response.naf_codes,
-                        "api_result": api_response.api_result,
-                    }
-                )
-                assistant_content = api_response.message
+            # Always store extraction, keep conversation active
+            await ConversationService.update_extraction(
+                db, conversation_id, {
+                    "partial_extraction": api_response.extraction_result,
+                    "company_count": api_response.company_count,
+                    "count_semantic": api_response.count_semantic,
+                    "refinement_round": refinement_round,
+                    "naf_codes": api_response.naf_codes,
+                    "api_result": api_response.api_result,
+                }
+            )
+            assistant_content = api_response.message
         else:
             # Query too vague - rejected
             assistant_content = agent_response.message
