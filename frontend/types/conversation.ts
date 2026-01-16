@@ -37,7 +37,6 @@ export interface ExtractionResult {
   }
   activite: {
     present: boolean
-    libelle_secteur: string | null
     activite_entreprise: string | null
   }
   taille_entreprise: {

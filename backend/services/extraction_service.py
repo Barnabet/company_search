@@ -46,7 +46,6 @@ Tu dois répondre avec exactement la structure suivante :
   },
   "activite": {
     "present": true/false,
-    "libelle_secteur": string ou null,
     "activite_entreprise": string ou null
   },
   "taille_entreprise": {
