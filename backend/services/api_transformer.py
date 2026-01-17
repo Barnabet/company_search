@@ -181,12 +181,15 @@ def transform_extraction_to_api_request(
             financial_criteria["turnover"] = financier["ca_plus_recent"]
         if financier.get("resultat_net_plus_recent"):
             financial_criteria["net_profit"] = financier["resultat_net_plus_recent"]
+        if financier.get("rentabilite_plus_recente"):
+            financial_criteria["profitability"] = financier["rentabilite_plus_recente"]
 
     # Build legal_criteria
     legal_criteria = {
         "present": juridique.get("present", False),
     }
     if legal_criteria["present"]:
+        # headquarters (siege_entreprise)
         siege = juridique.get("siege_entreprise")
         if siege:
             # Convert "oui"/"non" or bool to boolean
@@ -195,8 +198,54 @@ def transform_extraction_to_api_request(
             elif isinstance(siege, str):
                 legal_criteria["headquarters"] = siege.lower() in ("oui", "yes", "true", "1")
 
+        # legal_category (categorie_juridique) - e.g., "SAS", "SARL", "SA"
+        if juridique.get("categorie_juridique"):
+            legal_criteria["legal_category"] = juridique["categorie_juridique"]
+
+        # capital - actual value and threshold flag
         if juridique.get("capital"):
+            legal_criteria["capital"] = juridique["capital"]
             legal_criteria["capital_threshold_sup"] = True
+
+        # company_creation_date - API format:
+        #   company_creation_date_threshold: the date string (e.g., "2020-01-01")
+        #   company_creation_date_sup: boolean - true = created >= threshold (on or after)
+        #   company_creation_date_inf: boolean - true = created <= threshold (on or before)
+        # Note: API has only one threshold field, so ranges may not work - we'll try anyway
+        date_min = juridique.get("date_creation_entreprise_min")
+        date_max = juridique.get("date_creation_entreprise_max")
+
+        def normalize_date(date_val: str, is_min: bool = True) -> str:
+            """Convert year-only to full date format. Use Jan 1 for min, Dec 31 for max."""
+            date_str = str(date_val).strip()
+            # If it's just a 4-digit year, convert to full date
+            if len(date_str) == 4 and date_str.isdigit():
+                if is_min:
+                    return f"{date_str}-01-01"
+                else:
+                    return f"{date_str}-12-31"
+            return date_str
+
+        if date_min and date_max:
+            # Both specified - try sending both with min as threshold (experimental)
+            # API may reject this or ignore one condition
+            legal_criteria["company_creation_date_threshold"] = normalize_date(date_min, is_min=True)
+            legal_criteria["company_creation_date_sup"] = True
+            # Also add max as a separate field - this likely won't work but let's try
+            legal_criteria["company_creation_date_threshold_inf"] = normalize_date(date_max, is_min=False)
+            legal_criteria["company_creation_date_inf"] = True
+        elif date_min:
+            # Companies created on or after this date (>= date_min)
+            legal_criteria["company_creation_date_threshold"] = normalize_date(date_min, is_min=True)
+            legal_criteria["company_creation_date_sup"] = True
+        elif date_max:
+            # Companies created on or before this date (<= date_max)
+            legal_criteria["company_creation_date_threshold"] = normalize_date(date_max, is_min=False)
+            legal_criteria["company_creation_date_inf"] = True
+
+        # subsidiaries_number (nombre_etablissements)
+        if juridique.get("nombre_etablissements"):
+            legal_criteria["subsidiaries_number"] = juridique["nombre_etablissements"]
 
     return {
         "location": location,
@@ -249,13 +298,35 @@ def get_criteria_summary(api_request: Dict[str, Any]) -> str:
     # Financial
     financial = api_request.get("financial_criteria", {})
     if financial.get("present"):
+        fin_parts = []
         if financial.get("turnover"):
-            parts.append(f"CA min: {financial['turnover']:,.0f} EUR")
+            fin_parts.append(f"CA > {financial['turnover']:,.0f}€")
+        if financial.get("net_profit"):
+            fin_parts.append(f"Résultat > {financial['net_profit']:,.0f}€")
+        if financial.get("profitability"):
+            fin_parts.append(f"Rentabilité > {financial['profitability']}%")
+        if fin_parts:
+            parts.append(f"Financier: {', '.join(fin_parts)}")
 
     # Legal
     legal = api_request.get("legal_criteria", {})
     if legal.get("present"):
+        legal_parts = []
         if legal.get("headquarters"):
-            parts.append("Sieges sociaux uniquement")
+            legal_parts.append("Sièges uniquement")
+        if legal.get("legal_category"):
+            legal_parts.append(f"Forme: {legal['legal_category']}")
+        if legal.get("company_creation_date_threshold"):
+            threshold = legal["company_creation_date_threshold"]
+            if legal.get("company_creation_date_sup"):
+                legal_parts.append(f"Créées après {threshold}")
+            elif legal.get("company_creation_date_inf"):
+                legal_parts.append(f"Créées avant {threshold}")
+        if legal.get("capital"):
+            legal_parts.append(f"Capital > {legal['capital']:,.0f}€")
+        if legal.get("subsidiaries_number"):
+            legal_parts.append(f"{legal['subsidiaries_number']} établissements")
+        if legal_parts:
+            parts.append(f"Juridique: {', '.join(legal_parts)}")
 
     return " | ".join(parts) if parts else "Aucun critere specifie"

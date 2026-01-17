@@ -61,11 +61,18 @@ class SizeMatchResult:
 
 
 def _get_ranges_for_bounds(min_val: int, max_val: float) -> List[str]:
-    """Get INSEE ranges that fall within the given bounds."""
+    """Get INSEE ranges that fall within the given bounds.
+
+    Uses range_max for both checks:
+    - range_max >= min_val: the range reaches our minimum (has values at or above min_val)
+    - range_max <= max_val: the range doesn't exceed our maximum
+
+    This ensures that for '<=500', we exclude '500 to 999' (max 999 > 500).
+    """
     result = []
     for label, range_min, range_max in INSEE_RANGES:
-        # Include range if it overlaps with the requested bounds
-        if range_max >= min_val and range_min <= max_val:
+        # Include range if its max reaches our min AND stays within our max
+        if range_max >= min_val and range_max <= max_val:
             result.append(label)
     return result
 

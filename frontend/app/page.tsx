@@ -2,41 +2,66 @@
 
 import { useConversationStore } from '@/stores/conversationStore'
 import SearchFieldsPanel from '@/components/SearchFieldsPanel'
-import ChatPanel from '@/components/Chat/ChatPanel'
+import ChatSection from '@/components/Chat/ChatSection'
 import { ModeToggle } from '@/components/mode-toggle'
+import { cn } from '@/lib/utils'
 
 export default function Home() {
   const {
+    messages,
     extraction,
     companyCount,
     activityMatches,
     isLoading,
     isUpdatingSelection,
-    updateActivitySelection
+    updateActivitySelection,
+    sendMessage,
+    resetConversation,
+    error,
+    clearError,
   } = useConversationStore()
 
+  // Transition happens as soon as user sends first message
+  const hasStarted = messages.length > 0
+  // Criteria section only shows when we have results
+  const hasResults = extraction !== null
+
   return (
-    <main className="min-h-screen bg-background flex flex-col">
-      {/* Header */}
-      <header className="border-b px-6 py-4 shrink-0 flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-semibold">Company Search</h1>
-          <p className="text-sm text-muted-foreground">
-            Recherche d&apos;entreprises par critères
-          </p>
-        </div>
+    <main className="h-screen bg-background flex flex-col overflow-hidden">
+      {/* Theme toggle - floating top right */}
+      <div className="absolute top-4 right-4 z-10">
         <ModeToggle />
-      </header>
+      </div>
 
-      {/* Two-panel layout: Chat left, Results right */}
-      <div className="flex flex-col lg:flex-row flex-1 overflow-hidden">
-        {/* Left Panel - Chat */}
-        <div className="flex-1 flex flex-col p-4 overflow-hidden border-b lg:border-b-0 lg:border-r">
-          <ChatPanel />
-        </div>
+      {/* Chat Section - Animated height transition */}
+      <div
+        className={cn(
+          "shrink-0 transition-all duration-500 ease-out",
+          hasStarted ? "h-[40vh]" : "h-screen"
+        )}
+      >
+        <ChatSection
+          messages={messages}
+          isLoading={isLoading}
+          error={error}
+          onSendMessage={sendMessage}
+          onReset={resetConversation}
+          onClearError={clearError}
+          expanded={!hasStarted}
+        />
+      </div>
 
-        {/* Right Panel - Search Fields & Results */}
-        <aside className="w-full lg:w-80 xl:w-96 bg-muted/30 overflow-y-auto shrink-0">
+      {/* Criteria Section - Pops up from bottom when results arrive */}
+      <div
+        className={cn(
+          "flex-1 border-t overflow-hidden transition-all duration-500 ease-out",
+          hasStarted ? "block" : "hidden",
+          hasResults
+            ? "opacity-100 translate-y-0"
+            : "opacity-0 translate-y-full"
+        )}
+      >
+        <div className="h-full overflow-y-auto">
           <SearchFieldsPanel
             extraction={extraction}
             companyCount={companyCount}
@@ -44,8 +69,9 @@ export default function Home() {
             isLoading={isLoading}
             isUpdatingSelection={isUpdatingSelection}
             onActivitySelect={updateActivitySelection}
+            fullWidth
           />
-        </aside>
+        </div>
       </div>
     </main>
   )
