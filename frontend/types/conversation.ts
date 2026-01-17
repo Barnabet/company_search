@@ -29,9 +29,9 @@ export interface ExtractionResult {
     present: boolean
     categorie_juridique: string | null
     siege_entreprise: string | null
-    date_creation_entreprise: string | null
+    date_creation_entreprise_min: string | null
+    date_creation_entreprise_max: string | null
     capital: number | null
-    date_changement_dirigeant: string | null
     nombre_etablissements: number | null
   }
 }

@@ -99,7 +99,8 @@ Si la requête contient AU MOINS UN critère exploitable :
   },
   "activite": {
     "present": true/false,
-    "activite_entreprise": string ou null
+    "activite_entreprise": string ou null,
+    "mots_cles": string ou null
   },
   "taille_entreprise": {
     "present": true/false,
@@ -115,9 +116,9 @@ Si la requête contient AU MOINS UN critère exploitable :
     "present": true/false,
     "categorie_juridique": string ou null,
     "siege_entreprise": string ou null,
-    "date_creation_entreprise": string ou null,
+    "date_creation_entreprise_min": string ou null,
+    "date_creation_entreprise_max": string ou null,
     "capital": number ou null,
-    "date_changement_dirigeant": string ou null,
     "nombre_etablissements": number ou null
   }
 }
@@ -130,9 +131,25 @@ Si la requête est TROP VAGUE (aucun critère) :
 
 RÈGLES D'EXTRACTION
 -------------------
-- activite_entreprise : reprendre le terme utilisé par l'utilisateur (restauration, informatique, BTP...)
+- activite_entreprise : le nom du secteur d'activité correspondant le plus à la requête de l'utilisateur.
+- mots_cles : mots-clés optimisés pour la recherche sémantique dans une base de codes NAF.
+  Reformule et enrichis pour maximiser les chances de trouver les bons codes.
+  Exemples :
+    "boîtes d'informatique" → "informatique logiciel développement"
+    "restos" → "restauration restaurant"
+    "entreprises qui font du web" → "développement web internet numérique"
+    "boîtes de conseil" → "conseil consulting"
+    "usines" → "industrie fabrication manufacture production"
+- code_postal : toujours 5 chiffres (ex: "75001", "69003"). Ne jamais utiliser 2 chiffres.
+- departement : toujours le nom complet (ex: "Finistère", "Yvelines", "Bouches-du-Rhône"), jamais le numéro.
 - region : liste autorisée = Ile-de-France, Bretagne, Normandie, Occitanie, etc.
-- Ne jamais inventer de valeurs non mentionnées
+- date_creation_entreprise_min : date minimale de création (entreprises créées APRÈS cette date). Format: "YYYY" ou "YYYY-MM-DD"
+- date_creation_entreprise_max : date maximale de création (entreprises créées AVANT cette date). Format: "YYYY" ou "YYYY-MM-DD"
+  Exemples :
+    "startups récentes" → date_creation_entreprise_min: "2020"
+    "entreprises de plus de 10 ans" → date_creation_entreprise_max: "2014"
+    "créées entre 2015 et 2020" → date_creation_entreprise_min: "2015", date_creation_entreprise_max: "2020"
+- Ne jamais inventer de critères non mentionnés par l'utilisateur
 
 TAILLE D'ENTREPRISE (effectif_expression)
 -----------------------------------------
@@ -531,8 +548,10 @@ class AgentService:
             parts = []
             if jur.get("categorie_juridique"):
                 parts.append(f"Forme: {jur['categorie_juridique']}")
-            if jur.get("date_creation_entreprise"):
-                parts.append(f"Création: {jur['date_creation_entreprise']}")
+            if jur.get("date_creation_entreprise_min"):
+                parts.append(f"Créées après: {jur['date_creation_entreprise_min']}")
+            if jur.get("date_creation_entreprise_max"):
+                parts.append(f"Créées avant: {jur['date_creation_entreprise_max']}")
             if parts:
                 extraction_lines.append(f"- Juridique: {', '.join(parts)}")
 
@@ -648,23 +667,24 @@ class AgentService:
         try:
             # Check if activity changed (for caching)
             activite = extraction_result.get("activite", {})
-            activity_query = activite.get("activite_entreprise")
+            activity_display = activite.get("activite_entreprise")  # For display
+            mots_cles = activite.get("mots_cles")  # For embedding search
 
-            previous_activity = None
+            previous_mots_cles = None
             if previous_extraction:
                 previous_activite = previous_extraction.get("activite", {})
-                previous_activity = previous_activite.get("activite_entreprise")
+                previous_mots_cles = previous_activite.get("mots_cles")
 
-            activity_changed = activity_query != previous_activity
+            activity_changed = mots_cles != previous_mots_cles
 
             # Step 1: Match activities to NAF codes using embeddings (or use cache)
-            if activity_query:
-                # Save original activity text for semantic search
-                original_activity_text = activity_query
+            if mots_cles:
+                # Save original activity text for API semantic search
+                original_activity_text = activity_display or mots_cles
 
                 if not activity_changed and previous_activity_matches:
                     # Activity unchanged - reuse previous matches
-                    print(f"[Agent] Activity unchanged ('{activity_query}'), reusing cached matches")
+                    print(f"[Agent] Query terms unchanged ('{mots_cles}'), reusing cached matches")
                     activity_matches = previous_activity_matches
                     # Collect NAF codes from selected matches
                     for match in activity_matches:
@@ -673,16 +693,16 @@ class AgentService:
                                 if code not in naf_codes:
                                     naf_codes.append(code)
                 else:
-                    # Activity changed - run embedding search
+                    # Activity changed - run embedding search using mots_cles
                     activity_matcher = await get_activity_matcher()
-                    matches = activity_matcher.find_similar_activities(activity_query, top_k=5, threshold=0.3)
-                    print(f"[Agent] Activity '{activity_query}' matches:")
+                    matches = activity_matcher.find_similar_activities(mots_cles, top_k=5, threshold=0.3)
+                    print(f"[Agent] Query terms '{mots_cles}' matches:")
                     for activity, score, codes in matches:
                         print(f"  - {activity} (score={score:.2f}) NAF: {codes}")
 
                     # Step 2: LLM selects best matches
                     selected_indices, explanation, no_good_match = AgentService._select_naf_codes(
-                        activity_query, matches
+                        mots_cles, matches
                     )
                     print(f"[Agent] LLM selected indices: {selected_indices}, explanation: {explanation}")
 
