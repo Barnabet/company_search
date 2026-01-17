@@ -148,7 +148,7 @@ export default function Home() {
                 <p className="text-sm">
                   <span className="font-medium text-blue-600 dark:text-blue-400">Prêt pour export!</span>
                   <br />
-                  <span className="text-muted-foreground">Vous pouvez exporter jusqu'à 500 entreprises.</span>
+                  <span className="text-muted-foreground">Vous pouvez exporter jusqu&apos;à 500 entreprises.</span>
                 </p>
               ) : (
                 <p className="text-sm">
