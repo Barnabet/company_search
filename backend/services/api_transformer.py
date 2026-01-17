@@ -50,11 +50,17 @@ VALID_REGIONS = [
 
 
 def _to_array(value: Optional[Any]) -> List[Any]:
-    """Convert a value to array if not None."""
+    """
+    Convert a value to array if not None.
+    Handles comma-separated strings by splitting them.
+    """
     if value is None:
         return []
     if isinstance(value, list):
         return value
+    if isinstance(value, str) and ',' in value:
+        # Split comma-separated values and strip whitespace
+        return [v.strip() for v in value.split(',') if v.strip()]
     return [value]
 
 

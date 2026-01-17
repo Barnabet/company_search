@@ -71,10 +71,18 @@ export default function ChatSection({
         setIsTransitioning(false)
       }, 300)
     }
-    // New assistant message - add it with animation
+    // New assistant message or content update - add/update it with animation
     else if (lastMsg.role === 'assistant') {
       setDisplayMessages(prev => {
-        if (prev.find(m => m.id === lastMsg.id)) return prev
+        const existingMsg = prev.find(m => m.id === lastMsg.id)
+        if (existingMsg) {
+          // Message exists - update content if changed (streaming update)
+          if (existingMsg.content !== lastMsg.content) {
+            return prev.map(m => m.id === lastMsg.id ? lastMsg : m)
+          }
+          return prev
+        }
+        // New message
         newMessageIds.current.add(lastMsg.id)
         // Get the user message before this assistant message
         const userMsg = messages[messages.length - 2]
@@ -139,80 +147,67 @@ export default function ChatSection({
         </div>
       </div>
 
-      {/* THE SEARCH BAR - Single element that animates position */}
+      {/* THE SEARCH BAR - Fixed width, animates position only */}
       <div
         className={cn(
-          "absolute left-0 right-0 transition-all duration-500 ease-out z-10",
+          "absolute left-0 right-0 transition-all duration-500 ease-out z-10 px-6",
           expanded
-            ? "top-1/2 translate-y-[10px] px-6"
-            : "top-4 translate-y-0 pl-6 pr-20"
+            ? "top-1/2 translate-y-[10px]"
+            : "top-3 translate-y-0"
         )}
       >
-        {/* Inner wrapper for width animation */}
-        <div
-          className="mx-auto transition-all duration-500 ease-out"
-          style={{
-            maxWidth: expanded ? '672px' : '100%', // 672px = max-w-2xl
-          }}
-        >
-        <div className="flex items-center gap-3">
-          <div className={cn(
-            "relative flex-1 transition-all duration-500",
-          )}>
-            <Search className={cn(
-              "absolute top-1/2 -translate-y-1/2 text-muted-foreground transition-all duration-300",
-              expanded ? "left-4 h-5 w-5" : "left-3 h-4 w-4"
-            )} />
-            <Input
-              ref={inputRef}
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder={expanded ? "Décrivez les entreprises que vous recherchez..." : "Affinez votre recherche..."}
-              disabled={isLoading}
-              className={cn(
-                "border-border/50 bg-background transition-all duration-500",
-                expanded
-                  ? "pl-12 pr-14 h-14 text-base rounded-2xl"
-                  : "pl-10 pr-4 h-11 rounded-xl"
-              )}
-            />
-            {/* Send button inside input - only when expanded */}
-            {expanded && (
+        {/* Fixed width wrapper - always max-w-2xl */}
+        <div className="mx-auto max-w-2xl">
+          <div className="flex items-center gap-2">
+            <div className="relative flex-1">
+              <Search className={cn(
+                "absolute top-1/2 -translate-y-1/2 text-muted-foreground transition-all duration-300",
+                expanded ? "left-4 h-5 w-5" : "left-3 h-4 w-4"
+              )} />
+              <Input
+                ref={inputRef}
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder={expanded ? "Décrivez les entreprises que vous recherchez..." : "Affinez votre recherche..."}
+                disabled={isLoading}
+                className={cn(
+                  "border-2 border-black/20 dark:border-white/20 bg-background transition-colors duration-200 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-black/40 dark:focus-visible:border-white/40",
+                  expanded
+                    ? "pl-12 pr-14 h-14 text-base rounded-2xl"
+                    : "pl-10 pr-14 h-11 rounded-xl"
+                )}
+              />
+              {/* Send button inside input - always visible */}
               <Button
                 onClick={handleSend}
                 disabled={isLoading || !input.trim()}
                 size="icon"
-                className="absolute right-2 top-1/2 -translate-y-1/2 h-10 w-10 rounded-xl bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/20 transition-all duration-200 disabled:opacity-50 disabled:shadow-none"
+                className={cn(
+                  "absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/20 transition-all duration-200 disabled:opacity-50 disabled:shadow-none",
+                  expanded ? "h-10 w-10" : "h-7 w-7"
+                )}
               >
-                {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                {isLoading ? <Loader2 className={expanded ? "h-4 w-4" : "h-3.5 w-3.5"} /> : <Send className={expanded ? "h-4 w-4" : "h-3.5 w-3.5"} />}
               </Button>
-            )}
-          </div>
+            </div>
 
-          {/* Buttons - only when compact */}
-          {!expanded && (
-            <>
-              <Button
-                onClick={handleSend}
-                disabled={isLoading || !input.trim()}
-                size="icon"
-                className="h-11 w-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/20 transition-all duration-200 disabled:opacity-50 disabled:shadow-none"
-              >
-                {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={onReset}
-                className="h-11 w-11 rounded-xl text-muted-foreground hover:text-foreground"
-                title="Nouvelle recherche"
-              >
-                <RotateCcw className="h-4 w-4" />
-              </Button>
-            </>
-          )}
-        </div>
+            {/* Reset button - always present, fades in/out */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onReset}
+              className={cn(
+                "h-11 w-11 rounded-xl text-muted-foreground hover:text-foreground shrink-0 transition-all duration-500",
+                expanded
+                  ? "opacity-0 pointer-events-none w-0 h-0 overflow-hidden"
+                  : "opacity-100"
+              )}
+              title="Nouvelle recherche"
+            >
+              <RotateCcw className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -241,15 +236,15 @@ export default function ChatSection({
       {/* Messages - only visible when compact */}
       <div
         className={cn(
-          "absolute inset-x-0 top-[76px] bottom-0 px-6 pb-4 overflow-hidden transition-all duration-500 ease-out",
+          "absolute inset-x-0 top-[72px] bottom-0 px-6 pb-4 overflow-hidden transition-all duration-500 ease-out",
           expanded
             ? "opacity-0 translate-y-4 pointer-events-none"
             : "opacity-100 translate-y-0"
         )}
       >
-        <div className="h-full overflow-hidden">
+        <div className="h-full overflow-hidden flex justify-center">
           <div className={cn(
-            "space-y-3 transition-all duration-300",
+            "space-y-4 transition-all duration-300 w-full max-w-4xl",
             isTransitioning && "animate-slideUp"
           )}>
             {displayMessages.map((message) => (
@@ -258,28 +253,23 @@ export default function ChatSection({
                 className={cn(
                   'flex gap-2',
                   message.role === 'user' ? 'justify-end' : 'justify-start',
-                  newMessageIds.current.has(message.id) && (
-                    message.role === 'user' ? 'animate-slideInFromRight' : 'animate-slideInFromLeft'
-                  )
+                  newMessageIds.current.has(message.id) && message.role === 'user' && 'animate-slideInFromRight'
                 )}
               >
-                <div
-                  className={cn(
-                    'max-w-[85%] rounded-xl px-4 py-2.5',
-                    message.role === 'user'
-                      ? 'bg-blue-600 text-white rounded-br-sm'
-                      : 'bg-muted/50 border border-border/50 rounded-bl-sm'
-                  )}
-                >
-                  <p className="text-sm leading-relaxed">{message.content}</p>
-                </div>
+                {message.role === 'user' ? (
+                  <div className="max-w-[90%] rounded-xl rounded-br-sm px-3.5 py-2 bg-blue-600 text-white">
+                    <p className="text-sm leading-relaxed">{message.content}</p>
+                  </div>
+                ) : (
+                  <p className="text-sm leading-relaxed text-foreground max-w-[90%] mt-10">{message.content}</p>
+                )}
               </div>
             ))}
 
             {/* Loading indicator */}
             {isLoading && (
-              <div className="flex justify-start animate-slideInFromLeft">
-                <div className="bg-muted/50 rounded-xl px-4 py-2.5 flex items-center gap-2 border border-border/50">
+              <div className="flex justify-start animate-fadeIn mt-10">
+                <div className="flex items-center gap-2">
                   <Loader2 className="h-4 w-4 animate-spin text-blue-500" />
                   <span className="text-sm text-muted-foreground">Analyse...</span>
                 </div>

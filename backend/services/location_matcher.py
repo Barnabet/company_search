@@ -286,10 +286,24 @@ class LocationMatcher:
         # Otherwise return the first one
         return tied_matches[0]
 
+    def _split_multi_values(self, value: str) -> List[str]:
+        """
+        Split a value that may contain multiple locations (comma-separated).
+        Returns a list of individual values, stripped of whitespace.
+        """
+        if not value:
+            return []
+
+        # Split by comma and clean up
+        parts = [p.strip() for p in value.split(',')]
+        # Filter out empty parts
+        return [p for p in parts if p]
+
     def match_locations(self, extraction_result: dict) -> Tuple[dict, List[LocationCorrection]]:
         """
         Apply fuzzy matching to location fields in an extraction result.
         Searches across all lists and assigns to the correct field type.
+        Handles comma-separated lists of values (e.g., "Bordeaux, Toulouse").
         Modifies the extraction_result in place and returns it with corrections.
 
         Returns:
@@ -330,15 +344,18 @@ class LocationMatcher:
                 # Clear the invalid postal code
                 localisation["code_postal"] = None
 
-        # Collect all location values to match
-        location_values = []
+        # Collect all location values to match (supporting multi-values)
+        location_values = []  # List of (field, value) tuples
         for field in ["commune", "departement", "region"]:
             value = localisation.get(field)
             if value:
-                location_values.append((field, value))
+                # Split comma-separated values
+                individual_values = self._split_multi_values(value)
+                for v in individual_values:
+                    location_values.append((field, v))
 
-        # Clear existing location fields (we'll repopulate with correct matches)
-        matched_fields = {"commune": None, "departement": None, "region": None}
+        # Store matched values by field type (using lists to support multiple values)
+        matched_fields: dict[str, List[str]] = {"commune": [], "departement": [], "region": []}
 
         # Match each value across all lists
         for original_field, value in location_values:
@@ -348,9 +365,9 @@ class LocationMatcher:
             if result:
                 matched_value, correct_field, score = result
 
-                # Only set if not already set (first match wins for each field)
-                if matched_fields[correct_field] is None:
-                    matched_fields[correct_field] = matched_value
+                # Add to the list if not already present
+                if matched_value not in matched_fields[correct_field]:
+                    matched_fields[correct_field].append(matched_value)
 
                     # Record the correction
                     correction = LocationCorrection(
@@ -377,10 +394,10 @@ class LocationMatcher:
                     score=0.0
                 ))
 
-        # Update localisation with matched values
-        localisation["commune"] = matched_fields["commune"]
-        localisation["departement"] = matched_fields["departement"]
-        localisation["region"] = matched_fields["region"]
+        # Update localisation with matched values (join multiple values with commas)
+        localisation["commune"] = ", ".join(matched_fields["commune"]) if matched_fields["commune"] else None
+        localisation["departement"] = ", ".join(matched_fields["departement"]) if matched_fields["departement"] else None
+        localisation["region"] = ", ".join(matched_fields["region"]) if matched_fields["region"] else None
 
         return extraction_result, corrections
 
