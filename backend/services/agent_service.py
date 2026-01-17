@@ -11,7 +11,7 @@ Flow:
 import json
 import os
 import requests
-from typing import List, Dict, Any, Optional, Protocol
+from typing import List, Dict, Any, Optional, Protocol, AsyncGenerator
 from dataclasses import dataclass
 
 
@@ -486,6 +486,79 @@ class AgentService:
         return data["choices"][0]["message"]["content"]
 
     @staticmethod
+    async def _call_llm_text_stream(
+        messages: List[Dict[str, str]],
+        temperature: float = 0.7
+    ) -> AsyncGenerator[str, None]:
+        """
+        Call OpenRouter LLM for free-text response with streaming.
+
+        Args:
+            messages: List of message dicts with role and content
+            temperature: Temperature for generation
+
+        Yields:
+            str: Chunks of LLM response content
+        """
+        import httpx
+
+        if not OPENROUTER_API_KEY:
+            raise ValueError("OPENROUTER_API_KEY not set")
+
+        payload: Dict[str, Any] = {
+            "model": OPENROUTER_MODEL,
+            "messages": messages,
+            "temperature": temperature,
+            "stream": True,
+        }
+
+        headers = {
+            "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+            "Content-Type": "application/json",
+        }
+
+        async with httpx.AsyncClient(timeout=60.0) as client:
+            async with client.stream(
+                "POST",
+                OPENROUTER_API_URL,
+                headers=headers,
+                json=payload,
+            ) as response:
+                response.raise_for_status()
+
+                buffer = ""
+                async for chunk in response.aiter_text():
+                    if chunk:
+                        buffer += chunk
+                        while True:
+                            line_end = buffer.find('\n')
+                            if line_end == -1:
+                                break
+
+                            line = buffer[:line_end].strip()
+                            buffer = buffer[line_end + 1:]
+
+                            # Skip empty lines and comments (OpenRouter sends these)
+                            if not line or line.startswith(':'):
+                                continue
+
+                            if line.startswith('data: '):
+                                data = line[6:]
+                                if data == '[DONE]':
+                                    return
+
+                                try:
+                                    data_obj = json.loads(data)
+                                    # Check for errors
+                                    if 'error' in data_obj:
+                                        raise Exception(f"Stream error: {data_obj['error'].get('message', 'Unknown error')}")
+                                    content = data_obj.get("choices", [{}])[0].get("delta", {}).get("content")
+                                    if content:
+                                        yield content
+                                except json.JSONDecodeError:
+                                    pass  # Skip malformed lines
+
+    @staticmethod
     def _generate_contextual_response(
         user_query: str,
         company_count: int,
@@ -619,6 +692,131 @@ class AgentService:
                 return f"J'ai trouvé {company_count} entreprises. Vous pouvez affiner si besoin."
             else:
                 return f"J'ai trouvé {company_count} entreprises. Affinez vos critères pour réduire ce nombre."
+
+    @staticmethod
+    async def _generate_contextual_response_stream(
+        user_query: str,
+        company_count: int,
+        extraction_result: Dict[str, Any],
+        activity_matches: List["ActivityMatch"],
+        location_corrections: Optional[List["LocationCorrectionInfo"]] = None,
+        conversation_history: Optional[str] = None
+    ) -> AsyncGenerator[str, None]:
+        """
+        Generate a contextual response message using LLM with streaming.
+
+        Same as _generate_contextual_response but yields chunks for streaming.
+        """
+        # Build extraction summary
+        extraction_lines = []
+        loc = extraction_result.get("localisation", {})
+        if loc.get("present"):
+            parts = []
+            if loc.get("region"):
+                parts.append(f"Région: {loc['region']}")
+            if loc.get("departement"):
+                parts.append(f"Département: {loc['departement']}")
+            if loc.get("commune"):
+                parts.append(f"Commune: {loc['commune']}")
+            if loc.get("code_postal"):
+                parts.append(f"Code postal: {loc['code_postal']}")
+            if parts:
+                extraction_lines.append(f"- Localisation: {', '.join(parts)}")
+
+        act = extraction_result.get("activite", {})
+        if act.get("present") and act.get("activite_entreprise"):
+            extraction_lines.append(f"- Activité: {act['activite_entreprise']}")
+
+        taille = extraction_result.get("taille_entreprise", {})
+        if taille.get("present"):
+            if taille.get("acronyme"):
+                extraction_lines.append(f"- Taille: {taille['acronyme']}")
+
+        fin = extraction_result.get("criteres_financiers", {})
+        if fin.get("present"):
+            parts = []
+            if fin.get("ca_plus_recent"):
+                parts.append(f"CA > {fin['ca_plus_recent']}€")
+            if fin.get("resultat_net_plus_recent"):
+                parts.append(f"Résultat net > {fin['resultat_net_plus_recent']}€")
+            if parts:
+                extraction_lines.append(f"- Financier: {', '.join(parts)}")
+
+        jur = extraction_result.get("criteres_juridiques", {})
+        if jur.get("present"):
+            parts = []
+            if jur.get("categorie_juridique"):
+                parts.append(f"Forme: {jur['categorie_juridique']}")
+            if jur.get("date_creation_entreprise_min"):
+                parts.append(f"Créées après: {jur['date_creation_entreprise_min']}")
+            if jur.get("date_creation_entreprise_max"):
+                parts.append(f"Créées avant: {jur['date_creation_entreprise_max']}")
+            if parts:
+                extraction_lines.append(f"- Juridique: {', '.join(parts)}")
+
+        extraction_summary = "\n".join(extraction_lines) if extraction_lines else "Aucun critère spécifique"
+
+        # Build activity matches summary
+        activity_lines = []
+        for match in activity_matches:
+            status = "✓" if match.selected else "○"
+            naf_str = ", ".join(match.naf_codes) if match.naf_codes else "pas de NAF"
+            activity_lines.append(f"  {status} {match.activity} ({match.score*100:.0f}%) - {naf_str}")
+        activity_matches_summary = "\n".join(activity_lines) if activity_lines else "Aucune correspondance d'activité"
+
+        # Build location corrections summary
+        location_lines = []
+        if location_corrections:
+            for c in location_corrections:
+                if c.field_changed:
+                    location_lines.append(f"  - '{c.original}' ({c.original_field}) → '{c.corrected}' ({c.corrected_field})")
+                elif c.original != c.corrected:
+                    location_lines.append(f"  - '{c.original}' → '{c.corrected}'")
+        location_corrections_text = "\n".join(location_lines) if location_lines else "Aucune correction"
+
+        # Identify missing fields that could help narrow results
+        missing_fields = []
+        if not loc.get("present") or not any([loc.get("region"), loc.get("departement"), loc.get("commune")]):
+            missing_fields.append("localisation (région, département, ou commune)")
+        if not taille.get("present"):
+            missing_fields.append("taille d'entreprise (TPE, PME, ETI, GE)")
+        if not fin.get("present"):
+            missing_fields.append("critères financiers (CA minimum, résultat net)")
+
+        prompt = RESPONSE_GENERATION_PROMPT.format(
+            user_query=user_query,
+            company_count=company_count,
+            extraction_summary=extraction_summary,
+            activity_matches_summary=activity_matches_summary,
+            location_corrections=location_corrections_text
+        )
+
+        # Add missing fields hint
+        if missing_fields and company_count > 500:
+            prompt += f"\n\nCRITÈRES NON RENSEIGNÉS (pour affiner):\n- " + "\n- ".join(missing_fields)
+
+        # Add conversation history if available
+        if conversation_history:
+            prompt += f"\n\nHISTORIQUE DE LA CONVERSATION:\n{conversation_history}"
+
+        try:
+            llm_messages = [
+                {"role": "system", "content": prompt},
+                {"role": "user", "content": user_query},
+            ]
+            async for chunk in AgentService._call_llm_text_stream(llm_messages):
+                yield chunk
+        except Exception as e:
+            print(f"[Agent] Streaming response generation LLM failed: {e}")
+            # Fallback to simple message
+            if company_count == 0:
+                yield "Aucune entreprise ne correspond à ces critères. Essayez d'élargir votre recherche."
+            elif company_count <= 100:
+                yield f"J'ai trouvé {company_count} entreprises correspondant à vos critères."
+            elif company_count <= 500:
+                yield f"J'ai trouvé {company_count} entreprises. Vous pouvez affiner si besoin."
+            else:
+                yield f"J'ai trouvé {company_count} entreprises. Affinez vos critères pour réduire ce nombre."
 
     @staticmethod
     async def process_with_api(

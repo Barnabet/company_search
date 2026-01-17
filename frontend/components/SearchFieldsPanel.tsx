@@ -208,7 +208,7 @@ export default function SearchFieldsPanel({
                             <Circle className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
                           )}
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-center justify-between gap-2 mb-1">
+                            <div className="flex items-center justify-between gap-2">
                               <p className={`text-sm font-medium truncate ${match.selected ? 'text-blue-700 dark:text-blue-300' : ''}`}>
                                 {match.activity}
                               </p>
@@ -220,9 +220,6 @@ export default function SearchFieldsPanel({
                                 {(match.score * 100).toFixed(0)}%
                               </span>
                             </div>
-                            <p className="text-[10px] text-muted-foreground font-mono">
-                              {match.naf_codes.join(', ')}
-                            </p>
                           </div>
                         </div>
                       </button>
@@ -240,125 +237,75 @@ export default function SearchFieldsPanel({
           </div>
         )}
 
-        {/* Right: Results count + Criteria */}
+        {/* Right: Criteria Cards */}
         <div className="flex-1 p-6 overflow-y-auto">
-          <div className="max-w-4xl mx-auto">
-            {/* Results Count Card */}
-            {companyCount !== null && (
-              <div className={`relative overflow-hidden rounded-2xl p-6 mb-6 ${
-                isGoodCount
-                  ? 'bg-gradient-to-br from-blue-500/10 to-blue-600/5 border border-blue-500/20'
-                  : 'bg-gradient-to-br from-amber-500/10 to-orange-500/5 border border-amber-500/20'
-              }`}>
-                <div className={`absolute -top-12 -right-12 w-32 h-32 rounded-full blur-3xl ${
-                  isGoodCount ? 'bg-blue-500/20' : 'bg-amber-500/20'
-                }`} />
-                <div className="relative flex items-center justify-between">
-                  <div>
-                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      Entreprises trouvées
-                    </span>
-                    <div className={`text-4xl font-bold tracking-tight mt-1 ${
-                      isGoodCount
-                        ? 'text-blue-600 dark:text-blue-400'
-                        : 'text-amber-600 dark:text-amber-400'
-                    }`}>
-                      {companyCount.toLocaleString('fr-FR')}
-                    </div>
-                  </div>
-                  {isGoodCount ? (
-                    <span className="text-sm text-blue-600 dark:text-blue-400 font-medium">
-                      Prêt pour export
-                    </span>
-                  ) : (
-                    <span className="text-sm text-muted-foreground">
-                      Affinez vos critères
-                    </span>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* Criteria Cards - Grid */}
-            <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="h-full">
+            {/* Criteria Cards - Grid taking full height */}
+            <div className="grid grid-cols-5 gap-4 h-full">
               {/* Localisation */}
-              <div className={`rounded-xl p-4 border ${localisation?.present ? 'bg-background border-blue-500/20' : 'bg-muted/30 border-border/50'}`}>
-                <div className="flex items-center gap-2 mb-2">
-                  <MapPin className={`h-5 w-5 ${localisation?.present ? 'text-blue-500' : 'text-muted-foreground'}`} />
+              <div className={`rounded-xl p-5 border flex flex-col ${localisation?.present ? 'bg-background border-blue-500/20' : 'bg-muted/30 border-border/50'}`}>
+                <div className="flex flex-col items-center gap-1 mb-4">
+                  <MapPin className={`h-6 w-6 ${localisation?.present ? 'text-blue-500' : 'text-muted-foreground'}`} />
                   <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Localisation</span>
                 </div>
-                {localisation?.present ? (
-                  <p className="text-sm font-medium">{localisation.commune || localisation.departement || localisation.region || localisation.code_postal}</p>
-                ) : (
-                  <p className="text-sm text-muted-foreground">Non spécifié</p>
-                )}
+                <div className="space-y-2.5 text-sm flex-1">
+                  <div className="flex justify-between gap-2"><span className="text-muted-foreground shrink-0">Région</span><span className="font-medium text-right">{localisation?.region || '—'}</span></div>
+                  <div className="flex justify-between gap-2"><span className="text-muted-foreground shrink-0">Département</span><span className="font-medium text-right">{localisation?.departement || '—'}</span></div>
+                  <div className="flex justify-between gap-2"><span className="text-muted-foreground shrink-0">Commune</span><span className="font-medium text-right">{localisation?.commune || '—'}</span></div>
+                  <div className="flex justify-between gap-2"><span className="text-muted-foreground shrink-0">Code postal</span><span className="font-medium text-right">{localisation?.code_postal || '—'}</span></div>
+                </div>
               </div>
 
               {/* Activite */}
-              <div className={`rounded-xl p-4 border ${activite?.present ? 'bg-background border-blue-500/20' : 'bg-muted/30 border-border/50'}`}>
-                <div className="flex items-center gap-2 mb-2">
-                  <Building2 className={`h-5 w-5 ${activite?.present ? 'text-blue-500' : 'text-muted-foreground'}`} />
+              <div className={`rounded-xl p-5 border flex flex-col ${activite?.present ? 'bg-background border-blue-500/20' : 'bg-muted/30 border-border/50'}`}>
+                <div className="flex flex-col items-center gap-1 mb-4">
+                  <Building2 className={`h-6 w-6 ${activite?.present ? 'text-blue-500' : 'text-muted-foreground'}`} />
                   <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Activité</span>
                 </div>
-                {activite?.present ? (
-                  <p className="text-sm font-medium">{activite.activite_entreprise}</p>
-                ) : (
-                  <p className="text-sm text-muted-foreground">Non spécifié</p>
-                )}
+                <div className="space-y-2.5 text-sm flex-1">
+                  <div className="flex justify-between gap-2"><span className="text-muted-foreground shrink-0">Secteur</span><span className="font-medium text-right">{activite?.activite_entreprise || '—'}</span></div>
+                </div>
               </div>
 
               {/* Taille */}
-              <div className={`rounded-xl p-4 border ${taille_entreprise?.present ? 'bg-background border-blue-500/20' : 'bg-muted/30 border-border/50'}`}>
-                <div className="flex items-center gap-2 mb-2">
-                  <Users className={`h-5 w-5 ${taille_entreprise?.present ? 'text-blue-500' : 'text-muted-foreground'}`} />
+              <div className={`rounded-xl p-5 border flex flex-col ${taille_entreprise?.present ? 'bg-background border-blue-500/20' : 'bg-muted/30 border-border/50'}`}>
+                <div className="flex flex-col items-center gap-1 mb-4">
+                  <Users className={`h-6 w-6 ${taille_entreprise?.present ? 'text-blue-500' : 'text-muted-foreground'}`} />
                   <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Taille</span>
                 </div>
-                {taille_entreprise?.present ? (
-                  <p className="text-sm font-medium">
-                    {taille_entreprise.acronyme || (Array.isArray(taille_entreprise.tranche_effectif) ? formatSizeRange(taille_entreprise.tranche_effectif) : taille_entreprise.tranche_effectif)}
-                  </p>
-                ) : (
-                  <p className="text-sm text-muted-foreground">Non spécifié</p>
-                )}
+                <div className="space-y-2.5 text-sm flex-1">
+                  <div className="flex justify-between gap-2"><span className="text-muted-foreground shrink-0">Catégorie</span><span className="font-medium text-right">{taille_entreprise?.acronyme || '—'}</span></div>
+                  <div className="flex justify-between gap-2"><span className="text-muted-foreground shrink-0">Effectif</span><span className="font-medium text-right">{taille_entreprise?.tranche_effectif ? (Array.isArray(taille_entreprise.tranche_effectif) ? formatSizeRange(taille_entreprise.tranche_effectif) : taille_entreprise.tranche_effectif) : '—'}</span></div>
+                </div>
               </div>
 
               {/* Financier */}
-              <div className={`rounded-xl p-4 border ${criteres_financiers?.present ? 'bg-background border-blue-500/20' : 'bg-muted/30 border-border/50'}`}>
-                <div className="flex items-center gap-2 mb-2">
-                  <TrendingUp className={`h-5 w-5 ${criteres_financiers?.present ? 'text-blue-500' : 'text-muted-foreground'}`} />
+              <div className={`rounded-xl p-5 border flex flex-col ${criteres_financiers?.present ? 'bg-background border-blue-500/20' : 'bg-muted/30 border-border/50'}`}>
+                <div className="flex flex-col items-center gap-1 mb-4">
+                  <TrendingUp className={`h-6 w-6 ${criteres_financiers?.present ? 'text-blue-500' : 'text-muted-foreground'}`} />
                   <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Financier</span>
                 </div>
-                {criteres_financiers?.present ? (
-                  <div className="text-sm font-medium space-y-0.5">
-                    {criteres_financiers.ca_plus_recent && <p>CA: {formatFinancial(criteres_financiers.ca_plus_recent)}</p>}
-                    {criteres_financiers.resultat_net_plus_recent && <p>Résultat: {formatFinancial(criteres_financiers.resultat_net_plus_recent)}</p>}
-                    {criteres_financiers.rentabilite_plus_recente && <p>Rentabilité: {criteres_financiers.rentabilite_plus_recente}%</p>}
-                    {!criteres_financiers.ca_plus_recent && !criteres_financiers.resultat_net_plus_recent && !criteres_financiers.rentabilite_plus_recente && <p>Défini</p>}
-                  </div>
-                ) : (
-                  <p className="text-sm text-muted-foreground">Non spécifié</p>
-                )}
+                <div className="space-y-2.5 text-sm flex-1">
+                  <div className="flex justify-between gap-2"><span className="text-muted-foreground shrink-0">CA min.</span><span className="font-medium text-right">{criteres_financiers?.ca_plus_recent ? formatFinancial(criteres_financiers.ca_plus_recent) : '—'}</span></div>
+                  <div className="flex justify-between gap-2"><span className="text-muted-foreground shrink-0">Résultat</span><span className="font-medium text-right">{criteres_financiers?.resultat_net_plus_recent ? formatFinancial(criteres_financiers.resultat_net_plus_recent) : '—'}</span></div>
+                  <div className="flex justify-between gap-2"><span className="text-muted-foreground shrink-0">Rentabilité</span><span className="font-medium text-right">{criteres_financiers?.rentabilite_plus_recente ? `${criteres_financiers.rentabilite_plus_recente}%` : '—'}</span></div>
+                </div>
               </div>
 
               {/* Juridique */}
-              <div className={`rounded-xl p-4 border ${criteres_juridiques?.present ? 'bg-background border-blue-500/20' : 'bg-muted/30 border-border/50'}`}>
-                <div className="flex items-center gap-2 mb-2">
-                  <Scale className={`h-5 w-5 ${criteres_juridiques?.present ? 'text-blue-500' : 'text-muted-foreground'}`} />
+              <div className={`rounded-xl p-5 border flex flex-col ${criteres_juridiques?.present ? 'bg-background border-blue-500/20' : 'bg-muted/30 border-border/50'}`}>
+                <div className="flex flex-col items-center gap-1 mb-4">
+                  <Scale className={`h-6 w-6 ${criteres_juridiques?.present ? 'text-blue-500' : 'text-muted-foreground'}`} />
                   <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Juridique</span>
                 </div>
-                {criteres_juridiques?.present ? (
-                  <div className="text-sm font-medium space-y-0.5">
-                    {criteres_juridiques.categorie_juridique && <p>Forme: {criteres_juridiques.categorie_juridique}</p>}
-                    {criteres_juridiques.siege_entreprise && <p>Siège: {criteres_juridiques.siege_entreprise}</p>}
-                    {criteres_juridiques.date_creation_entreprise_min && <p>Après: {criteres_juridiques.date_creation_entreprise_min}</p>}
-                    {criteres_juridiques.date_creation_entreprise_max && <p>Avant: {criteres_juridiques.date_creation_entreprise_max}</p>}
-                    {criteres_juridiques.capital && <p>Capital: {formatFinancial(criteres_juridiques.capital)}</p>}
-                    {criteres_juridiques.nombre_etablissements && <p>{criteres_juridiques.nombre_etablissements} établ.</p>}
-                    {!criteres_juridiques.categorie_juridique && !criteres_juridiques.siege_entreprise && !criteres_juridiques.date_creation_entreprise_min && !criteres_juridiques.date_creation_entreprise_max && !criteres_juridiques.capital && !criteres_juridiques.nombre_etablissements && <p>Défini</p>}
-                  </div>
-                ) : (
-                  <p className="text-sm text-muted-foreground">Non spécifié</p>
-                )}
+                <div className="space-y-2.5 text-sm flex-1">
+                  <div className="flex justify-between gap-2"><span className="text-muted-foreground shrink-0">Forme</span><span className="font-medium text-right">{criteres_juridiques?.categorie_juridique || '—'}</span></div>
+                  <div className="flex justify-between gap-2"><span className="text-muted-foreground shrink-0">Siège</span><span className="font-medium text-right">{criteres_juridiques?.siege_entreprise || '—'}</span></div>
+                  <div className="flex justify-between gap-2"><span className="text-muted-foreground shrink-0">Créées après</span><span className="font-medium text-right">{criteres_juridiques?.date_creation_entreprise_min || '—'}</span></div>
+                  <div className="flex justify-between gap-2"><span className="text-muted-foreground shrink-0">Créées avant</span><span className="font-medium text-right">{criteres_juridiques?.date_creation_entreprise_max || '—'}</span></div>
+                  <div className="flex justify-between gap-2"><span className="text-muted-foreground shrink-0">Capital min.</span><span className="font-medium text-right">{criteres_juridiques?.capital ? formatFinancial(criteres_juridiques.capital) : '—'}</span></div>
+                  <div className="flex justify-between gap-2"><span className="text-muted-foreground shrink-0">Établissements</span><span className="font-medium text-right">{criteres_juridiques?.nombre_etablissements || '—'}</span></div>
+                </div>
               </div>
             </div>
           </div>

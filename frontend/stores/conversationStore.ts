@@ -78,7 +78,7 @@ export const useConversationStore = create<ConversationState>((set, get) => ({
   isUpdatingSelection: false,
   error: null,
 
-  // Send a message (works for both first message and follow-ups)
+  // Send a message with streaming response
   sendMessage: async (content: string) => {
     const { messages } = get()
 
@@ -87,6 +87,15 @@ export const useConversationStore = create<ConversationState>((set, get) => ({
       id: `msg-${Date.now()}`,
       role: 'user',
       content,
+      created_at: new Date().toISOString(),
+    }
+
+    // Create placeholder assistant message for streaming
+    const assistantMessageId = `msg-${Date.now()}-assistant`
+    const assistantMessage: ChatMessage = {
+      id: assistantMessageId,
+      role: 'assistant',
+      content: '',
       created_at: new Date().toISOString(),
     }
 
@@ -107,7 +116,7 @@ export const useConversationStore = create<ConversationState>((set, get) => ({
       // Get current extraction and activity matches for caching
       const { extraction, activityMatches } = get()
 
-      const response = await fetch(`${API_URL}/api/v1/chat`, {
+      const response = await fetch(`${API_URL}/api/v1/chat/stream`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -122,29 +131,107 @@ export const useConversationStore = create<ConversationState>((set, get) => ({
         throw new Error(errorData.detail || 'Failed to send message')
       }
 
-      const data: ChatResponse = await response.json()
-
-      // Create assistant message
-      const assistantMessage: ChatMessage = {
-        id: `msg-${Date.now()}-assistant`,
-        role: 'assistant',
-        content: data.message,
-        created_at: new Date().toISOString(),
+      if (!response.body) {
+        throw new Error('Response body is not readable')
       }
 
-      // Update state with response
-      // Only update extraction/counts if we got new data (don't reset on rejection)
-      const currentState = get()
-      set({
-        messages: [...currentState.messages, assistantMessage],
-        extraction: data.extraction_result ?? currentState.extraction,
-        companyCount: data.company_count ?? currentState.companyCount,
-        countSemantic: data.count_semantic ?? currentState.countSemantic,
-        nafCodes: data.naf_codes ?? currentState.nafCodes,
-        apiResult: data.api_result ?? currentState.apiResult,
-        activityMatches: data.activity_matches ?? currentState.activityMatches,
-        isLoading: false,
-      })
+      const reader = response.body.getReader()
+      const decoder = new TextDecoder()
+      let buffer = ''
+      let streamedContent = ''
+      let assistantMessageAdded = false
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+
+        const chunk = decoder.decode(value, { stream: true })
+        buffer += chunk
+
+        // Process complete SSE events (separated by double newline)
+        const events = buffer.split('\n\n')
+        buffer = events.pop() || ''
+
+        for (const eventBlock of events) {
+          if (!eventBlock.trim()) continue
+
+          // Parse event type and data from the block
+          let eventType = ''
+          let eventData = ''
+
+          const lines = eventBlock.split('\n')
+          for (const line of lines) {
+            if (line.startsWith('event: ')) {
+              eventType = line.slice(7).trim()
+            } else if (line.startsWith('data: ')) {
+              eventData = line.slice(6)
+            }
+          }
+
+          if (!eventType || !eventData) continue
+
+          try {
+            const data = JSON.parse(eventData)
+
+            switch (eventType) {
+              case 'metadata': {
+                const currentState = get()
+                if (!data.rejected) {
+                  set({
+                    extraction: data.extraction_result ?? currentState.extraction,
+                    companyCount: data.company_count ?? currentState.companyCount,
+                    countSemantic: data.count_semantic ?? currentState.countSemantic,
+                    nafCodes: data.naf_codes ?? currentState.nafCodes,
+                    activityMatches: data.activity_matches ?? currentState.activityMatches,
+                  })
+                }
+                break
+              }
+
+              case 'content': {
+                streamedContent += data as string
+
+                // Add assistant message on first content chunk
+                if (!assistantMessageAdded) {
+                  const currentState = get()
+                  set({
+                    messages: [...currentState.messages, { ...assistantMessage, content: streamedContent }],
+                    isLoading: false,
+                  })
+                  assistantMessageAdded = true
+                } else {
+                  // Update existing assistant message with accumulated content
+                  set((state) => ({
+                    messages: state.messages.map(m =>
+                      m.id === assistantMessageId
+                        ? { ...m, content: streamedContent }
+                        : m
+                    ),
+                  }))
+                }
+                break
+              }
+
+              case 'done': {
+                set({ isLoading: false })
+                break
+              }
+
+              case 'error': {
+                throw new Error(data.message || 'Stream error')
+              }
+            }
+          } catch (parseError) {
+            console.error('Error parsing SSE data:', eventData, parseError)
+          }
+        }
+      }
+
+      // If no content was streamed, ensure loading is stopped
+      if (!assistantMessageAdded) {
+        set({ isLoading: false })
+      }
+
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'An error occurred'
       set({ error: errorMessage, isLoading: false })
